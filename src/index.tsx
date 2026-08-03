@@ -8,6 +8,9 @@ import React, {
   forwardRef,
   useMemo,
   useLayoutEffect,
+  createContext,
+  type ComponentType,
+  type ReactNode,
 } from "react";
 import {
   BackHandler,
@@ -15,9 +18,11 @@ import {
   Platform,
   UIManager,
   View,
-  ViewStyle,
   Keyboard,
   TouchableWithoutFeedback,
+  type ViewStyle,
+  type ReactNativeElement,
+  type LayoutChangeEvent,
 } from "react-native";
 import { useSafeAreaFrame } from "react-native-safe-area-context";
 import sortBy from "lodash/sortBy";
@@ -38,11 +43,15 @@ const useKeyboard = () => {
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
-      () => setKeyboardVisible(true),
+      () => {
+        setKeyboardVisible(true);
+      },
     );
     const keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
-      () => setKeyboardVisible(false),
+      () => {
+        setKeyboardVisible(false);
+      },
     );
 
     return () => {
@@ -65,15 +74,18 @@ interface IWalkthroughStepMask {
 }
 
 interface IWalkthroughFunctions {
-  registerStep: (step: IWalkthroughStep) => any;
-  updateStep: (identifier, step: Partial<IWalkthroughStep>) => any;
-  start: () => any;
-  stop: () => any;
-  next: () => any;
-  goTo: (number: number) => any;
-  previous: () => any;
-  setTransitionDuration: (duration: number) => any;
-  setBackdropColor: (color: string) => any;
+  registerStep: (step: IWalkthroughStep) => void;
+  updateStep: (
+    identifier: IWalkthroughStep["identifier"],
+    step: Partial<IWalkthroughStep>,
+  ) => void;
+  start: () => void;
+  stop: () => void;
+  next: () => void;
+  goTo: (number: number) => void;
+  previous: () => void;
+  setTransitionDuration: (duration: number) => void;
+  setBackdropColor: (color: string) => void;
 }
 
 interface IWalkthroughContext extends IWalkthroughFunctions {
@@ -81,12 +93,12 @@ interface IWalkthroughContext extends IWalkthroughFunctions {
   allSteps: IWalkthroughStep[];
   backdropColor: string;
   transitionDuration: number;
-  animateNextLayoutChange: (duration?: number) => any;
+  animateNextLayoutChange: (duration?: number) => void;
   debug: boolean;
   isWalkthroughOn: boolean;
   isReady: boolean;
-  currentStepNumber: number;
-  useIsFocused?: () => boolean;
+  currentStepNumber: number | undefined;
+  useIsFocused: () => boolean;
 }
 
 interface ILayoutAdjustments {
@@ -116,33 +128,33 @@ interface IWalkthroughCallback {
 
 type EnableHardwareBackFunction = (
   props?: Pick<IWalkthroughFunctions, "goTo" | "previous">,
-) => any;
-type OnPressWithContextType = (context?: IWalkthroughContext) => any;
-// TS will complain that we don't hav ea value in createContext but we actually want it null if not inside the provider.
-// @ts-ignore
-const WalkthroughContext = React.createContext<IWalkthroughContext>();
+) => void;
+type OnPressWithContextType = (context?: IWalkthroughContext) => void;
+const WalkthroughContext = createContext<IWalkthroughContext | undefined>(
+  undefined,
+);
 interface IWalkthroughStep {
   number: number;
   identifier: string;
   overlayComponentKey: string;
   // Pass through props to pass into the component. Make sure the props object does not remove keys or change order,
   // as it will cause an error when checking for a chance in values amongst the object values.
-  overlayComponentProps?: any;
-  OverlayComponent?: React.ComponentType<IOverlayComponentProps>;
+  overlayComponentProps?: any; //TODO: typed
+  OverlayComponent?: ComponentType<IOverlayComponentProps>;
   fullScreen?: boolean;
   layoutAdjustments?: ILayoutAdjustments;
   // Only allow the onLayout to get set once. This is useful on for example, scrollable containers where the position
   // on the page can change when you scroll.
   layoutLock?: boolean;
   enableHardwareBack?: boolean | EnableHardwareBackFunction; // android only - Pass in the step number to go back to that step
-  onStart?: (props: IWalkthroughCallback) => any;
-  onFinish?: (props: IWalkthroughCallback) => any;
-  onBackground?: () => any;
+  onStart?: (props: IWalkthroughCallback) => void;
+  onFinish?: (props: IWalkthroughCallback) => void;
+  onBackground?: () => void;
   onPressMask?: OnPressWithContextType;
   onPressBackdrop?: OnPressWithContextType;
   mask: IWalkthroughStepMask;
   computedMask?: IWalkthroughStepMask;
-  measureMask: () => any;
+  measureMask: () => void;
 }
 
 interface IOverlayProps {
@@ -150,10 +162,9 @@ interface IOverlayProps {
   style: ViewStyle;
   onPress?: OnPressWithContextType;
 }
-const createLogger = (debug) => (number: number, str: string) =>
-  debug ? console.log(`[WT][${number}]: ${str}`) : undefined;
+
 const WalkthroughDisplayer = () => {
-  const context = useContext<IWalkthroughContext>(WalkthroughContext);
+  const context = useContext(WalkthroughContext)!;
   const {
     currentSteps,
     currentStepNumber,
@@ -166,42 +177,63 @@ const WalkthroughDisplayer = () => {
     debug,
   } = context;
 
-  const logStep = createLogger(debug);
+  const logStep = useCallback(
+    (number: number, str: string) => {
+      if (debug) {
+        console.log(`[WT][${String(number)}]: ${str}`);
+      }
+    },
+    [debug],
+  );
 
   const lastStepsRef = useRef<IWalkthroughStep[]>([]);
 
-  if (isAndroid) {
-    const isKeyboardOpen = useKeyboard();
-    useEffect(
-      () =>
-        isWalkthroughOn
-          ? BackHandler.addEventListener("hardwareBackPress", () => {
-            if (isKeyboardOpen) {
-              return false;
-            } else {
-              const backEnabled = currentSteps.filter(
-                (s) => s.enableHardwareBack,
-              );
-              if (backEnabled.length) {
-                const functions = backEnabled
-                .map((s) => s.enableHardwareBack)
-                .filter(
-                  (x) => typeof x === "function",
-                ) as EnableHardwareBackFunction[];
-                if (!functions.length) {
-                  // if no function was specified, just do the default previous
-                  functions.push(() => previous());
-                }
-                functions.forEach((f) => f({ goTo, previous }));
-              }
+  const isKeyboardOpen = useKeyboard();
 
-              return true; // return true to block the back button which we always do when the walkthrough is on.
-            }
-          }).remove
-          : () => undefined,
-      [isWalkthroughOn, isKeyboardOpen, currentSteps, previous, goTo],
+  const onHardwareBackPress = useCallback(() => {
+    if (isKeyboardOpen) {
+      return false;
+    } else {
+      const backEnabled = currentSteps.filter((s) =>
+        Boolean(s.enableHardwareBack),
+      );
+      if (backEnabled.length) {
+        let functions = backEnabled
+          .map((s) => s.enableHardwareBack)
+          .filter(
+            (x): x is EnableHardwareBackFunction => typeof x === "function",
+          );
+        if (!functions.length) {
+          functions = [
+            () => {
+              previous();
+            },
+          ];
+        }
+        functions.forEach((f) => {
+          f({ goTo, previous });
+        });
+      }
+
+      return true; // return true to block the back button which we always do when the walkthrough is on.
+    }
+  }, [isKeyboardOpen, currentSteps, previous, goTo]);
+
+  useEffect(() => {
+    if (!isAndroid || !isWalkthroughOn) {
+      return;
+    }
+    // eslint-disable-next-line @eslint-react/web-api/no-leaked-event-listener
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onHardwareBackPress,
     );
-  }
+    return () => {
+      subscription.remove();
+    };
+  }, [isWalkthroughOn, onHardwareBackPress]);
+
+  const currentStepsKey = currentSteps.map((s) => s.identifier).join("|");
 
   useLayoutEffect(
     () => {
@@ -215,15 +247,17 @@ const WalkthroughDisplayer = () => {
       ) {
         logStep(
           lastStepsRef.current[0].number,
-          `Finished at ${time.getTime()}`,
+          `Finished at ${String(time.getTime())}`,
         );
-        lastStepsRef.current.forEach((step) => step.onFinish?.({ time }));
+        lastStepsRef.current.forEach((step) => {
+          step.onFinish?.({ time });
+        });
       }
 
       if (currentSteps.length) {
         animateNextLayoutChange(transitionDuration);
 
-        logStep(currentStepNumber, `Started at ${time.getTime()}`);
+        logStep(currentStepNumber ?? 0, `Started at ${String(time.getTime())}`);
         currentSteps.forEach((step) => {
           step.onStart?.({ time });
           step.measureMask();
@@ -233,116 +267,114 @@ const WalkthroughDisplayer = () => {
       lastStepsRef.current = currentSteps;
     },
     // Need to do it based on currentSteps, since that changes when screens mount and things get added to the steps.
-    [currentSteps.map((s) => s.identifier).join("|")],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [currentStepsKey],
   );
 
-  const overlayProps = useMemo(
-    () => {
-      // We build the views from top to bottom
-      const sortedCurrentSteps: IWalkthroughStep[] = sortBy(
-        currentSteps,
-        (step) => step.mask.y,
-      );
-      const arr: IOverlayProps[] = [];
-      let markerY = 0;
+  const overlayProps = useMemo(() => {
+    // We build the views from top to bottom
+    const sortedCurrentSteps: IWalkthroughStep[] = sortBy(
+      currentSteps,
+      (step) => step.mask.y,
+    );
+    const arr: IOverlayProps[] = [];
+    let markerY = 0;
 
-      sortedCurrentSteps.forEach((step, i) => {
-        const computedMask = step.computedMask;
+    sortedCurrentSteps.forEach((step, i) => {
+      const computedMask = step.computedMask ?? step.mask;
 
-        // Rectange on the top across the whole screen
+      // Rectange on the top across the whole screen
+      arr.push({
+        key: `topRect-${String(i)}`,
+        onPress: step.onPressBackdrop,
+        style: {
+          backgroundColor: backdropColor,
+          top: markerY,
+          left: 0,
+          right: 0,
+          height: computedMask.y - markerY,
+          ...(debug ? { borderWidth: 1, borderColor: "red" } : {}),
+        },
+      });
+      // Rectange on the left side.
+      arr.push({
+        key: `leftRect-${String(i)}`,
+        onPress: step.onPressBackdrop,
+        style: {
+          backgroundColor: backdropColor,
+          top: computedMask.y,
+          left: 0,
+          width: computedMask.x,
+          height: computedMask.height,
+          ...(debug ? { borderWidth: 1, borderColor: "blue" } : {}),
+        },
+      });
+      // Rectange on the right side.
+      arr.push({
+        key: `rightRect-${String(i)}`,
+        onPress: step.onPressBackdrop,
+        style: {
+          backgroundColor: backdropColor,
+          top: computedMask.y,
+          left: computedMask.x + computedMask.width,
+          right: 0,
+          height: computedMask.height,
+          ...(debug ? { borderWidth: 1, borderColor: "green" } : {}),
+        },
+      });
+      // The bottom rectange up to the next component (or bottom of the screen)
+      const nextStep =
+        i + 1 < sortedCurrentSteps.length
+          ? sortedCurrentSteps[i + 1]
+          : undefined;
+      if (!nextStep) {
+        const top = computedMask.y + computedMask.height;
         arr.push({
-          key: `topRect-${i}`,
+          // We only have one of these (at the end) so want to give this the same key so it can be reused in the animation.
+          key: `bottomRect`,
           onPress: step.onPressBackdrop,
           style: {
             backgroundColor: backdropColor,
-            top: markerY,
+            top,
             left: 0,
             right: 0,
-            height: computedMask.y - markerY,
-            ...(debug ? { borderWidth: 1, borderColor: "red" } : {}),
+            bottom: 0,
+            ...(debug ? { borderWidth: 1, borderColor: "orange" } : {}),
           },
         });
-        // Rectange on the left side.
-        arr.push({
-          key: `leftRect-${i}`,
-          onPress: step.onPressBackdrop,
-          style: {
-            backgroundColor: backdropColor,
-            top: computedMask.y,
-            left: 0,
-            width: computedMask.x,
-            height: computedMask.height,
-            ...(debug ? { borderWidth: 1, borderColor: "blue" } : {}),
-          },
-        });
-        // Rectange on the right side.
-        arr.push({
-          key: `rightRect-${i}`,
-          onPress: step.onPressBackdrop,
-          style: {
-            backgroundColor: backdropColor,
-            top: computedMask.y,
-            left: computedMask.x + computedMask.width,
-            right: 0,
-            height: computedMask.height,
-            ...(debug ? { borderWidth: 1, borderColor: "green" } : {}),
-          },
-        });
-        // The bottom rectange up to the next component (or bottom of the screen)
-        const nextStep =
-          i + 1 < sortedCurrentSteps.length
-            ? sortedCurrentSteps[i + 1]
-            : undefined;
-        if (!nextStep) {
-          const top = computedMask.y + computedMask.height;
-          arr.push({
-            // We only have one of these (at the end) so want to give this the same key so it can be reused in the animation.
-            key: `bottomRect`,
-            onPress: step.onPressBackdrop,
-            style: {
-              backgroundColor: backdropColor,
-              top,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              ...(debug ? { borderWidth: 1, borderColor: "orange" } : {}),
-            },
-          });
-        }
+      }
 
-        // If we aren't allowing interaction on the highlighted region, then just put a view over that as well so its not pressable.
-        if (!computedMask.allowInteraction) {
-          arr.push({
-            key: `coverRect-${i}`,
-            onPress: step.onPressMask,
-            style: {
-              top: computedMask.y,
-              left: computedMask.x,
-              width: computedMask.width,
-              height: computedMask.height,
-              // on Android (not sure if all), if we have an empty View without a background, it will not take the
-              // touchevents. Rather then experimenting with wrapping it with TouchableWithoutFeedback, etc, we simply
-              // give it an *extremely* subtle background that's essentially not noticeable. This helps it steal the touch events.
-              ...(isAndroid
-                ? { backgroundColor: "#FFFFFF01", opacity: 0.1 }
-                : {}),
-              // Add a background color so in testing you can see that there is something over it.
-              ...(debug
-                ? {
+      // If we aren't allowing interaction on the highlighted region, then just put a view over that as well so its not pressable.
+      if (computedMask.allowInteraction !== true) {
+        arr.push({
+          key: `coverRect-${String(i)}`,
+          onPress: step.onPressMask,
+          style: {
+            top: computedMask.y,
+            left: computedMask.x,
+            width: computedMask.width,
+            height: computedMask.height,
+            // on Android (not sure if all), if we have an empty View without a background, it will not take the
+            // touchevents. Rather then experimenting with wrapping it with TouchableWithoutFeedback, etc, we simply
+            // give it an *extremely* subtle background that's essentially not noticeable. This helps it steal the touch events.
+            ...(isAndroid
+              ? { backgroundColor: "#FFFFFF01", opacity: 0.1 }
+              : {}),
+            // Add a background color so in testing you can see that there is something over it.
+            ...(debug
+              ? {
                   borderWidth: 1,
                   borderColor: "forestgreen",
                   backgroundColor: "#0000FF33",
                 }
-                : {}),
-            },
-          });
-        }
-        markerY = computedMask.y + computedMask.height;
-      });
-      return arr;
-    },
-    [currentSteps, backdropColor, debug],
-  );
+              : {}),
+          },
+        });
+      }
+      markerY = computedMask.y + computedMask.height;
+    });
+    return arr;
+  }, [currentSteps, backdropColor, debug]);
 
   return (
     <>
@@ -355,7 +387,9 @@ const WalkthroughDisplayer = () => {
           content = (
             <TouchableWithoutFeedback
               key={key}
-              onPress={() => onPress(context)}
+              onPress={() => {
+                onPress(context);
+              }}
             >
               {content}
             </TouchableWithoutFeedback>
@@ -369,7 +403,8 @@ const WalkthroughDisplayer = () => {
           <s.OverlayComponent
             key={s.overlayComponentKey}
             step={s}
-            {...(s.overlayComponentProps || {})}
+            {...(s.overlayComponentProps as  //TODO: remove this cast
+              Partial<IOverlayComponentProps> | undefined)}
             {...context}
           />
         ) : null,
@@ -378,9 +413,9 @@ const WalkthroughDisplayer = () => {
   );
 };
 
-const defaultAnimateNextLayoutChange = (duration: number) =>
+const defaultAnimateNextLayoutChange = (duration: number | undefined) => {
   LayoutAnimation.configureNext({
-    duration,
+    duration: duration ?? 0,
     create: {
       type: LayoutAnimation.Types.easeInEaseOut,
       property: LayoutAnimation.Properties.opacity,
@@ -390,33 +425,35 @@ const defaultAnimateNextLayoutChange = (duration: number) =>
       property: LayoutAnimation.Properties.scaleXY,
     },
   });
+};
 
-interface IWalkthroughProvider
-  extends Partial<
-    Pick<
-      IWalkthroughContext,
-      | "useIsFocused"
-      | "transitionDuration"
-      | "backdropColor"
-      | "animateNextLayoutChange"
-      | "debug"
-      >
-    > {
+const defaultUseIsFocused = () => true;
+
+interface IWalkthroughProvider extends Partial<
+  Pick<
+    IWalkthroughContext,
+    | "useIsFocused"
+    | "transitionDuration"
+    | "backdropColor"
+    | "animateNextLayoutChange"
+    | "debug"
+  >
+> {
   enableExperimentalLayoutAnimation?: boolean;
-  children?: any;
+  children?: ReactNode;
 }
 const WalkthroughProvider = forwardRef<
   IWalkthroughFunctions,
   IWalkthroughProvider
-  >(
+>(
   (
     {
-      useIsFocused = () => true,
+      useIsFocused = defaultUseIsFocused,
       transitionDuration: _transitionDuration = 300,
       backdropColor: _backdropColor = "#000000DA",
       animateNextLayoutChange = defaultAnimateNextLayoutChange,
       enableExperimentalLayoutAnimation: _enableExperimentalLayoutAnimation,
-      debug,
+      debug = false,
       children,
     },
     ref,
@@ -427,12 +464,14 @@ const WalkthroughProvider = forwardRef<
     const [steps, setSteps] = useState<IWalkthroughStep[]>([]);
     const [currentStepNumber, setCurrentStepNumber] = useState<number>();
 
-    const isWalkthroughOn = Boolean(typeof currentStepNumber === "number");
+    const isWalkthroughOn = typeof currentStepNumber === "number";
     const isReady = useMemo(() => steps.some((s) => s.number === 1), [steps]);
 
-    if (_enableExperimentalLayoutAnimation) {
-      useEffect(enableExperimentalLayoutAnimation, []);
-    }
+    useEffect(() => {
+      if (_enableExperimentalLayoutAnimation === true) {
+        enableExperimentalLayoutAnimation();
+      }
+    }, [_enableExperimentalLayoutAnimation]);
 
     const currentSteps = useMemo(
       () =>
@@ -443,20 +482,24 @@ const WalkthroughProvider = forwardRef<
     );
 
     const registerStep = useCallback<IWalkthroughFunctions["registerStep"]>(
-      (step) =>
+      (step) => {
         setSteps((steps) =>
           sortBy(
             [step, ...steps.filter((s) => s.identifier !== step.identifier)],
             "number",
           ),
-        ),
+        );
+      },
       [],
     );
 
     const updateStep = useCallback<IWalkthroughFunctions["updateStep"]>(
-      (identifier, step) =>
+      (identifier, step) => {
         setSteps((steps) => {
           const oldStep = steps.find((s) => s.identifier === identifier);
+          if (oldStep === undefined) {
+            return steps;
+          }
           return sortBy(
             [
               { ...oldStep, ...step },
@@ -464,19 +507,18 @@ const WalkthroughProvider = forwardRef<
             ],
             "number",
           );
-        }),
+        });
+      },
       [],
     );
 
-    const next = useCallback<IWalkthroughFunctions["next"]>(
-      () => setCurrentStepNumber((x) => (x || 0) + 1),
-      [setCurrentStepNumber],
-    );
+    const next = useCallback<IWalkthroughFunctions["next"]>(() => {
+      setCurrentStepNumber((x) => (x ?? 0) + 1);
+    }, []);
 
-    const previous = useCallback<IWalkthroughFunctions["previous"]>(
-      () => setCurrentStepNumber((x) => (x ? x - 1 : 0)),
-      [setCurrentStepNumber],
-    );
+    const previous = useCallback<IWalkthroughFunctions["previous"]>(() => {
+      setCurrentStepNumber((x) => (x === 0 || x === undefined ? 0 : x - 1));
+    }, []);
 
     const goTo: IWalkthroughFunctions["goTo"] = setCurrentStepNumber;
 
@@ -485,43 +527,70 @@ const WalkthroughProvider = forwardRef<
         const step = steps[0]; // already ordered so take the first one
         setCurrentStepNumber(step.number);
       }
-    }, [steps, setCurrentStepNumber]);
+    }, [steps]);
 
-    const stop = useCallback<IWalkthroughFunctions["stop"]>(
-      () => setCurrentStepNumber(undefined),
-      [steps, setCurrentStepNumber],
+    const stop = useCallback<IWalkthroughFunctions["stop"]>(() => {
+      setCurrentStepNumber(undefined);
+    }, []);
+
+    const functions = useMemo<IWalkthroughFunctions>(
+      () => ({
+        registerStep,
+        updateStep,
+        start,
+        stop,
+        next,
+        previous,
+        goTo,
+        setTransitionDuration,
+        setBackdropColor,
+      }),
+      [
+        registerStep,
+        updateStep,
+        start,
+        stop,
+        next,
+        previous,
+        goTo,
+        setTransitionDuration,
+        setBackdropColor,
+      ],
     );
-
-    const functions: IWalkthroughFunctions = {
-      registerStep,
-      updateStep,
-      start,
-      stop,
-      next,
-      previous,
-      goTo,
-      setTransitionDuration,
-      setBackdropColor,
-    };
 
     useImperativeHandle(ref, () => functions);
 
+    const contextValue = useMemo<IWalkthroughContext>(
+      () => ({
+        ...functions,
+        isWalkthroughOn,
+        currentStepNumber,
+        currentSteps,
+        allSteps: steps, // want to be called "allSteps" so doesn't sound too close to "step".
+        debug,
+        animateNextLayoutChange,
+        transitionDuration,
+        backdropColor,
+        useIsFocused,
+        isReady,
+      }),
+      [
+        functions,
+        isWalkthroughOn,
+        currentStepNumber,
+        currentSteps,
+        steps,
+        debug,
+        animateNextLayoutChange,
+        transitionDuration,
+        backdropColor,
+        useIsFocused,
+        isReady,
+      ],
+    );
+
     return (
-      <WalkthroughContext.Provider
-        value={{
-          ...functions,
-          isWalkthroughOn,
-          currentStepNumber,
-          currentSteps,
-          allSteps: steps, // want to be called "allSteps" so doesn't sound too close to "step".
-          debug,
-          animateNextLayoutChange,
-          transitionDuration,
-          backdropColor,
-          useIsFocused,
-          isReady,
-        }}
-      >
+      <WalkthroughContext.Provider value={contextValue}>
         {children}
         {/*@aryk - If we have no steps registered, don't mount the displayer */}
         {Boolean(steps.length) && <WalkthroughDisplayer />}
@@ -529,11 +598,14 @@ const WalkthroughProvider = forwardRef<
     );
   },
 );
+WalkthroughProvider.displayName = "WalkthroughProvider";
 
 const useWalkthrough = () => {
-  const context = useContext<IWalkthroughContext>(WalkthroughContext);
-  if (!context) {
-    throw "Make sure that this is called as a child of WalkthroughProvider.";
+  const context = useContext(WalkthroughContext);
+  if (context === undefined) {
+    throw new Error(
+      "Make sure that this is called as a child of WalkthroughProvider.",
+    );
   }
   return context;
 };
@@ -541,11 +613,10 @@ const useWalkthrough = () => {
 interface IUseWalkthroughStepStrict extends Omit<IWalkthroughStep, "mask"> {
   maskAllowInteraction?: boolean;
 }
-interface IUseWalkthroughStep
-  extends PartialBy<
-    IUseWalkthroughStepStrict,
-    "identifier" | "overlayComponentKey" | "measureMask"
-    > {}
+type IUseWalkthroughStep = PartialBy<
+  IUseWalkthroughStepStrict,
+  "identifier" | "overlayComponentKey" | "measureMask"
+>;
 
 const useWalkthroughStep = ({
   fullScreen,
@@ -555,83 +626,43 @@ const useWalkthroughStep = ({
 }: IUseWalkthroughStep) => {
   const context = useWalkthrough();
 
-  const targetRef = useRef<any>();
+  const { registerStep, allSteps, currentStepNumber, stop, useIsFocused } =
+    context;
+
+  const targetRef = useRef<ReactNativeElement | null>(null);
+
+  const resolvedIdentifier = identifier ?? number.toString();
 
   // On unmount, make sure to empty the targetRef. It might still be stored in the "steps" on the WalkthroughProvider.
   useEffect(
     () => () => {
-      targetRef.current = undefined;
+      targetRef.current = null;
     },
     [],
   );
 
-  // Better to provide an identifier, especially if you have multiple overlays at a single Step, then this
-  // won't work.
-  identifier = identifier || number.toString();
-
-  const {
-    registerStep,
-    allSteps,
-    currentStepNumber,
-    debug,
-    stop,
-    useIsFocused,
-  } = context;
-
   const step = useMemo(
-    () => allSteps.find((s) => s.identifier === identifier),
-    [identifier, allSteps],
+    () => allSteps.find((s) => s.identifier === resolvedIdentifier),
+    [resolvedIdentifier, allSteps],
   );
 
-  // We want the step to be registered if the props change so that the render item reflects the new overlayComponentProps
-  useEffect(
-    () => {
-      if (step && props.overlayComponentProps) {
-        registerStep({
-          ...step,
-          overlayComponentProps: props.overlayComponentProps,
-        })
-      }
-    },
-    // Do not include step or any other dependency, will cause an infinite loop
-    Object.values(props.overlayComponentProps || {}),
-  )
+  const propsRef = useRef<IUseWalkthroughStepStrict | null>(null);
 
-  const isFocused = useIsFocused();
-  const wasVisibleRef = useRef(false);
-  useEffect(
-    () => {
-      if (currentStepNumber === number) {
-        if (isFocused) {
-          wasVisibleRef.current = true;
-          // If we had this step visible on a screen, but now for some reason not anymore (maybe they navigated for a notification)
-          // then we basically reset the tutorial and stop it so it doesn't stay on the screen as they navigate.
-        } else if (wasVisibleRef.current) {
-          stop();
-        }
-        // When the walkthrough is stopped, we need to reset this flag.
-      } else if (currentStepNumber === undefined) {
-        wasVisibleRef.current = false;
-      }
-    },
-    [currentStepNumber, isFocused]
-  );
-
-  // https://stackoverflow.com/a/64882955/7180620
   const registerStepWithProps = useCallback(
-    (maskProps: IWalkthroughStepMask) => {
-      const { maskAllowInteraction, ...stepProps } = propsRef.current;
-      logStep(stepProps.number, `Setting mask: ${JSON.stringify(maskProps)}`);
-
-      const mask: IWalkthroughStepMask = {
-        allowInteraction: maskAllowInteraction,
-        ...maskProps,
-      };
+    (mask: IWalkthroughStepMask) => {
+      const base = propsRef.current;
+      if (base === null) {
+        return;
+      }
+      const { maskAllowInteraction: _maskAllowInteraction, ...rest } = base;
 
       let step: IWalkthroughStep = {
-        ...stepProps,
+        ...rest,
+        number,
+        identifier: resolvedIdentifier,
+        overlayComponentKey: resolvedIdentifier,
         mask,
-        computedMask: mask, // default, overwrite in next block maybe...
+        computedMask: mask,
       };
 
       if (step.layoutAdjustments) {
@@ -640,82 +671,138 @@ const useWalkthroughStep = ({
           ...step,
           computedMask: {
             allowInteraction: mask.allowInteraction,
-            x: Math.min(Math.max(la.minX || -Number.POSITIVE_INFINITY, (la.x ?? step.mask.x) + (la.addX ?? -(la.addPadding || 0))), Number.POSITIVE_INFINITY),
-            y: Math.min(Math.max(la.minY || -Number.POSITIVE_INFINITY, (la.y ?? step.mask.y) + (la.addY ?? -(la.addPadding || 0))), Number.POSITIVE_INFINITY),
+            x: Math.min(
+              Math.max(
+                la.minX ?? -Number.POSITIVE_INFINITY,
+                (la.x ?? step.mask.x) + (la.addX ?? -(la.addPadding ?? 0)),
+              ),
+              Number.POSITIVE_INFINITY,
+            ),
+            y: Math.min(
+              Math.max(
+                la.minY ?? -Number.POSITIVE_INFINITY,
+                (la.y ?? step.mask.y) + (la.addY ?? -(la.addPadding ?? 0)),
+              ),
+              Number.POSITIVE_INFINITY,
+            ),
             width:
               (la.width ?? step.mask.width) +
-              (la.addWidth ?? (la.addPadding || 0) * 2),
+              (la.addWidth ?? (la.addPadding ?? 0) * 2),
             height:
               (la.height ?? step.mask.height) +
-              (la.addHeight ?? (la.addPadding || 0) * 2),
+              (la.addHeight ?? (la.addPadding ?? 0) * 2),
           },
-        }
+        };
       }
 
       registerStep(step);
     },
-    [registerStep],
+    [registerStep, number, resolvedIdentifier],
   );
 
   const onMeasure = useCallback(
-    (_, __, width, height, x, y) =>
-      registerStepWithProps({ width, height, x, y }),
+    (
+      _x: number,
+      _y: number,
+      width: number,
+      height: number,
+      x: number,
+      y: number,
+    ) => {
+      registerStepWithProps({ width, height, x, y });
+    },
     [registerStepWithProps],
   );
 
-  const logStep = createLogger(debug);
+  const measuredMask = useCallback(() => {
+    const target = targetRef.current;
+    if (target === null) {
+      return;
+    }
+    target.measure((_x, _y, width, height, x, y) => {
+      if (
+        Number.isFinite(x) &&
+        Number.isFinite(y) &&
+        Number.isFinite(width) &&
+        Number.isFinite(height)
+      ) {
+        const newPosition =
+          step &&
+          // If component is unmounted, then this will be undefined
+          (step.mask.x !== x ||
+            step.mask.y !== y ||
+            step.mask.width !== width ||
+            step.mask.height !== height);
 
-  const propsRef = useRef<IUseWalkthroughStepStrict>();
-  useEffect(() => {
-    propsRef.current = {
-      identifier,
-      number,
-      measureMask: () => {
-        if (targetRef.current) {
-          targetRef.current.measure((_, __, width, height, x, y) => {
-            const newPosition =
-              step &&
-              // If component is unmounted, then this will be undefined
-              width &&
-              height &&
-              x &&
-              y &&
-              (step.mask.x !== x ||
-                step.mask.y !== y ||
-                step.mask.width !== width ||
-                step.mask.height !== height);
-
-            if (newPosition) {
-              registerStepWithProps({ width, height, x, y });
-            }
-          });
+        if (newPosition === true) {
+          registerStepWithProps({ width, height, x, y });
         }
-      },
-      overlayComponentKey: identifier,
+      }
+    });
+  }, [step, registerStepWithProps]);
+
+  useLayoutEffect(() => {
+    propsRef.current = {
       ...props,
+      number,
+      identifier: resolvedIdentifier,
+      overlayComponentKey: resolvedIdentifier,
+      measureMask: measuredMask,
     };
   });
 
-  const { width, height } = useSafeAreaFrame();
+  const overlayComponentProps = props.overlayComponentProps;
 
   useEffect(
     () => {
-      if (fullScreen && width && height) {
-        // We basically put a line at the bottom of the screen so that we blank out the whole screen.
-        registerStepWithProps({ x: 0, y: height, width, height });
+      if (step && overlayComponentProps) {
+        registerStep({
+          ...step,
+          overlayComponentProps,
+        });
       }
+      // Register only when the overlay props (by value) change; depending on the objects or `step` directly
+      // would cause an infinite loop, since re-registering re-renders and re-creates those references.
     },
-    [fullScreen, registerStepWithProps, width, height],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    Object.values(overlayComponentProps || {}),
   );
+
+  const isFocused = useIsFocused();
+  const wasVisibleRef = useRef(false);
+  useEffect(() => {
+    if (currentStepNumber === number) {
+      if (isFocused) {
+        wasVisibleRef.current = true;
+        // If we had this step visible on a screen, but now for some reason not anymore (maybe they navigated for a notification)
+        // then we basically reset the tutorial and stop it so it doesn't stay on the screen as they navigate.
+      } else if (wasVisibleRef.current) {
+        stop();
+      }
+      // When the walkthrough is stopped, we need to reset this flag.
+    } else if (currentStepNumber === undefined) {
+      wasVisibleRef.current = false;
+    }
+  }, [currentStepNumber, number, isFocused, stop]);
+
+  const { width, height } = useSafeAreaFrame();
+
+  useEffect(() => {
+    if (fullScreen === true && width > 0 && height > 0) {
+      // We basically put a line at the bottom of the screen so that we blank out the whole screen.
+      registerStepWithProps({ x: 0, y: height, width, height });
+    }
+  }, [fullScreen, registerStepWithProps, width, height]);
 
   const layoutLockRef = useRef(false);
   const onLayout = useCallback(
-    (event) => {
+    (event: LayoutChangeEvent) => {
       if (!layoutLockRef.current) {
-        targetRef.current = event.target; // store it to measure later
-        event.target.measure(onMeasure);
+        const target = event.target;
+        targetRef.current = target;
+        target.measure(onMeasure);
       }
-      layoutLockRef.current = props.layoutLock;
+      layoutLockRef.current = props.layoutLock === true;
     },
     [onMeasure, props.layoutLock],
   );
@@ -731,15 +818,15 @@ const useWalkthroughStep = ({
 
 export {
   enableExperimentalLayoutAnimation,
-  IWalkthroughStepMask,
-  IWalkthroughFunctions,
-  IWalkthroughContext,
-  IOverlayComponentProps,
-  IWalkthroughStep,
-  IWalkthroughProvider,
   WalkthroughProvider,
-  IUseWalkthroughStep,
   useWalkthrough,
   useWalkthroughStep,
-  IWalkthroughCallback,
+  type IWalkthroughStepMask,
+  type IWalkthroughFunctions,
+  type IWalkthroughContext,
+  type IOverlayComponentProps,
+  type IWalkthroughStep,
+  type IWalkthroughProvider,
+  type IUseWalkthroughStep,
+  type IWalkthroughCallback,
 };

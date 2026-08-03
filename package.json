@@ -11,13 +11,10 @@
     "lib"
   ],
   "scripts": {
-    "test": "jest",
-    "typescript": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint --ext .js,.ts,.tsx .",
     "release": "release-it",
-    "example": "yarn --cwd example",
-    "bootstrap": "yarn example && yarn",
-    "prepare": "bob build"
+    "prepare": "husky && bob build"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
@@ -44,50 +41,29 @@
     "tutorial"
   ],
   "devDependencies": {
-    "@commitlint/config-conventional": "^13.1.0",
-    "@expo/vector-icons": "^12.0.5",
-    "@release-it/conventional-changelog": "^3.0.1",
-    "@types/react": "^17.0.15",
-    "@types/react-native": "0.64.12",
-    "babel-jest": "^27.0.6",
-    "babel-preset-react-native": "^4.0.0",
-    "commitlint": "^13.1.0",
-    "eslint": "^7.31.0",
-    "eslint-config-satya164": "^3.1.10",
-    "eslint-plugin-react-native-globals": "^0.1.2",
-    "husky": "^4.2.5",
-    "jest": "^27.0.6",
-    "prettier": "^2.3.2",
-    "react": "~16.13.1",
-    "react-native": "~0.63.4",
-    "react-native-builder-bob": "^0.18.1",
-    "react-native-pager-view": "^5.0.12",
-    "react-native-safe-area-context": "^3.3.2",
-    "release-it": "^14.10.1",
-    "typedoc": "^0.22.10",
-    "typedoc-plugin-markdown": "^3.11.8",
-    "typescript": "^4.3.5"
+    "@commitlint/config-conventional": "^21.2.0",
+    "@release-it/conventional-changelog": "^12.0.0",
+    "@types/lodash": "^4.17.25",
+    "@types/react": "^19.2.3",
+    "commitlint": "^21.2.1",
+    "eslint": "^10.8.0",
+    "eslint-config-satya164": "^5.2.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.9.6",
+    "react": "^19.2.3",
+    "react-native": "^0.86.2",
+    "react-native-builder-bob": "^0.43.0",
+    "react-native-safe-area-context": "^5.5.2",
+    "release-it": "^21.0.1",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "lodash.sortby": "^4.7.0"
   },
   "peerDependencies": {
-    "react": ">= 16.x.x",
-    "react-native": ">=0.63.x",
-    "react-native-safe-area-context": ">= 3.x.x"
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "yarn lint && yarn typescript"
-    }
-  },
-  "jest": {
-    "preset": "react-native",
-    "modulePathIgnorePatterns": [
-      "<rootDir>/example/node_modules",
-      "<rootDir>/lib/"
-    ]
+    "react": "*",
+    "react-native": "*",
+    "react-native-safe-area-context": "*"
   },
   "react-native-builder-bob": {
     "source": "src",

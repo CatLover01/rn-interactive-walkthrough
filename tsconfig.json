@@ -1,19 +1,17 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
-      "@tribefy/react-native-walkthrough": ["./src/index"]
+      "@": ["./src/*"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "declaration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "importsNotUsedAsValues": "error",
     "jsx": "react",
     "lib": ["esnext", "dom"],
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false,
     "noImplicitReturns": true,
@@ -23,8 +21,9 @@
     "noUnusedParameters": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "strict": false,
-    "target": "esnext"
+    "strict": true,
+    "target": "esnext",
+    "verbatimModuleSyntax": true
   },
   "exclude": ["lib/**/*"]
 }
