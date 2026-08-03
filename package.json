@@ -1,6 +1,6 @@
 {
-  "name": "react-native-interactive-walkthrough",
-  "version": "1.0.15",
+  "name": "rn-interactive-walkthrough",
+  "version": "0.1.0",
   "description": "Create interactive walkthroughs and onboarding tutorials in react-native.",
   "main": "lib/commonjs/index.js",
   "react-native": "src/index.tsx",
@@ -22,22 +22,21 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "author": "Aryk Grosz <open-source@tribefy.com>",
+  "author": "Olivier Allard",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tribefyhq/react-native-interactive-walkthrough.git"
+    "url": "git+https://github.com/CatLover01/rn-interactive-walkthrough.git"
   },
-  "homepage": "https://github.com/tribefyhq/react-native-interactive-walkthrough#readme",
+  "homepage": "https://github.com/CatLover01/rn-interactive-walkthrough#readme",
   "bugs": {
-    "url": "https://github.com/tribefyhq/react-native-interactive-walkthrough/issues"
+    "url": "https://github.com/CatLover01/rn-interactive-walkthrough/issues"
   },
   "keywords": [
     "walkthrough",
     "copilot",
     "intro",
     "tour",
-    "tribefy",
     "react",
     "rn",
     "react-native",
