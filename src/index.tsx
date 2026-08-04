@@ -133,14 +133,14 @@ type OnPressWithContextType = (context?: IWalkthroughContext) => void;
 const WalkthroughContext = createContext<IWalkthroughContext | undefined>(
   undefined,
 );
-interface IWalkthroughStep {
+interface IWalkthroughStep<
+  P extends IOverlayComponentProps = IOverlayComponentProps,
+> {
   number: number;
   identifier: string;
   overlayComponentKey: string;
-  // Pass through props to pass into the component. Make sure the props object does not remove keys or change order,
-  // as it will cause an error when checking for a chance in values amongst the object values.
-  overlayComponentProps?: any; //TODO: typed
-  OverlayComponent?: ComponentType<IOverlayComponentProps>;
+  overlayComponentProps?: Omit<P, keyof IOverlayComponentProps>;
+  OverlayComponent?: ComponentType<P>;
   fullScreen?: boolean;
   layoutAdjustments?: ILayoutAdjustments;
   // Only allow the onLayout to get set once. This is useful on for example, scrollable containers where the position
@@ -403,8 +403,7 @@ const WalkthroughDisplayer = () => {
           <s.OverlayComponent
             key={s.overlayComponentKey}
             step={s}
-            {...(s.overlayComponentProps as  //TODO: remove this cast
-              Partial<IOverlayComponentProps> | undefined)}
+            {...s.overlayComponentProps}
             {...context}
           />
         ) : null,
@@ -610,20 +609,26 @@ const useWalkthrough = () => {
   return context;
 };
 
-interface IUseWalkthroughStepStrict extends Omit<IWalkthroughStep, "mask"> {
+type IUseWalkthroughStepStrict<P extends IOverlayComponentProps> = Omit<
+  IWalkthroughStep<P>,
+  "mask"
+> & {
   maskAllowInteraction?: boolean;
-}
-type IUseWalkthroughStep = PartialBy<
-  IUseWalkthroughStepStrict,
+};
+
+type IUseWalkthroughStep<P extends IOverlayComponentProps> = PartialBy<
+  IUseWalkthroughStepStrict<P>,
   "identifier" | "overlayComponentKey" | "measureMask"
 >;
 
-const useWalkthroughStep = ({
+const useWalkthroughStep = <
+  P extends IOverlayComponentProps = IOverlayComponentProps,
+>({
   fullScreen,
   identifier,
   number,
   ...props
-}: IUseWalkthroughStep) => {
+}: IUseWalkthroughStep<P>) => {
   const context = useWalkthrough();
 
   const { registerStep, allSteps, currentStepNumber, stop, useIsFocused } =
@@ -646,7 +651,7 @@ const useWalkthroughStep = ({
     [resolvedIdentifier, allSteps],
   );
 
-  const propsRef = useRef<IUseWalkthroughStepStrict | null>(null);
+  const propsRef = useRef<IUseWalkthroughStepStrict<P> | null>(null);
 
   const registerStepWithProps = useCallback(
     (mask: IWalkthroughStepMask) => {
@@ -656,7 +661,7 @@ const useWalkthroughStep = ({
       }
       const { maskAllowInteraction: _maskAllowInteraction, ...rest } = base;
 
-      let step: IWalkthroughStep = {
+      let step: IWalkthroughStep<P> = {
         ...rest,
         number,
         identifier: resolvedIdentifier,
@@ -695,7 +700,8 @@ const useWalkthroughStep = ({
         };
       }
 
-      registerStep(step);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+      registerStep(step as unknown as IWalkthroughStep);
     },
     [registerStep, number, resolvedIdentifier],
   );
