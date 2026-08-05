@@ -1,0 +1,146 @@
+---
+sidebar_position: 2
+sidebar_label: Usage
+description: Learn how to use rn-interactive-walkthrough in your React Native app
+---
+
+# Usage
+
+## 1. Wrap your app in `WalkthroughProvider`
+
+`WalkthroughProvider` is a React context provider. It must wrap everything that
+contains walkthrough steps, typically the root of your app.
+
+```tsx
+import * as React from "react";
+import { WalkthroughProvider } from "rn-interactive-walkthrough";
+
+export default function App() {
+  return (
+    <WalkthroughProvider>
+      <MyAwesomeApp />
+    </WalkthroughProvider>
+  );
+}
+```
+
+## 2. Define a step with `useWalkthroughStep`
+
+Call `useWalkthroughStep` inside any component, passing a step `number` and an
+`OverlayComponent`. Then attach the returned `onLayout` handler to the `View`
+you want to highlight.
+
+```tsx
+import { useWalkthroughStep } from "rn-interactive-walkthrough";
+import { NearbyUsersOverlay } from "./Overlays";
+
+export default function HomeScreen() {
+  const { onLayout } = useWalkthroughStep({
+    number: 1,
+    OverlayComponent: NearbyUsersOverlay,
+  });
+
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={{ height: 10 }} onLayout={onLayout}>
+        <Text>Here is my app!</Text>
+      </View>
+    </View>
+  );
+}
+```
+
+The `onLayout` handler measures the view so the library knows exactly where to
+draw the mask (the highlighted area) on the screen.
+
+## 3. Start the walkthrough
+
+Use the `start` function, either from the context, a ref to the provider, or
+directly from a step hook.
+
+```tsx
+import { useWalkthroughStep } from "rn-interactive-walkthrough";
+
+export default function HomeScreen() {
+  const { onLayout, start, isReady } = useWalkthroughStep({
+    number: 1,
+    OverlayComponent: NearbyUsersOverlay,
+  });
+
+  React.useEffect(() => {
+    start();
+  }, [start]);
+
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={{ height: 10 }} onLayout={onLayout}>
+        <Text>Here is my app!</Text>
+      </View>
+    </View>
+  );
+}
+```
+
+`start` begins the walkthrough at the lowest-numbered registered step. `isReady`
+becomes `true` once step `1` has been registered, which is a good condition to
+check before starting.
+
+## 4. Navigate steps
+
+Every overlay receives the walkthrough context, so `next`, `previous`, and
+`goTo` are available to move the user through the tour. `IOverlayComponentProps`
+gives you the current `step`, and you extend it to add your own props, which are
+passed through `overlayComponentProps`.
+
+```tsx
+import { IOverlayComponentProps } from "rn-interactive-walkthrough";
+
+interface NearbyUsersOverlayProps extends IOverlayComponentProps {
+  title: string;
+}
+
+const NearbyUsersOverlay = ({
+  title,
+  next,
+  previous,
+}: NearbyUsersOverlayProps) => {
+  return (
+    <View>
+      <Text>{title}</Text>
+      <Button title="Back" onPress={previous} />
+      <Button title="Next" onPress={next} />
+    </View>
+  );
+};
+```
+
+```tsx
+const { onLayout } = useWalkthroughStep({
+  number: 2,
+  OverlayComponent: NearbyUsersOverlay,
+  overlayComponentProps: {
+    title: "These are all your friends nearby!",
+  },
+});
+```
+
+See the [Overlays guide](overlays) for the full set of patterns.
+
+## 5. (Optional) Track navigation focus
+
+If your walkthrough spans multiple screens and you use a navigation library, pass
+a `useIsFocused` hook to the provider. The walkthrough will automatically stop
+itself if the user navigates away mid-tour (e.g. via a push notification).
+
+```tsx
+import { WalkthroughProvider } from "rn-interactive-walkthrough";
+import { useIsFocused } from "@react-navigation/native";
+
+export default function App() {
+  return (
+    <WalkthroughProvider useIsFocused={useIsFocused}>
+      <MyAwesomeApp />
+    </WalkthroughProvider>
+  );
+}
+```

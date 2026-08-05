@@ -2,7 +2,7 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import { recommended, react, typechecked } from "eslint-config-satya164";
 
 export default defineConfig(
-  [globalIgnores(["lib/"])],
+  [globalIgnores(["lib/", "docs/"])],
   recommended,
   react,
   typechecked,

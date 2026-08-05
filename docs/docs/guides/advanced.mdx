@@ -1,0 +1,177 @@
+---
+sidebar_position: 4
+sidebar_label: Advanced
+description: Advanced topics for rn-interactive-walkthrough, including multiple masks, programmatic control, and customization
+---
+
+# Advanced
+
+## Multiple masks in a single step
+
+A step is not limited to a single mask. Call `useWalkthroughStep` multiple times
+with the same `number` (use distinct `identifier`s) to highlight several parts of
+the screen at once. Each `OverlayComponent` renders for that step, and you can
+make one mask interactable while another is not.
+
+```tsx
+const { onLayout: onHeaderLayout } = useWalkthroughStep({
+  number: 1,
+  identifier: "header",
+  OverlayComponent: HeaderOverlay,
+});
+
+const { onLayout: onSearchLayout } = useWalkthroughStep({
+  number: 1,
+  identifier: "search",
+  maskAllowInteraction: true,
+  OverlayComponent: SearchOverlay,
+});
+```
+
+Both masks are highlighted when step `1` is active. `currentSteps` in the context
+contains every mask for the current step.
+
+## Tuning the mask with `layoutAdjustments`
+
+Sometimes the measured view doesn't quite cover what you want to highlight.
+`layoutAdjustments` lets you pad, shrink, or shift the mask:
+
+- `addPadding`: expand the mask on all sides
+- `addX` / `addY` / `addWidth` / `addHeight`: shift or resize individual edges
+- `x` / `y` / `width` / `height`: override the mask position or size entirely
+- `minX` / `minY` / `maxX` / `maxY`: clamp the mask within bounds
+
+```tsx
+const { onLayout } = useWalkthroughStep({
+  number: 2,
+  OverlayComponent: ButtonOverlay,
+  layoutAdjustments: {
+    addPadding: 8,
+  },
+});
+```
+
+## Programmatic control
+
+Every function on the context (`start`, `stop`, `next`, `previous`, `goTo`,
+`updateStep`, `setTransitionDuration`, and `setBackdropColor`) can be triggered
+from any component inside the provider.
+
+### Via `useWalkthrough()`
+
+```tsx
+import { useWalkthrough } from "rn-interactive-walkthrough";
+
+function SettingsScreen() {
+  const { goTo, stop } = useWalkthrough();
+
+  return (
+    <View>
+      <Button title="Skip tour" onPress={stop} />
+      <Button title="Jump to step 3" onPress={() => goTo(3)} />
+    </View>
+  );
+}
+```
+
+### Via a ref on the provider
+
+`WalkthroughProvider` also exposes these functions through a ref, so you can call
+them from outside the tree.
+
+```tsx
+import { useRef } from "react";
+import { WalkthroughProvider, IWalkthroughFunctions } from "rn-interactive-walkthrough";
+
+const ref = useRef<IWalkthroughFunctions>(null);
+
+<WalkthroughProvider ref={ref}>
+  <MyAwesomeApp />
+</WalkthroughProvider>;
+
+// Somewhere else:
+ref.current?.start();
+```
+
+### Step lifecycle callbacks
+
+`onStart` and `onFinish` fire when a step becomes active and when the user
+advances past it. Each receives an `IWalkthroughCallback` with the timestamp.
+
+```tsx
+const { onLayout } = useWalkthroughStep({
+  number: 2,
+  OverlayComponent: NearbyUsersOverlay,
+  onStart: ({ time }) => {
+    console.log("Step 2 started at", time);
+  },
+  onFinish: ({ time }) => {
+    console.log("Step 2 finished at", time);
+  },
+});
+```
+
+## Android hardware back button
+
+By default the walkthrough blocks the Android hardware back button. Set
+`enableHardwareBack: true` to step back through the tour instead of exiting:
+
+```tsx
+const { onLayout } = useWalkthroughStep({
+  number: 2,
+  enableHardwareBack: true,
+  OverlayComponent: NearbyUsersOverlay,
+});
+```
+
+You can also pass a function to customize the behavior, e.g. to go back to a
+specific step.
+
+## Updating steps
+
+`updateStep(identifier, partialStep)` lets you modify a registered step at
+runtime, useful when the position of a highlighted element changes or you want
+to toggle interactivity on a mask.
+
+```tsx
+const { updateStep, allSteps } = useWalkthrough();
+const searchStep = allSteps.find((s) => s.identifier === "search");
+
+updateStep("search", {
+  computedMask: { ...searchStep?.computedMask, allowInteraction: false },
+});
+```
+
+## Global appearance
+
+`transitionDuration` and `backdropColor` can be set as props on
+`WalkthroughProvider`, or changed at runtime:
+
+```tsx
+const { setTransitionDuration, setBackdropColor } = useWalkthrough();
+
+setTransitionDuration(600);
+setBackdropColor("rgba(0, 0, 0, 0.85)");
+```
+
+Pass `debug` to the provider to render colored outlines around every mask and
+log walkthrough transitions to the console, which is very handy while building a
+tour.
+
+## Locking a mask's position
+
+If a highlighted view sits inside a scrollable container, its position changes as
+the user scrolls. Pass `layoutLock: true` so `onLayout` is only honored once and
+the mask does not keep re-measuring.
+
+## Layout animations on Android
+
+If you want the walkthrough transitions to animate smoothly on Android, call
+`enableExperimentalLayoutAnimation()` once during boot, or pass
+`enableExperimentalLayoutAnimation` to the provider.
+
+```tsx
+import { enableExperimentalLayoutAnimation } from "rn-interactive-walkthrough";
+
+enableExperimentalLayoutAnimation();
+```

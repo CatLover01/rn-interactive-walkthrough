@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "paths": {
-      "@": ["./src/*"]
+      "rn-interactive-walkthrough": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
@@ -25,5 +25,5 @@
     "target": "esnext",
     "verbatimModuleSyntax": true
   },
-  "exclude": ["lib/**/*"]
+  "exclude": ["lib/**/*", "docs/**/*"]
 }

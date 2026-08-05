@@ -1,0 +1,148 @@
+---
+sidebar_position: 3
+sidebar_label: Overlays
+description: Build overlay components that render tooltips, callouts, and full-screen content
+---
+
+# Overlays
+
+The `OverlayComponent` you pass to `useWalkthroughStep` is what gets rendered on
+top of the mask while the step is active. It receives `IOverlayComponentProps`,
+which provides the current `step` (including its `mask`), plus the walkthrough
+context such as `next`, `previous`, `goTo`, and `stop`.
+
+You are free to render anything you like, the library just provides the context
+and the mask position.
+
+## Full-screen overlays
+
+Set `fullScreen: true` to blank out the entire screen and render your overlay on
+top of it. This is great for welcome screens and introductions.
+
+To pass your own content, extend `IOverlayComponentProps` and supply the extra
+props through `overlayComponentProps`.
+
+```tsx
+import { IOverlayComponentProps } from "rn-interactive-walkthrough";
+import { View, Text, Button } from "react-native";
+
+interface WelcomeMessageOverlayProps extends IOverlayComponentProps {
+  title: string;
+}
+
+const WelcomeMessageOverlay = ({
+  title,
+  next,
+}: WelcomeMessageOverlayProps) => {
+  return (
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text>{title}</Text>
+      <Button title="Next" onPress={next} />
+    </View>
+  );
+};
+```
+
+```tsx
+const { onLayout, start } = useWalkthroughStep({
+  number: 1,
+  fullScreen: true,
+  OverlayComponent: WelcomeMessageOverlay,
+  overlayComponentProps: {
+    title: "Let's take a quick tour!",
+  },
+});
+```
+
+## Overlays positioned relative to a mask
+
+For non-full-screen steps, destructure `step: { mask }` to position your tooltip
+relative to the highlighted area. `mask` provides `x`, `y`, `width`, and
+`height` in absolute screen coordinates.
+
+```tsx
+import { IOverlayComponentProps } from "rn-interactive-walkthrough";
+
+interface WalkthroughTooltipProps extends IOverlayComponentProps {
+  title: string;
+  body: string;
+}
+
+const WalkthroughTooltip = ({
+  title,
+  body,
+  step: { mask },
+}: WalkthroughTooltipProps) => {
+  return (
+    <View
+      style={{
+        position: "absolute",
+        top: mask.y + mask.height + 16,
+        left: 50,
+      }}
+    >
+      <Text>{title}</Text>
+      <Text>{body}</Text>
+    </View>
+  );
+};
+```
+
+```tsx
+const { onLayout } = useWalkthroughStep({
+  number: 2,
+  OverlayComponent: WalkthroughTooltip,
+  overlayComponentProps: {
+    title: "Nearby users",
+    body: "These are all your friends nearby!",
+  },
+});
+```
+
+Because the overlay is just a React component, you can render it as a callout
+with an arrow, a modal, a bottom sheet, or whatever fits your design. Navigation
+functions like `next` and `previous` are available on the same props, so add them
+to your component whenever you need buttons.
+
+## Making the mask pressable
+
+By default the highlighted area is blocked from receiving touches, so tapping it
+does nothing. Pass `maskAllowInteraction: true` to let the user press whatever is
+under the mask.
+
+```tsx
+const { onLayout } = useWalkthroughStep({
+  number: 2,
+  maskAllowInteraction: true,
+  OverlayComponent: WalkthroughTooltip,
+});
+```
+
+## Press handlers
+
+You can also attach your own press handlers to the mask and the backdrop:
+
+- `onPressMask`: called when the user taps the highlighted area
+- `onPressBackdrop`: called when the user taps anywhere outside the mask
+
+Both receive the walkthrough context, so you can do things like advance or stop
+the tour.
+
+```tsx
+const { onLayout } = useWalkthroughStep({
+  number: 2,
+  onPressMask: (ctx) => ctx.next(),
+  onPressBackdrop: (ctx) => ctx.stop(),
+  OverlayComponent: WalkthroughTooltip,
+});
+```
+
+## Passing props to an overlay
+
+Extra props are passed to your overlay via `overlayComponentProps`, and you add
+them to your component's props by extending `IOverlayComponentProps`. The
+examples above show this pattern with `title` and `body`.
+
+The API reference documents the full `IOverlayComponentProps` interface, and the
+per-step generic on `useWalkthroughStep<P>` lets you keep your props fully
+type-safe.
