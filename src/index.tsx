@@ -654,12 +654,16 @@ const useWalkthroughStep = <
   const propsRef = useRef<IUseWalkthroughStepStrict<P> | null>(null);
 
   const registerStepWithProps = useCallback(
-    (mask: IWalkthroughStepMask) => {
+    (maskProps: IWalkthroughStepMask) => {
       const base = propsRef.current;
       if (base === null) {
         return;
       }
-      const { maskAllowInteraction: _maskAllowInteraction, ...rest } = base;
+      const { maskAllowInteraction, ...rest } = base;
+      const mask: IWalkthroughStepMask = {
+        allowInteraction: maskAllowInteraction,
+        ...maskProps,
+      };
 
       let step: IWalkthroughStep<P> = {
         ...rest,
