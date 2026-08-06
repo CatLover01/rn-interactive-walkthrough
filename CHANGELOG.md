@@ -1,6 +1,6 @@
 # Changelog
 
-# [0.2.0](https://github.com/CatLover01/rn-interactive-walkthrough/compare/v0.1.0...v0.2.0) (2026-08-06)
+## [0.2.0](https://github.com/CatLover01/rn-interactive-walkthrough/compare/v0.1.0...v0.2.0) (2026-08-06)
 
 ### Bug Fixes
 
