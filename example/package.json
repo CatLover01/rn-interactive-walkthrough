@@ -1,0 +1,19 @@
+{
+  "name": "example",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "expo": "~57.0.11",
+    "expo-status-bar": "~57.0.1",
+    "react": "^19.2.3",
+    "react-native": "^0.86.2",
+    "react-native-safe-area-context": "^5.5.2",
+    "rn-interactive-walkthrough": "file:../"
+  }
+}

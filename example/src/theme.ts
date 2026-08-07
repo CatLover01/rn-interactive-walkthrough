@@ -1,0 +1,32 @@
+export const colors = {
+  bg: "#F5F3ED",
+  surface: "#FFFFFF",
+  surfaceAlt: "#EFECE3",
+  border: "#E4E0D4",
+  borderStrong: "#D2CCBC",
+  ink: "#211E18",
+  inkSoft: "#57524A",
+  inkFaint: "#8B8577",
+  accent: "#0E7C66",
+  accentPressed: "#0B624F",
+  accentSoft: "#E0EFE9",
+  onAccent: "#FFFFFF",
+  danger: "#B3392C",
+  dangerSoft: "#F5E4E1",
+  tooltipBg: "#26231C",
+  tooltipInk: "#EDEAE0",
+  tooltipMuted: "#A8A192",
+  tooltipAccent: "#7BD3BC",
+  backdrop: "rgba(24, 21, 15, 0.86)",
+  darkBg: "#141210",
+  darkSurface: "#1E1B17",
+  darkBorder: "#2E2A23",
+  darkInk: "#EDEAE1",
+  darkMuted: "#9A9384",
+};
+
+export const radii = {
+  card: 14,
+  control: 9,
+  pill: 999,
+};

@@ -98,6 +98,11 @@ const config: Config = {
           label: "API Reference",
         },
         {
+          href: "https://github.com/CatLover01/rn-interactive-walkthrough/tree/main/example",
+          label: "Example App",
+          position: "right",
+        },
+        {
           href: "https://github.com/CatLover01/rn-interactive-walkthrough",
           label: "GitHub",
           position: "right",

@@ -1,0 +1,33 @@
+import { useCallback, useState } from "react";
+
+import { StatusBar } from "expo-status-bar";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { WalkthroughProvider } from "rn-interactive-walkthrough";
+
+import { colors } from "./theme";
+import { DemoShell } from "./components/DemoShell";
+import { GalleryScreen } from "./screens/GalleryScreen";
+import type { DemoDescriptor } from "./types";
+
+export default function App() {
+  const [demo, setDemo] = useState<DemoDescriptor | null>(null);
+
+  const closeDemo = useCallback(() => {
+    setDemo(null);
+  }, []);
+
+  return (
+    <SafeAreaProvider>
+      <WalkthroughProvider key={demo?.id} backdropColor={colors.backdrop}>
+        {demo ? (
+          <DemoShell title={demo.screenTitle} onBack={closeDemo}>
+            <demo.screen />
+          </DemoShell>
+        ) : (
+          <GalleryScreen onOpen={setDemo} />
+        )}
+      </WalkthroughProvider>
+      <StatusBar style="dark" />
+    </SafeAreaProvider>
+  );
+}
