@@ -1,12 +1,11 @@
-import { useCallback, useState } from "react";
-
 import { StatusBar } from "expo-status-bar";
+import { useCallback, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { WalkthroughProvider } from "rn-interactive-walkthrough";
 
-import { colors } from "./theme";
 import { DemoShell } from "./components/DemoShell";
 import { GalleryScreen } from "./screens/GalleryScreen";
+import { colors } from "./theme";
 import type { DemoDescriptor } from "./types";
 
 export default function App() {

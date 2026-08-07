@@ -1,11 +1,10 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-
 import { useWalkthrough, useWalkthroughStep } from "rn-interactive-walkthrough";
 
-import { colors } from "../theme";
-import { Tooltip } from "../components/Tooltip";
 import { FullScreenCard } from "../components/FullScreenCard";
 import { StartDemoButton } from "../components/StartDemoButton";
+import { Tooltip } from "../components/Tooltip";
+import { colors } from "../theme";
 
 const BACKDROP_OPTIONS = [
   { label: "Dark", value: "rgba(24, 21, 15, 0.86)" },

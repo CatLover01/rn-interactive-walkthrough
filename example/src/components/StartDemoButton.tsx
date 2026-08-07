@@ -1,5 +1,4 @@
 import { Pressable, StyleSheet, Text } from "react-native";
-
 import { useWalkthrough } from "rn-interactive-walkthrough";
 
 import { colors } from "../theme";

@@ -7,13 +7,12 @@ import {
   Text,
   View,
 } from "react-native";
-
 import { useWalkthroughStep } from "rn-interactive-walkthrough";
 
-import { colors } from "../theme";
-import { Tooltip } from "../components/Tooltip";
 import { FullScreenCard } from "../components/FullScreenCard";
 import { StartDemoButton } from "../components/StartDemoButton";
+import { Tooltip } from "../components/Tooltip";
+import { colors } from "../theme";
 
 export function InteractiveTargetsScreen() {
   const [pushEnabled, setPushEnabled] = useState(true);

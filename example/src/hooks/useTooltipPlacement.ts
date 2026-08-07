@@ -1,5 +1,4 @@
 import { useSafeAreaFrame } from "react-native-safe-area-context";
-
 import type { IWalkthroughStepMask } from "rn-interactive-walkthrough";
 
 export const TOOLTIP_MARGIN = 20;

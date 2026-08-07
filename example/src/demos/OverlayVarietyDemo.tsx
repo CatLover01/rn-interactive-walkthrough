@@ -1,14 +1,13 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-
 import { useWalkthroughStep } from "rn-interactive-walkthrough";
 
-import { colors } from "../theme";
-import { Tooltip } from "../components/Tooltip";
-import { CalloutPill } from "../components/CalloutPill";
 import { BottomSheetOverlay } from "../components/BottomSheetOverlay";
+import { CalloutPill } from "../components/CalloutPill";
 import { CenterCardOverlay } from "../components/CenterCardOverlay";
 import { FullScreenCard } from "../components/FullScreenCard";
 import { StartDemoButton } from "../components/StartDemoButton";
+import { Tooltip } from "../components/Tooltip";
+import { colors } from "../theme";
 
 export function OverlayVarietyScreen() {
   const pillStep = useWalkthroughStep({

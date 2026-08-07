@@ -1,5 +1,4 @@
 import { StyleSheet, Text, View } from "react-native";
-
 import type { IOverlayComponentProps } from "rn-interactive-walkthrough";
 
 import { colors } from "../theme";

@@ -1,10 +1,8 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-
 import type { LayoutChangeEvent } from "react-native";
 
-import type { DemoDescriptor } from "../types";
-
 import { colors } from "../theme";
+import type { DemoDescriptor } from "../types";
 import { MiniPreview } from "./MiniPreview";
 
 type DemoCardProps = {

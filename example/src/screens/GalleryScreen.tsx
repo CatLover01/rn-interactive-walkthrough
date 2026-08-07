@@ -1,14 +1,13 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useWalkthrough, useWalkthroughStep } from "rn-interactive-walkthrough";
 
-import { colors } from "../theme";
-import { Tooltip } from "../components/Tooltip";
-import { FullScreenCard } from "../components/FullScreenCard";
 import { DemoCard } from "../components/DemoCard";
+import { FullScreenCard } from "../components/FullScreenCard";
+import { Tooltip } from "../components/Tooltip";
 import { demos } from "../demos";
+import { colors } from "../theme";
 import type { DemoDescriptor } from "../types";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type GalleryScreenProps = {
   onOpen: (demo: DemoDescriptor) => void;

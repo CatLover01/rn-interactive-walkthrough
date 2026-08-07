@@ -1,12 +1,11 @@
-import type { DemoDescriptor } from "./types";
-
-import { SmartTooltipsScreen } from "./demos/SmartTooltipsDemo";
-import { InteractiveTargetsScreen } from "./demos/InteractiveTargetsDemo";
-import { TapToAdvanceScreen } from "./demos/TapToAdvanceDemo";
 import { FullScreenDemoScreen } from "./demos/FullScreenDemo";
+import { InteractiveTargetsScreen } from "./demos/InteractiveTargetsDemo";
 import { OverlayVarietyScreen } from "./demos/OverlayVarietyDemo";
 import { ProgrammaticScreen } from "./demos/ProgrammaticDemo";
+import { SmartTooltipsScreen } from "./demos/SmartTooltipsDemo";
+import { TapToAdvanceScreen } from "./demos/TapToAdvanceDemo";
 import { ThemedScreen } from "./demos/ThemedDemo";
+import type { DemoDescriptor } from "./types";
 
 export const demos: DemoDescriptor[] = [
   {

@@ -1,3 +1,4 @@
+import sortBy from "lodash/sortBy";
 import React, {
   useEffect,
   useRef,
@@ -25,7 +26,6 @@ import {
   type LayoutChangeEvent,
 } from "react-native";
 import { useSafeAreaFrame } from "react-native-safe-area-context";
-import sortBy from "lodash/sortBy";
 
 const isAndroid = Platform.OS === "android";
 

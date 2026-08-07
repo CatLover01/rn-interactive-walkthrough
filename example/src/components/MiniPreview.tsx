@@ -1,8 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 
-import type { DemoPreviewKind } from "../types";
-
 import { colors } from "../theme";
+import type { DemoPreviewKind } from "../types";
 
 type MiniPreviewProps = {
   kind: DemoPreviewKind;

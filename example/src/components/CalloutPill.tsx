@@ -1,10 +1,9 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaFrame } from "react-native-safe-area-context";
-
 import type { IOverlayComponentProps } from "rn-interactive-walkthrough";
 
-import { colors } from "../theme";
 import { TOOLTIP_MARGIN } from "../hooks/useTooltipPlacement";
+import { colors } from "../theme";
 
 const PILL_WIDTH = 210;
 const GAP = 10;

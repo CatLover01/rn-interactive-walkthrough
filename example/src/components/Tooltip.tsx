@@ -1,14 +1,13 @@
 import { StyleSheet, Text, View } from "react-native";
-
 import type { IOverlayComponentProps } from "rn-interactive-walkthrough";
 
-import { colors } from "../theme";
 import {
   ARROW_HEIGHT,
   ARROW_WIDTH,
   TOOLTIP_MARGIN,
   useTooltipPlacement,
 } from "../hooks/useTooltipPlacement";
+import { colors } from "../theme";
 import { OverlayFooter } from "./OverlayFooter";
 
 export type TooltipProps = IOverlayComponentProps & {

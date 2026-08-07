@@ -1,8 +1,7 @@
 import { useCallback, useEffect } from "react";
+import type { ReactNode } from "react";
 import { BackHandler, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import type { ReactNode } from "react";
 
 import { colors } from "../theme";
 

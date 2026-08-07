@@ -1,11 +1,10 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-
 import { useWalkthroughStep } from "rn-interactive-walkthrough";
 
-import { colors } from "../theme";
-import { ThemedTooltip } from "../components/ThemedTooltip";
 import { FullScreenCard } from "../components/FullScreenCard";
 import { StartDemoButton } from "../components/StartDemoButton";
+import { ThemedTooltip } from "../components/ThemedTooltip";
+import { colors } from "../theme";
 
 export function ThemedScreen() {
   const step1 = useWalkthroughStep({

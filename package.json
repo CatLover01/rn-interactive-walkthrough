@@ -11,10 +11,11 @@
     "lib"
   ],
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "prepare": "husky && bob build",
     "lint": "eslint --ext .js,.ts,.tsx .",
-    "release": "release-it",
-    "prepare": "husky && bob build"
+    "lint:fix": "eslint --ext .js,.ts,.tsx . --fix",
+    "typecheck": "tsc --noEmit",
+    "release": "release-it"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
