@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.0](https://github.com/CatLover01/rn-interactive-walkthrough/compare/v0.2.0...v0.3.0) (2026-08-08)
+
+### Bug Fixes
+
+* replace LayoutAnimation with react-native-reanimated layout animations ([08383f6](https://github.com/CatLover01/rn-interactive-walkthrough/commit/08383f6eb723e5aeb76c1ab88f1d3b23ca8ba7cf))
+
 ## [0.2.0](https://github.com/CatLover01/rn-interactive-walkthrough/compare/v0.1.0...v0.2.0) (2026-08-06)
 
 ### Bug Fixes
