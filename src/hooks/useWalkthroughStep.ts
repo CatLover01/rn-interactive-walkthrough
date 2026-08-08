@@ -5,8 +5,8 @@ import {
   useMemo,
   useRef,
 } from "react";
+import { useWindowDimensions } from "react-native";
 import type { LayoutChangeEvent, ReactNativeElement } from "react-native";
-import { useSafeAreaFrame } from "react-native-safe-area-context";
 
 import { useWalkthrough } from "../context";
 import type {
@@ -25,6 +25,7 @@ export const useWalkthroughStep = <
   number,
   ...props
 }: IUseWalkthroughStep<P>) => {
+  const { width, height } = useWindowDimensions();
   const context = useWalkthrough();
 
   const { registerStep, allSteps, currentStepNumber, stop, useIsFocused } =
@@ -190,8 +191,6 @@ export const useWalkthroughStep = <
       wasVisibleRef.current = false;
     }
   }, [currentStepNumber, number, isFocused, stop]);
-
-  const { width, height } = useSafeAreaFrame();
 
   useEffect(() => {
     if (fullScreen === true && width > 0 && height > 0) {
