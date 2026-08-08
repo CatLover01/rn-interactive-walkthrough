@@ -35,7 +35,7 @@ export interface WalkthroughContextType<
   backdropColor: string;
   transitionDuration: number;
   debug: boolean;
-  isWalkthroughOn: boolean;
+  isActive: boolean;
   isReady: boolean;
   currentStepNumber: number | undefined;
   animations: WalkthroughLayoutAnimations;

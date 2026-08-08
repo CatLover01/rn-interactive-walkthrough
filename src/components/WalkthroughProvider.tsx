@@ -42,15 +42,12 @@ const WalkthroughProviderComponent = <P extends ContentComponentProps>(
     [userAnimations, transitionDuration],
   );
 
-  const isWalkthroughOn = typeof currentStepNumber === "number";
+  const isActive = typeof currentStepNumber === "number";
   const isReady = useMemo(() => steps.some((s) => s.number === 1), [steps]);
 
   const currentSteps = useMemo(
-    () =>
-      isWalkthroughOn
-        ? steps.filter((s) => s.number === currentStepNumber)
-        : [],
-    [isWalkthroughOn, currentStepNumber, steps],
+    () => (isActive ? steps.filter((s) => s.number === currentStepNumber) : []),
+    [isActive, currentStepNumber, steps],
   );
 
   const registerStep = useCallback<WalkthroughFunctions["registerStep"]>(
@@ -123,7 +120,7 @@ const WalkthroughProviderComponent = <P extends ContentComponentProps>(
   const contextValue = useMemo<WalkthroughContextType<P>>(
     () => ({
       ...functions,
-      isWalkthroughOn,
+      isActive,
       currentStepNumber,
       currentSteps,
       steps,
@@ -137,7 +134,7 @@ const WalkthroughProviderComponent = <P extends ContentComponentProps>(
     }),
     [
       functions,
-      isWalkthroughOn,
+      isActive,
       currentStepNumber,
       currentSteps,
       steps,
