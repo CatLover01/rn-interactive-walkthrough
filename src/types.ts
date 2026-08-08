@@ -68,9 +68,6 @@ export interface WalkthroughCallback {
   time: Date;
 }
 
-export type EnableHardwareBackFunction = (
-  props?: Pick<WalkthroughFunctions, "goTo" | "previous">,
-) => void;
 export type OnPressWithContextType = (context?: WalkthroughContextType) => void;
 
 export type ComponentLayoutProps = Pick<
@@ -98,7 +95,6 @@ export interface WalkthroughStep<
   // Only allow the onLayout to get set once. This is useful on for example, scrollable containers where the position
   // on the page can change when you scroll.
   layoutLock?: boolean;
-  enableHardwareBack?: boolean | EnableHardwareBackFunction; // android only - Pass in the step number to go back to that step
   onStart?: (props: WalkthroughCallback) => void;
   onFinish?: (props: WalkthroughCallback) => void;
   onBackground?: () => void;

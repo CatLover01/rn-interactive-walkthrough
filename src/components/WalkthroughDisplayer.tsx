@@ -1,27 +1,10 @@
 import sortBy from "lodash/sortBy";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-} from "react";
-import {
-  StyleSheet,
-  BackHandler,
-  type ViewStyle,
-  Pressable,
-} from "react-native";
+import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import { StyleSheet, type ViewStyle, Pressable } from "react-native";
 import Animated from "react-native-reanimated";
 
 import { useWalkthrough } from "../context";
-import { useKeyboard } from "../hooks/useKeyboard";
-import type {
-  EnableHardwareBackFunction,
-  WalkthroughStep,
-  OnPressWithContextType,
-} from "../types";
-import { isAndroid } from "../utils";
+import type { WalkthroughStep, OnPressWithContextType } from "../types";
 
 interface IOverlayProps {
   key: string;
@@ -37,9 +20,6 @@ export const WalkthroughDisplayer = () => {
     currentSteps,
     currentStepNumber,
     backdropColor,
-    isWalkthroughOn,
-    previous,
-    goTo,
     debug,
     animations: { backdrop, content },
     contentComponent,
@@ -55,51 +35,6 @@ export const WalkthroughDisplayer = () => {
   );
 
   const lastStepsRef = useRef<WalkthroughStep[]>([]);
-
-  const isKeyboardOpen = useKeyboard();
-
-  const onHardwareBackPress = useCallback(() => {
-    if (isKeyboardOpen) {
-      return false;
-    } else {
-      const backEnabled = currentSteps.filter((s) =>
-        Boolean(s.enableHardwareBack),
-      );
-      if (backEnabled.length) {
-        let functions = backEnabled
-          .map((s) => s.enableHardwareBack)
-          .filter(
-            (x): x is EnableHardwareBackFunction => typeof x === "function",
-          );
-        if (!functions.length) {
-          functions = [
-            () => {
-              previous();
-            },
-          ];
-        }
-        functions.forEach((f) => {
-          f({ goTo, previous });
-        });
-      }
-
-      return true; // return true to block the back button which we always do when the walkthrough is on.
-    }
-  }, [isKeyboardOpen, currentSteps, previous, goTo]);
-
-  useEffect(() => {
-    if (!isAndroid || !isWalkthroughOn) {
-      return;
-    }
-    // eslint-disable-next-line @eslint-react/web-api/no-leaked-event-listener
-    const subscription = BackHandler.addEventListener(
-      "hardwareBackPress",
-      onHardwareBackPress,
-    );
-    return () => {
-      subscription.remove();
-    };
-  }, [isWalkthroughOn, onHardwareBackPress]);
 
   const currentStepsKey = currentSteps.map((s) => s.identifier).join("|");
 

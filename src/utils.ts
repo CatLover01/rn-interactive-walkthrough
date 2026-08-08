@@ -1,9 +1,6 @@
-import { Platform } from "react-native";
 import { LinearTransition, FadeIn, FadeOut } from "react-native-reanimated";
 
 import type { WalkthroughLayoutAnimations } from "./types";
-
-export const isAndroid = Platform.OS === "android";
 
 export const getDefaultAnimations = (
   transitionDuration: number,
