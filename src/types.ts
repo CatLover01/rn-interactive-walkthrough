@@ -61,7 +61,7 @@ export interface LayoutAdjustments {
 }
 
 export interface ContentComponentProps extends WalkthroughContextType {
-  step: WalkthroughStep; // pass through the step as well
+  step: WalkthroughStep;
 }
 
 export interface WalkthroughCallback {

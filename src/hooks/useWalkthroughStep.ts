@@ -26,10 +26,8 @@ export const useWalkthroughStep = <
   ...props
 }: UseWalkthroughStep<P>) => {
   const { width, height } = useWindowDimensions();
-  const context = useWalkthrough();
-
   const { registerStep, steps, currentStepNumber, stop, useIsFocused } =
-    context;
+    useWalkthrough();
 
   const targetRef = useRef<ReactNativeElement | null>(null);
 
@@ -213,7 +211,6 @@ export const useWalkthroughStep = <
   );
 
   return {
-    ...context,
     isVisible: number === currentStepNumber,
     onLayout,
     onMeasure,
