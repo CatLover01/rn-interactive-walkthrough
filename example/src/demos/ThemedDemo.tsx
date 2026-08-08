@@ -10,8 +10,8 @@ export function ThemedScreen() {
   const step1 = useWalkthroughStep({
     number: 1,
     layoutAdjustments: { addPadding: 8 },
-    OverlayComponent: ThemedTooltip,
-    overlayComponentProps: {
+    contentComponent: ThemedTooltip,
+    contentComponentProps: {
       title: "Overlays match your theme",
       text: "This tooltip is a plain light card, picked to contrast with the dark screen.",
     },
@@ -20,8 +20,8 @@ export function ThemedScreen() {
   const step2 = useWalkthroughStep({
     number: 2,
     layoutAdjustments: { addPadding: 8 },
-    OverlayComponent: ThemedTooltip,
-    overlayComponentProps: {
+    contentComponent: ThemedTooltip,
+    contentComponentProps: {
       title: "Just a styled component",
       text: "No theme system is needed. Style the overlay however you would style any view.",
     },
@@ -30,8 +30,8 @@ export function ThemedScreen() {
   useWalkthroughStep({
     number: 3,
     fullScreen: true,
-    OverlayComponent: FullScreenCard,
-    overlayComponentProps: {
+    contentComponent: FullScreenCard,
+    contentComponentProps: {
       title: "Dark finale",
       text: "Even the full-screen card takes a dark variant, so the whole tour stays in the app's style.",
       action: "Done",

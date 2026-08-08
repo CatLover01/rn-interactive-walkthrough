@@ -14,8 +14,8 @@ export function OverlayVarietyScreen() {
     number: 1,
     layoutAdjustments: { addPadding: 6 },
     onPressBackdrop: (ctx) => ctx?.stop(),
-    OverlayComponent: CalloutPill,
-    overlayComponentProps: {
+    contentComponent: CalloutPill,
+    contentComponentProps: {
       text: "A compact callout, if that's all you need.",
     },
   });
@@ -24,8 +24,8 @@ export function OverlayVarietyScreen() {
     number: 2,
     layoutAdjustments: { addPadding: 6 },
     onPressBackdrop: (ctx) => ctx?.stop(),
-    OverlayComponent: BottomSheetOverlay,
-    overlayComponentProps: {
+    contentComponent: BottomSheetOverlay,
+    contentComponentProps: {
       title: "A bottom sheet",
       text: "The overlay is just a component, so anchor it anywhere you like.",
     },
@@ -35,8 +35,8 @@ export function OverlayVarietyScreen() {
     number: 3,
     layoutAdjustments: { addPadding: 6 },
     onPressBackdrop: (ctx) => ctx?.stop(),
-    OverlayComponent: CenterCardOverlay,
-    overlayComponentProps: {
+    contentComponent: CenterCardOverlay,
+    contentComponentProps: {
       title: "Or a centered card",
       text: "Render whatever fits your app. Nothing about the overlay shape is fixed.",
     },
@@ -46,8 +46,8 @@ export function OverlayVarietyScreen() {
     number: 4,
     layoutAdjustments: { addPadding: 6 },
     onPressBackdrop: (ctx) => ctx?.stop(),
-    OverlayComponent: Tooltip,
-    overlayComponentProps: {
+    contentComponent: Tooltip,
+    contentComponentProps: {
       title: "Back to a classic tooltip",
       text: "Every step can use a different overlay, even within the same tour.",
     },
@@ -56,8 +56,8 @@ export function OverlayVarietyScreen() {
   useWalkthroughStep({
     number: 5,
     fullScreen: true,
-    OverlayComponent: FullScreenCard,
-    overlayComponentProps: {
+    contentComponent: FullScreenCard,
+    contentComponentProps: {
       title: "Pick a style per step",
       text: "Callouts, sheets, centered cards, tooltips. It's all just React.",
       action: "Done",

@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
-import type { IOverlayComponentProps } from "rn-interactive-walkthrough";
+import type { ContentComponentProps } from "rn-interactive-walkthrough";
 
 import { colors } from "../theme";
 import { OverlayFooter } from "./OverlayFooter";
 
-export type CenterCardOverlayProps = IOverlayComponentProps & {
+export type CenterCardOverlayProps = ContentComponentProps & {
   title: string;
   text: string;
 };

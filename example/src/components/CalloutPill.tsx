@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaFrame } from "react-native-safe-area-context";
-import type { IOverlayComponentProps } from "rn-interactive-walkthrough";
+import type { ContentComponentProps } from "rn-interactive-walkthrough";
 
 import { TOOLTIP_MARGIN } from "../hooks/useTooltipPlacement";
 import { colors } from "../theme";
@@ -8,7 +8,7 @@ import { colors } from "../theme";
 const PILL_WIDTH = 210;
 const GAP = 10;
 
-export type CalloutPillProps = IOverlayComponentProps & {
+export type CalloutPillProps = ContentComponentProps & {
   text: string;
 };
 

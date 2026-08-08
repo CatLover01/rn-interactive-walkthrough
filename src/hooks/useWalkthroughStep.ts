@@ -10,21 +10,21 @@ import type { LayoutChangeEvent, ReactNativeElement } from "react-native";
 
 import { useWalkthrough } from "../context";
 import type {
-  IOverlayComponentProps,
-  IUseWalkthroughStep,
-  IUseWalkthroughStepStrict,
-  IWalkthroughStep,
-  IWalkthroughStepMask,
+  ContentComponentProps,
+  UseWalkthroughStep,
+  UseWalkthroughStepStrict,
+  WalkthroughStep,
+  WalkthroughStepMask,
 } from "../types";
 
 export const useWalkthroughStep = <
-  P extends IOverlayComponentProps = IOverlayComponentProps,
+  P extends ContentComponentProps = ContentComponentProps,
 >({
   fullScreen,
   identifier,
   number,
   ...props
-}: IUseWalkthroughStep<P>) => {
+}: UseWalkthroughStep<P>) => {
   const { width, height } = useWindowDimensions();
   const context = useWalkthrough();
 
@@ -48,25 +48,25 @@ export const useWalkthroughStep = <
     [resolvedIdentifier, steps],
   );
 
-  const propsRef = useRef<IUseWalkthroughStepStrict<P> | null>(null);
+  const propsRef = useRef<UseWalkthroughStepStrict<P> | null>(null);
 
   const registerStepWithProps = useCallback(
-    (maskProps: IWalkthroughStepMask) => {
+    (maskProps: WalkthroughStepMask) => {
       const base = propsRef.current;
       if (base === null) {
         return;
       }
       const { maskAllowInteraction, ...rest } = base;
-      const mask: IWalkthroughStepMask = {
+      const mask: WalkthroughStepMask = {
         allowInteraction: maskAllowInteraction,
         ...maskProps,
       };
 
-      let step: IWalkthroughStep<P> = {
+      let step: WalkthroughStep<P> = {
         ...rest,
         number,
         identifier: resolvedIdentifier,
-        overlayComponentKey: resolvedIdentifier,
+        contentComponentKey: resolvedIdentifier,
         mask,
         computedMask: mask,
       };
@@ -102,7 +102,7 @@ export const useWalkthroughStep = <
       }
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-      registerStep(step as unknown as IWalkthroughStep);
+      registerStep(step as unknown as WalkthroughStep);
     },
     [registerStep, number, resolvedIdentifier],
   );
@@ -153,26 +153,26 @@ export const useWalkthroughStep = <
       ...props,
       number,
       identifier: resolvedIdentifier,
-      overlayComponentKey: resolvedIdentifier,
+      contentComponentKey: resolvedIdentifier,
       measureMask: measuredMask,
     };
   });
 
-  const overlayComponentProps = props.overlayComponentProps;
+  const contentComponentProps = props.contentComponentProps;
 
   useEffect(
     () => {
-      if (step && overlayComponentProps) {
+      if (step && contentComponentProps) {
         registerStep({
           ...step,
-          overlayComponentProps,
+          contentComponentProps,
         });
       }
-      // Register only when the overlay props (by value) change; depending on the objects or `step` directly
+      // Register only when the content props (by value) change; depending on the objects or `step` directly
       // would cause an infinite loop, since re-registering re-renders and re-creates those references.
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    Object.values(overlayComponentProps || {}),
+    Object.values(contentComponentProps || {}),
   );
 
   const isFocused = useIsFocused();

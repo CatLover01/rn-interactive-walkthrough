@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import type { IOverlayComponentProps } from "rn-interactive-walkthrough";
+import type { ContentComponentProps } from "rn-interactive-walkthrough";
 
 import {
   ARROW_HEIGHT,
@@ -10,7 +10,7 @@ import {
 import { colors } from "../theme";
 import { OverlayFooter } from "./OverlayFooter";
 
-export type ThemedTooltipProps = IOverlayComponentProps & {
+export type ThemedTooltipProps = ContentComponentProps & {
   title: string;
   text: string;
 };

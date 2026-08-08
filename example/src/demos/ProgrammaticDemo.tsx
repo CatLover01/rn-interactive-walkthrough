@@ -149,8 +149,8 @@ export function ProgrammaticScreen() {
     number: 1,
     layoutAdjustments: { addPadding: 8 },
     onPressBackdrop: (ctx) => ctx?.stop(),
-    OverlayComponent: Tooltip,
-    overlayComponentProps: {
+    contentComponent: Tooltip,
+    contentComponentProps: {
       title: "You jumped here",
       text: "goTo started the tour at this step. Tap the dim area to get back to the panel.",
     },
@@ -160,8 +160,8 @@ export function ProgrammaticScreen() {
     number: 2,
     layoutAdjustments: { addPadding: 8 },
     onPressBackdrop: (ctx) => ctx?.stop(),
-    OverlayComponent: Tooltip,
-    overlayComponentProps: {
+    contentComponent: Tooltip,
+    contentComponentProps: {
       title: "Step two",
       text: "The panel can also change the backdrop color and transition speed while running.",
     },
@@ -171,8 +171,8 @@ export function ProgrammaticScreen() {
     number: 3,
     layoutAdjustments: { addPadding: 8 },
     onPressBackdrop: (ctx) => ctx?.stop(),
-    OverlayComponent: Tooltip,
-    overlayComponentProps: {
+    contentComponent: Tooltip,
+    contentComponentProps: {
       title: "Step three",
       text: "Pick another color above, then press Stop or tap the dim area to keep experimenting.",
     },
@@ -181,8 +181,8 @@ export function ProgrammaticScreen() {
   useWalkthroughStep({
     number: 4,
     fullScreen: true,
-    OverlayComponent: FullScreenCard,
-    overlayComponentProps: {
+    contentComponent: FullScreenCard,
+    contentComponentProps: {
       title: "Full programmatic control",
       text: "start, stop, goTo, setBackdropColor, and setTransitionDuration are all on the context.",
       action: "Done",

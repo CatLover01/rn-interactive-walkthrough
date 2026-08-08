@@ -18,7 +18,7 @@ import { useWalkthrough } from "../context";
 import { useKeyboard } from "../hooks/useKeyboard";
 import type {
   EnableHardwareBackFunction,
-  IWalkthroughStep,
+  WalkthroughStep,
   OnPressWithContextType,
 } from "../types";
 import { isAndroid } from "../utils";
@@ -42,6 +42,7 @@ export const WalkthroughDisplayer = () => {
     goTo,
     debug,
     animations: { backdrop, content },
+    contentComponent,
   } = context;
 
   const logStep = useCallback(
@@ -53,7 +54,7 @@ export const WalkthroughDisplayer = () => {
     [debug],
   );
 
-  const lastStepsRef = useRef<IWalkthroughStep[]>([]);
+  const lastStepsRef = useRef<WalkthroughStep[]>([]);
 
   const isKeyboardOpen = useKeyboard();
 
@@ -138,7 +139,7 @@ export const WalkthroughDisplayer = () => {
 
   const overlayProps = useMemo(() => {
     // We build the views from top to bottom
-    const sortedCurrentSteps: IWalkthroughStep[] = sortBy(
+    const sortedCurrentSteps: WalkthroughStep[] = sortBy(
       currentSteps,
       (step) => step.mask.y,
     );
@@ -254,24 +255,22 @@ export const WalkthroughDisplayer = () => {
         />
       ))}
 
-      {currentSteps.map((s) =>
-        s.OverlayComponent ? (
+      {currentSteps.map((s) => {
+        const Component = s.contentComponent ?? contentComponent;
+        if (!Component) return null;
+        return (
           <Animated.View
-            key={s.overlayComponentKey}
+            key={s.contentComponentKey}
             pointerEvents="box-none"
             style={StyleSheet.absoluteFill}
             entering={content.entering}
             layout={content.layout}
             exiting={content.exiting}
           >
-            <s.OverlayComponent
-              step={s}
-              {...s.overlayComponentProps}
-              {...context}
-            />
+            <Component step={s} {...s.contentComponentProps} {...context} />
           </Animated.View>
-        ) : null,
-      )}
+        );
+      })}
     </>
   );
 };

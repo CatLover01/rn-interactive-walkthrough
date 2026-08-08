@@ -12,8 +12,8 @@ export function TapToAdvanceScreen() {
     layoutAdjustments: { addPadding: 8 },
     onPressMask: (ctx) => ctx?.next(),
     onPressBackdrop: (ctx) => ctx?.stop(),
-    OverlayComponent: Tooltip,
-    overlayComponentProps: {
+    contentComponent: Tooltip,
+    contentComponentProps: {
       title: "Tap the target to continue",
       text: "The whole highlighted button acts as the Next button. Tapping the dim area stops the tour.",
     },
@@ -24,8 +24,8 @@ export function TapToAdvanceScreen() {
     layoutAdjustments: { addPadding: 8 },
     onPressMask: (ctx) => ctx?.next(),
     onPressBackdrop: (ctx) => ctx?.stop(),
-    OverlayComponent: Tooltip,
-    overlayComponentProps: {
+    contentComponent: Tooltip,
+    contentComponentProps: {
       title: "Same handlers, new target",
       text: "onPressMask and onPressBackdrop work on every step, so the pattern scales.",
     },
@@ -34,8 +34,8 @@ export function TapToAdvanceScreen() {
   useWalkthroughStep({
     number: 3,
     fullScreen: true,
-    OverlayComponent: FullScreenCard,
-    overlayComponentProps: {
+    contentComponent: FullScreenCard,
+    contentComponentProps: {
       title: "Taps drive the tour",
       text: "Use the handlers to build tours that feel like part of the app.",
       action: "Done",

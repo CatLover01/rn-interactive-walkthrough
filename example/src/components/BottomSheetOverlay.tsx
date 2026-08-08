@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import type { IOverlayComponentProps } from "rn-interactive-walkthrough";
+import type { ContentComponentProps } from "rn-interactive-walkthrough";
 
 import { colors } from "../theme";
 import { OverlayFooter } from "./OverlayFooter";
 
-export type BottomSheetOverlayProps = IOverlayComponentProps & {
+export type BottomSheetOverlayProps = ContentComponentProps & {
   title: string;
   text: string;
 };

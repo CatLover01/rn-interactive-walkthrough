@@ -24,8 +24,8 @@ export function InteractiveTargetsScreen() {
     number: 1,
     maskAllowInteraction: true,
     layoutAdjustments: { addPadding: 6 },
-    OverlayComponent: Tooltip,
-    overlayComponentProps: {
+    contentComponent: Tooltip,
+    contentComponentProps: {
       title: "The mask lets you interact",
       text: "This row stays tappable while it is highlighted. Go on, flip the switch.",
     },
@@ -35,8 +35,8 @@ export function InteractiveTargetsScreen() {
     number: 2,
     maskAllowInteraction: true,
     layoutAdjustments: { addPadding: 6 },
-    OverlayComponent: Tooltip,
-    overlayComponentProps: {
+    contentComponent: Tooltip,
+    contentComponentProps: {
       title: "Even destructive buttons",
       text: "This mask is interactive too. Tap the button, then continue with Next.",
     },
@@ -46,8 +46,8 @@ export function InteractiveTargetsScreen() {
     number: 3,
     maskAllowInteraction: false,
     layoutAdjustments: { addPadding: 6 },
-    OverlayComponent: Tooltip,
-    overlayComponentProps: {
+    contentComponent: Tooltip,
+    contentComponentProps: {
       title: "A read-only highlight",
       text: "This button is real, but the mask swallows the tap. Without maskAllowInteraction, blocking is the default.",
     },
@@ -56,8 +56,8 @@ export function InteractiveTargetsScreen() {
   useWalkthroughStep({
     number: 4,
     fullScreen: true,
-    OverlayComponent: FullScreenCard,
-    overlayComponentProps: {
+    contentComponent: FullScreenCard,
+    contentComponentProps: {
       title: "Controls stay usable",
       text: "Pass maskAllowInteraction to keep the target pressable during the tour.",
       action: "Done",

@@ -4,7 +4,7 @@ import type { AnimatedProps } from "react-native-reanimated";
 
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
-export interface IWalkthroughStepMask {
+export interface WalkthroughStepMask {
   x: number;
   y: number;
   width: number;
@@ -12,11 +12,11 @@ export interface IWalkthroughStepMask {
   allowInteraction?: boolean;
 }
 
-export interface IWalkthroughFunctions {
-  registerStep: (step: IWalkthroughStep) => void;
+export interface WalkthroughFunctions {
+  registerStep: (step: WalkthroughStep) => void;
   updateStep: (
-    identifier: IWalkthroughStep["identifier"],
-    step: Partial<IWalkthroughStep>,
+    identifier: WalkthroughStep["identifier"],
+    step: Partial<WalkthroughStep>,
   ) => void;
   start: () => void;
   stop: () => void;
@@ -27,9 +27,11 @@ export interface IWalkthroughFunctions {
   setBackdropColor: (color: string) => void;
 }
 
-export interface IWalkthroughContext extends IWalkthroughFunctions {
-  currentSteps: IWalkthroughStep[];
-  steps: IWalkthroughStep[];
+export interface WalkthroughContextType<
+  P extends ContentComponentProps = ContentComponentProps,
+> extends WalkthroughFunctions {
+  currentSteps: WalkthroughStep[];
+  steps: WalkthroughStep[];
   backdropColor: string;
   transitionDuration: number;
   debug: boolean;
@@ -37,10 +39,11 @@ export interface IWalkthroughContext extends IWalkthroughFunctions {
   isReady: boolean;
   currentStepNumber: number | undefined;
   animations: WalkthroughLayoutAnimations;
+  contentComponent?: ComponentType<P>;
   useIsFocused: () => boolean;
 }
 
-export interface ILayoutAdjustments {
+export interface LayoutAdjustments {
   minX?: number;
   minY?: number;
   maxX?: number;
@@ -57,18 +60,18 @@ export interface ILayoutAdjustments {
   addPadding?: number;
 }
 
-export interface IOverlayComponentProps extends IWalkthroughContext {
-  step: IWalkthroughStep; // pass through the step as well
+export interface ContentComponentProps extends WalkthroughContextType {
+  step: WalkthroughStep; // pass through the step as well
 }
 
-export interface IWalkthroughCallback {
+export interface WalkthroughCallback {
   time: Date;
 }
 
 export type EnableHardwareBackFunction = (
-  props?: Pick<IWalkthroughFunctions, "goTo" | "previous">,
+  props?: Pick<WalkthroughFunctions, "goTo" | "previous">,
 ) => void;
-export type OnPressWithContextType = (context?: IWalkthroughContext) => void;
+export type OnPressWithContextType = (context?: WalkthroughContextType) => void;
 
 export type ComponentLayoutProps = Pick<
   AnimatedProps<ViewProps>,
@@ -82,48 +85,54 @@ export interface WalkthroughLayoutAnimations {
   content: ComponentLayoutProps;
 }
 
-export interface IWalkthroughStep<
-  P extends IOverlayComponentProps = IOverlayComponentProps,
+export interface WalkthroughStep<
+  P extends ContentComponentProps = ContentComponentProps,
 > {
   number: number;
   identifier: string;
-  overlayComponentKey: string;
-  overlayComponentProps?: Omit<P, keyof IOverlayComponentProps>;
-  OverlayComponent?: ComponentType<P>;
+  contentComponentKey: string;
+  contentComponentProps?: Omit<P, keyof ContentComponentProps>;
+  contentComponent?: ComponentType<P>;
   fullScreen?: boolean;
-  layoutAdjustments?: ILayoutAdjustments;
+  layoutAdjustments?: LayoutAdjustments;
   // Only allow the onLayout to get set once. This is useful on for example, scrollable containers where the position
   // on the page can change when you scroll.
   layoutLock?: boolean;
   enableHardwareBack?: boolean | EnableHardwareBackFunction; // android only - Pass in the step number to go back to that step
-  onStart?: (props: IWalkthroughCallback) => void;
-  onFinish?: (props: IWalkthroughCallback) => void;
+  onStart?: (props: WalkthroughCallback) => void;
+  onFinish?: (props: WalkthroughCallback) => void;
   onBackground?: () => void;
   onPressMask?: OnPressWithContextType;
   onPressBackdrop?: OnPressWithContextType;
-  mask: IWalkthroughStepMask;
-  computedMask?: IWalkthroughStepMask;
+  mask: WalkthroughStepMask;
+  computedMask?: WalkthroughStepMask;
   measureMask: () => void;
 }
 
-export type IUseWalkthroughStepStrict<P extends IOverlayComponentProps> = Omit<
-  IWalkthroughStep<P>,
+export type UseWalkthroughStepStrict<P extends ContentComponentProps> = Omit<
+  WalkthroughStep<P>,
   "mask"
 > & {
   maskAllowInteraction?: boolean;
 };
 
-export type IUseWalkthroughStep<P extends IOverlayComponentProps> = PartialBy<
-  IUseWalkthroughStepStrict<P>,
-  "identifier" | "overlayComponentKey" | "measureMask"
+export type UseWalkthroughStep<P extends ContentComponentProps> = PartialBy<
+  UseWalkthroughStepStrict<P>,
+  "identifier" | "contentComponentKey" | "measureMask"
 >;
 
-export interface IWalkthroughProvider extends Partial<
+export interface WalkthroughProviderProps<
+  P extends ContentComponentProps,
+> extends Partial<
   Pick<
-    IWalkthroughContext,
-    "useIsFocused" | "transitionDuration" | "backdropColor" | "debug"
+    WalkthroughContextType<P>,
+    | "useIsFocused"
+    | "contentComponent"
+    | "transitionDuration"
+    | "backdropColor"
+    | "debug"
+    | "animations"
   >
 > {
-  animations?: Partial<WalkthroughLayoutAnimations>;
   children?: ReactNode;
 }

@@ -10,8 +10,8 @@ export function SmartTooltipsScreen() {
   const step1 = useWalkthroughStep({
     number: 1,
     layoutAdjustments: { addPadding: 8 },
-    OverlayComponent: Tooltip,
-    overlayComponentProps: {
+    contentComponent: Tooltip,
+    contentComponentProps: {
       title: "Tooltip lands below",
       text: "There is room under this card, so the tooltip sits below it and points up at the mask.",
     },
@@ -20,8 +20,8 @@ export function SmartTooltipsScreen() {
   const step2 = useWalkthroughStep({
     number: 2,
     layoutAdjustments: { addPadding: 8 },
-    OverlayComponent: Tooltip,
-    overlayComponentProps: {
+    contentComponent: Tooltip,
+    contentComponentProps: {
       title: "Tooltip flips above",
       text: "No room below this card, so the tooltip moves above it automatically.",
     },
@@ -30,8 +30,8 @@ export function SmartTooltipsScreen() {
   const step3 = useWalkthroughStep({
     number: 3,
     layoutAdjustments: { addPadding: 8 },
-    OverlayComponent: Tooltip,
-    overlayComponentProps: {
+    contentComponent: Tooltip,
+    contentComponentProps: {
       title: "The arrow tracks the target",
       text: "The arrow stays centered on the highlighted card no matter which side the tooltip lands on.",
     },
@@ -40,8 +40,8 @@ export function SmartTooltipsScreen() {
   useWalkthroughStep({
     number: 4,
     fullScreen: true,
-    OverlayComponent: FullScreenCard,
-    overlayComponentProps: {
+    contentComponent: FullScreenCard,
+    contentComponentProps: {
       title: "That's the core loop",
       text: "Highlight a view, measure it, explain it, move on. The other demos build on this.",
       action: "Done",

@@ -21,8 +21,8 @@ export function GalleryScreen({ onOpen }: GalleryScreenProps) {
     number: 1,
     layoutAdjustments: { addPadding: 4 },
     onPressBackdrop: (ctx) => ctx?.stop(),
-    OverlayComponent: Tooltip,
-    overlayComponentProps: {
+    contentComponent: Tooltip,
+    contentComponentProps: {
       title: "Every card is a working demo",
       text: "Each entry is a full example you can open. Pick one, or follow this tour first.",
     },
@@ -32,8 +32,8 @@ export function GalleryScreen({ onOpen }: GalleryScreenProps) {
     number: 2,
     layoutAdjustments: { addPadding: 4 },
     onPressBackdrop: (ctx) => ctx?.stop(),
-    OverlayComponent: Tooltip,
-    overlayComponentProps: {
+    contentComponent: Tooltip,
+    contentComponentProps: {
       title: "Open a demo",
       text: "Tap a card to open it. When a tour runs, the mask shows exactly what is highlighted.",
     },
@@ -43,8 +43,8 @@ export function GalleryScreen({ onOpen }: GalleryScreenProps) {
     number: 3,
     layoutAdjustments: { addPadding: 4 },
     onPressBackdrop: (ctx) => ctx?.stop(),
-    OverlayComponent: Tooltip,
-    overlayComponentProps: {
+    contentComponent: Tooltip,
+    contentComponentProps: {
       title: "Eight demos inside",
       text: "Start with the first one. The rest layer on more features of the library.",
     },
@@ -53,8 +53,8 @@ export function GalleryScreen({ onOpen }: GalleryScreenProps) {
   useWalkthroughStep({
     number: 4,
     fullScreen: true,
-    OverlayComponent: FullScreenCard,
-    overlayComponentProps: {
+    contentComponent: FullScreenCard,
+    contentComponentProps: {
       title: "You made it",
       text: "Tap any card to open it. Tapping the dim area skips ahead when a tour is running.",
       action: "Done",

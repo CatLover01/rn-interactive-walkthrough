@@ -1,5 +1,5 @@
 import { useSafeAreaFrame } from "react-native-safe-area-context";
-import type { IWalkthroughStepMask } from "rn-interactive-walkthrough";
+import type { WalkthroughStepMask } from "rn-interactive-walkthrough";
 
 export const TOOLTIP_MARGIN = 20;
 export const TOOLTIP_GAP = 12;
@@ -17,7 +17,7 @@ export type TooltipPlacement = {
 };
 
 export function useTooltipPlacement(
-  mask: IWalkthroughStepMask,
+  mask: WalkthroughStepMask,
 ): TooltipPlacement {
   const { width, height } = useSafeAreaFrame();
 

@@ -10,8 +10,8 @@ export function FullScreenDemoScreen() {
   useWalkthroughStep({
     number: 1,
     fullScreen: true,
-    OverlayComponent: FullScreenCard,
-    overlayComponentProps: {
+    contentComponent: FullScreenCard,
+    contentComponentProps: {
       title: "Full-screen overlays",
       text: "fullScreen: true hides everything behind a mask and layers your overlay on top. Great for welcomes.",
     },
@@ -20,8 +20,8 @@ export function FullScreenDemoScreen() {
   const ctaStep = useWalkthroughStep({
     number: 2,
     layoutAdjustments: { addPadding: 8 },
-    OverlayComponent: Tooltip,
-    overlayComponentProps: {
+    contentComponent: Tooltip,
+    contentComponentProps: {
       title: "Back to normal steps",
       text: "Regular steps highlight one target at a time, exactly like the other demos.",
     },
@@ -30,8 +30,8 @@ export function FullScreenDemoScreen() {
   useWalkthroughStep({
     number: 3,
     fullScreen: true,
-    OverlayComponent: FullScreenCard,
-    overlayComponentProps: {
+    contentComponent: FullScreenCard,
+    contentComponentProps: {
       title: "And a finale",
       text: "End the tour with another full-screen overlay, or with a simple tooltip step.",
       action: "Done",

@@ -1,9 +1,9 @@
 import { createContext, useContext } from "react";
 
-import type { IWalkthroughContext } from "./types";
+import type { WalkthroughContextType } from "./types";
 
 export const WalkthroughContext = createContext<
-  IWalkthroughContext | undefined
+  WalkthroughContextType | undefined
 >(undefined);
 
 export const useWalkthrough = () => {
