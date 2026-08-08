@@ -28,7 +28,7 @@ export const useWalkthroughStep = <
   const { width, height } = useWindowDimensions();
   const context = useWalkthrough();
 
-  const { registerStep, allSteps, currentStepNumber, stop, useIsFocused } =
+  const { registerStep, steps, currentStepNumber, stop, useIsFocused } =
     context;
 
   const targetRef = useRef<ReactNativeElement | null>(null);
@@ -44,8 +44,8 @@ export const useWalkthroughStep = <
   );
 
   const step = useMemo(
-    () => allSteps.find((s) => s.identifier === resolvedIdentifier),
-    [resolvedIdentifier, allSteps],
+    () => steps.find((s) => s.identifier === resolvedIdentifier),
+    [resolvedIdentifier, steps],
   );
 
   const propsRef = useRef<IUseWalkthroughStepStrict<P> | null>(null);

@@ -17,11 +17,11 @@ export function CalloutPill({
   text,
   next,
   stop,
-  allSteps,
+  steps,
 }: CalloutPillProps) {
   const { width } = useSafeAreaFrame();
   const mask = step.computedMask ?? step.mask;
-  const isLast = allSteps[allSteps.length - 1]?.number === step.number;
+  const isLast = steps[steps.length - 1]?.number === step.number;
 
   const fitsRight =
     mask.x + mask.width + GAP + PILL_WIDTH < width - TOOLTIP_MARGIN;

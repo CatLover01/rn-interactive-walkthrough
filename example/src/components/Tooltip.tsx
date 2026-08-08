@@ -23,12 +23,12 @@ export function Tooltip({
   previous,
   stop,
   currentStepNumber,
-  allSteps,
+  steps,
 }: TooltipProps) {
   const mask = step.computedMask ?? step.mask;
   const { top, arrow, arrowLeft } = useTooltipPlacement(mask);
-  const isFirst = allSteps[0]?.number === step.number;
-  const isLast = allSteps[allSteps.length - 1]?.number === step.number;
+  const isFirst = steps[0]?.number === step.number;
+  const isLast = steps[steps.length - 1]?.number === step.number;
   const stepNumber = currentStepNumber ?? step.number;
 
   return (
@@ -47,7 +47,7 @@ export function Tooltip({
       />
       <View style={styles.header}>
         <Text style={styles.step}>
-          {`STEP ${String(stepNumber)} OF ${String(allSteps.length)}`}
+          {`STEP ${String(stepNumber)} OF ${String(steps.length)}`}
         </Text>
       </View>
       <Text style={styles.title}>{title}</Text>

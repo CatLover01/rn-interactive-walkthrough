@@ -16,18 +16,18 @@ export function CenterCardOverlay({
   previous,
   stop,
   currentStepNumber,
-  allSteps,
+  steps,
   step,
 }: CenterCardOverlayProps) {
-  const isFirst = allSteps[0]?.number === step.number;
-  const isLast = allSteps[allSteps.length - 1]?.number === step.number;
+  const isFirst = steps[0]?.number === step.number;
+  const isLast = steps[steps.length - 1]?.number === step.number;
   const stepNumber = currentStepNumber ?? step.number;
 
   return (
     <View style={styles.wrap} pointerEvents="box-none">
       <View style={styles.card}>
         <Text style={styles.step}>
-          {`STEP ${String(stepNumber)} OF ${String(allSteps.length)}`}
+          {`STEP ${String(stepNumber)} OF ${String(steps.length)}`}
         </Text>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.text}>{text}</Text>

@@ -29,7 +29,7 @@ export interface IWalkthroughFunctions {
 
 export interface IWalkthroughContext extends IWalkthroughFunctions {
   currentSteps: IWalkthroughStep[];
-  allSteps: IWalkthroughStep[];
+  steps: IWalkthroughStep[];
   backdropColor: string;
   transitionDuration: number;
   debug: boolean;

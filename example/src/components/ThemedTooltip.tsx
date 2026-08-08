@@ -23,12 +23,12 @@ export function ThemedTooltip({
   previous,
   stop,
   currentStepNumber,
-  allSteps,
+  steps,
 }: ThemedTooltipProps) {
   const mask = step.computedMask ?? step.mask;
   const { top, arrow, arrowLeft } = useTooltipPlacement(mask);
-  const isFirst = allSteps[0]?.number === step.number;
-  const isLast = allSteps[allSteps.length - 1]?.number === step.number;
+  const isFirst = steps[0]?.number === step.number;
+  const isLast = steps[steps.length - 1]?.number === step.number;
   const stepNumber = currentStepNumber ?? step.number;
 
   return (
@@ -46,7 +46,7 @@ export function ThemedTooltip({
         ]}
       />
       <Text style={styles.step}>
-        {`STEP ${String(stepNumber)} OF ${String(allSteps.length)}`}
+        {`STEP ${String(stepNumber)} OF ${String(steps.length)}`}
       </Text>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.text}>{text}</Text>

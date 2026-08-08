@@ -127,7 +127,7 @@ export const WalkthroughProvider = forwardRef<
         isWalkthroughOn,
         currentStepNumber,
         currentSteps,
-        allSteps: steps, // want to be called "allSteps" so doesn't sound too close to "step".
+        steps,
         debug,
         transitionDuration,
         backdropColor,
