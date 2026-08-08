@@ -1,4 +1,6 @@
 import type { ComponentType, ReactNode } from "react";
+import type { ViewProps } from "react-native";
+import type { AnimatedProps } from "react-native-reanimated";
 
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
@@ -30,11 +32,11 @@ export interface IWalkthroughContext extends IWalkthroughFunctions {
   allSteps: IWalkthroughStep[];
   backdropColor: string;
   transitionDuration: number;
-  animateNextLayoutChange: (duration?: number) => void;
   debug: boolean;
   isWalkthroughOn: boolean;
   isReady: boolean;
   currentStepNumber: number | undefined;
+  animations: WalkthroughLayoutAnimations;
   useIsFocused: () => boolean;
 }
 
@@ -67,6 +69,18 @@ export type EnableHardwareBackFunction = (
   props?: Pick<IWalkthroughFunctions, "goTo" | "previous">,
 ) => void;
 export type OnPressWithContextType = (context?: IWalkthroughContext) => void;
+
+export type ComponentLayoutProps = Pick<
+  AnimatedProps<ViewProps>,
+  "entering" | "exiting" | "layout"
+>;
+
+export interface WalkthroughLayoutAnimations {
+  /** Layout animations for the backdrop/pressable */
+  backdrop: ComponentLayoutProps;
+  /** Layout animations for the step content container */
+  content: ComponentLayoutProps;
+}
 
 export interface IWalkthroughStep<
   P extends IOverlayComponentProps = IOverlayComponentProps,
@@ -107,13 +121,9 @@ export type IUseWalkthroughStep<P extends IOverlayComponentProps> = PartialBy<
 export interface IWalkthroughProvider extends Partial<
   Pick<
     IWalkthroughContext,
-    | "useIsFocused"
-    | "transitionDuration"
-    | "backdropColor"
-    | "animateNextLayoutChange"
-    | "debug"
+    "useIsFocused" | "transitionDuration" | "backdropColor" | "debug"
   >
 > {
-  enableExperimentalLayoutAnimation?: boolean;
+  animations?: Partial<WalkthroughLayoutAnimations>;
   children?: ReactNode;
 }

@@ -1,20 +1,20 @@
 import sortBy from "lodash/sortBy";
 import {
   useCallback,
-  useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
 } from "react";
 import {
+  StyleSheet,
   BackHandler,
-  TouchableWithoutFeedback,
-  View,
   type ViewStyle,
+  Pressable,
 } from "react-native";
+import Animated from "react-native-reanimated";
 
-import { WalkthroughContext } from "../context";
+import { useWalkthrough } from "../context";
 import { useKeyboard } from "../hooks/useKeyboard";
 import type {
   EnableHardwareBackFunction,
@@ -29,18 +29,19 @@ interface IOverlayProps {
   onPress?: OnPressWithContextType;
 }
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 export const WalkthroughDisplayer = () => {
-  const context = useContext(WalkthroughContext)!;
+  const context = useWalkthrough();
   const {
     currentSteps,
     currentStepNumber,
     backdropColor,
-    transitionDuration,
-    animateNextLayoutChange,
     isWalkthroughOn,
     previous,
     goTo,
     debug,
+    animations: { backdrop, content },
   } = context;
 
   const logStep = useCallback(
@@ -121,8 +122,6 @@ export const WalkthroughDisplayer = () => {
       }
 
       if (currentSteps.length) {
-        animateNextLayoutChange(transitionDuration);
-
         logStep(currentStepNumber ?? 0, `Started at ${String(time.getTime())}`);
         currentSteps.forEach((step) => {
           step.onStart?.({ time });
@@ -149,7 +148,7 @@ export const WalkthroughDisplayer = () => {
     sortedCurrentSteps.forEach((step, i) => {
       const computedMask = step.computedMask ?? step.mask;
 
-      // Rectange on the top across the whole screen
+      // Rectangle on the top.
       arr.push({
         key: `topRect-${String(i)}`,
         onPress: step.onPressBackdrop,
@@ -162,7 +161,7 @@ export const WalkthroughDisplayer = () => {
           ...(debug ? { borderWidth: 1, borderColor: "red" } : {}),
         },
       });
-      // Rectange on the left side.
+      // Rectangle on the left side.
       arr.push({
         key: `leftRect-${String(i)}`,
         onPress: step.onPressBackdrop,
@@ -175,7 +174,7 @@ export const WalkthroughDisplayer = () => {
           ...(debug ? { borderWidth: 1, borderColor: "blue" } : {}),
         },
       });
-      // Rectange on the right side.
+      // Rectangle on the right side.
       arr.push({
         key: `rightRect-${String(i)}`,
         onPress: step.onPressBackdrop,
@@ -188,7 +187,7 @@ export const WalkthroughDisplayer = () => {
           ...(debug ? { borderWidth: 1, borderColor: "green" } : {}),
         },
       });
-      // The bottom rectange up to the next component (or bottom of the screen)
+      // The bottom rectangle up to the next component (or bottom of the screen)
       const nextStep =
         i + 1 < sortedCurrentSteps.length
           ? sortedCurrentSteps[i + 1]
@@ -220,12 +219,6 @@ export const WalkthroughDisplayer = () => {
             left: computedMask.x,
             width: computedMask.width,
             height: computedMask.height,
-            // on Android (not sure if all), if we have an empty View without a background, it will not take the
-            // touchevents. Rather then experimenting with wrapping it with TouchableWithoutFeedback, etc, we simply
-            // give it an *extremely* subtle background that's essentially not noticeable. This helps it steal the touch events.
-            ...(isAndroid
-              ? { backgroundColor: "#FFFFFF01", opacity: 0.1 }
-              : {}),
             // Add a background color so in testing you can see that there is something over it.
             ...(debug
               ? {
@@ -244,34 +237,39 @@ export const WalkthroughDisplayer = () => {
 
   return (
     <>
-      {overlayProps.map(({ key, onPress, style }) => {
-        let content = (
-          <View key={key} style={[style, { position: "absolute" }]} />
-        );
+      {overlayProps.map(({ key, onPress, style }) => (
+        <AnimatedPressable
+          key={key}
+          layout={backdrop.layout}
+          style={[style, { position: "absolute" }]}
+          onPress={
+            onPress
+              ? () => {
+                  onPress(context);
+                }
+              : undefined
+          }
+          entering={backdrop.entering}
+          exiting={backdrop.exiting}
+        />
+      ))}
 
-        if (onPress) {
-          content = (
-            <TouchableWithoutFeedback
-              key={key}
-              onPress={() => {
-                onPress(context);
-              }}
-            >
-              {content}
-            </TouchableWithoutFeedback>
-          );
-        }
-
-        return content;
-      })}
       {currentSteps.map((s) =>
         s.OverlayComponent ? (
-          <s.OverlayComponent
+          <Animated.View
             key={s.overlayComponentKey}
-            step={s}
-            {...s.overlayComponentProps}
-            {...context}
-          />
+            pointerEvents="box-none"
+            style={StyleSheet.absoluteFill}
+            entering={content.entering}
+            layout={content.layout}
+            exiting={content.exiting}
+          >
+            <s.OverlayComponent
+              step={s}
+              {...s.overlayComponentProps}
+              {...context}
+            />
+          </Animated.View>
         ) : null,
       )}
     </>

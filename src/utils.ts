@@ -1,29 +1,34 @@
-import { LayoutAnimation, Platform, UIManager } from "react-native";
+import { Platform } from "react-native";
+import { LinearTransition, FadeIn, FadeOut } from "react-native-reanimated";
+
+import type { WalkthroughLayoutAnimations } from "./types";
 
 export const isAndroid = Platform.OS === "android";
 
-// Convenience method to enable this if it's not already enabled in your app.
-// https://reactnative.dev/docs/layoutanimation.html#easeineaseout
-export const enableExperimentalLayoutAnimation = () => {
-  if (isAndroid && UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-  }
-};
+export const getDefaultAnimations = (
+  transitionDuration: number,
+): WalkthroughLayoutAnimations => ({
+  backdrop: {
+    entering: FadeIn.duration(transitionDuration),
+    exiting: FadeOut.duration(transitionDuration),
+    layout: LinearTransition.duration(transitionDuration),
+  },
+  content: {
+    entering: FadeIn.duration(transitionDuration),
+    exiting: FadeOut.duration(transitionDuration),
+    layout: LinearTransition.duration(transitionDuration),
+  },
+});
 
-export const defaultAnimateNextLayoutChange = (
-  duration: number | undefined,
-) => {
-  LayoutAnimation.configureNext({
-    duration: duration ?? 0,
-    create: {
-      type: LayoutAnimation.Types.easeInEaseOut,
-      property: LayoutAnimation.Properties.opacity,
-    },
-    update: {
-      type: LayoutAnimation.Types.easeInEaseOut,
-      property: LayoutAnimation.Properties.scaleXY,
-    },
-  });
+export const getAnimations = (
+  userAnimations: Partial<WalkthroughLayoutAnimations> | undefined,
+  transitionDuration: number,
+): WalkthroughLayoutAnimations => {
+  const { backdrop, content } = getDefaultAnimations(transitionDuration);
+  return {
+    backdrop: { ...backdrop, ...userAnimations?.backdrop },
+    content: { ...content, ...userAnimations?.content },
+  };
 };
 
 export const defaultUseIsFocused = () => true;

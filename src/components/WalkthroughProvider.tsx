@@ -2,7 +2,6 @@ import sortBy from "lodash/sortBy";
 import {
   forwardRef,
   useCallback,
-  useEffect,
   useImperativeHandle,
   useMemo,
   useState,
@@ -15,11 +14,7 @@ import type {
   IWalkthroughProvider,
   IWalkthroughStep,
 } from "../types";
-import {
-  defaultAnimateNextLayoutChange,
-  defaultUseIsFocused,
-  enableExperimentalLayoutAnimation,
-} from "../utils";
+import { defaultUseIsFocused, getAnimations } from "../utils";
 import { WalkthroughDisplayer } from "./WalkthroughDisplayer";
 
 export const WalkthroughProvider = forwardRef<
@@ -28,30 +23,28 @@ export const WalkthroughProvider = forwardRef<
 >(
   (
     {
+      transitionDuration: initialDuration = 300,
+      animations: userAnimations,
       useIsFocused = defaultUseIsFocused,
-      transitionDuration: _transitionDuration = 300,
-      backdropColor: _backdropColor = "#000000DA",
-      animateNextLayoutChange = defaultAnimateNextLayoutChange,
-      enableExperimentalLayoutAnimation: _enableExperimentalLayoutAnimation,
+      backdropColor: initialBackdropColor = "#000000DA",
       debug = false,
       children,
     },
     ref,
   ) => {
-    const [transitionDuration, setTransitionDuration] =
-      useState<number>(_transitionDuration);
-    const [backdropColor, setBackdropColor] = useState<string>(_backdropColor);
     const [steps, setSteps] = useState<IWalkthroughStep[]>([]);
     const [currentStepNumber, setCurrentStepNumber] = useState<number>();
 
+    const [backdropColor, setBackdropColor] = useState(initialBackdropColor);
+    const [transitionDuration, setTransitionDuration] =
+      useState(initialDuration);
+    const animations = useMemo(
+      () => getAnimations(userAnimations, transitionDuration),
+      [userAnimations, transitionDuration],
+    );
+
     const isWalkthroughOn = typeof currentStepNumber === "number";
     const isReady = useMemo(() => steps.some((s) => s.number === 1), [steps]);
-
-    useEffect(() => {
-      if (_enableExperimentalLayoutAnimation === true) {
-        enableExperimentalLayoutAnimation();
-      }
-    }, [_enableExperimentalLayoutAnimation]);
 
     const currentSteps = useMemo(
       () =>
@@ -100,8 +93,6 @@ export const WalkthroughProvider = forwardRef<
       setCurrentStepNumber((x) => (x === 0 || x === undefined ? 0 : x - 1));
     }, []);
 
-    const goTo: IWalkthroughFunctions["goTo"] = setCurrentStepNumber;
-
     const start = useCallback<IWalkthroughFunctions["start"]>(() => {
       if (steps.length) {
         const step = steps[0]; // already ordered so take the first one
@@ -121,21 +112,11 @@ export const WalkthroughProvider = forwardRef<
         stop,
         next,
         previous,
-        goTo,
+        goTo: setCurrentStepNumber,
         setTransitionDuration,
         setBackdropColor,
       }),
-      [
-        registerStep,
-        updateStep,
-        start,
-        stop,
-        next,
-        previous,
-        goTo,
-        setTransitionDuration,
-        setBackdropColor,
-      ],
+      [registerStep, updateStep, start, stop, next, previous],
     );
 
     useImperativeHandle(ref, () => functions);
@@ -148,11 +129,11 @@ export const WalkthroughProvider = forwardRef<
         currentSteps,
         allSteps: steps, // want to be called "allSteps" so doesn't sound too close to "step".
         debug,
-        animateNextLayoutChange,
         transitionDuration,
         backdropColor,
         useIsFocused,
         isReady,
+        animations,
       }),
       [
         functions,
@@ -161,11 +142,11 @@ export const WalkthroughProvider = forwardRef<
         currentSteps,
         steps,
         debug,
-        animateNextLayoutChange,
         transitionDuration,
         backdropColor,
         useIsFocused,
         isReady,
+        animations,
       ],
     );
 

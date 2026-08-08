@@ -10,11 +10,10 @@ import type {
   IWalkthroughProvider,
   IWalkthroughStep,
   IWalkthroughStepMask,
+  WalkthroughLayoutAnimations,
 } from "./types";
-import { enableExperimentalLayoutAnimation } from "./utils";
 
 export {
-  enableExperimentalLayoutAnimation,
   WalkthroughProvider,
   useWalkthrough,
   useWalkthroughStep,
@@ -26,4 +25,5 @@ export {
   type IWalkthroughProvider,
   type IUseWalkthroughStep,
   type IWalkthroughCallback,
+  type WalkthroughLayoutAnimations,
 };
