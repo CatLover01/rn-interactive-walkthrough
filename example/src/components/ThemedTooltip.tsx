@@ -19,11 +19,7 @@ export function ThemedTooltip({
   step,
   title,
   text,
-  next,
-  previous,
-  stop,
-  currentStepNumber,
-  steps,
+  ctx: { next, previous, stop, currentStepNumber, steps },
 }: ThemedTooltipProps) {
   const mask = step.computedMask ?? step.mask;
   const { top, arrow, arrowLeft } = useTooltipPlacement(mask);

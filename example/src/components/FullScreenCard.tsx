@@ -17,8 +17,7 @@ export function FullScreenCard({
   action = "Next",
   mode = "next",
   dark = false,
-  next,
-  stop,
+  ctx: { next, stop },
 }: FullScreenCardProps) {
   return (
     <View style={styles.wrap} pointerEvents="box-none">

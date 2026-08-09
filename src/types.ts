@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode } from "react";
+import type { ComponentType } from "react";
 import type { ViewProps } from "react-native";
 import type {
   AnimatedProps,
@@ -16,7 +16,20 @@ export interface WalkthroughStepMask {
   allowInteraction?: boolean;
 }
 
-export interface WalkthroughFunctions {
+export interface WalkthroughContextType<
+  P extends ContentComponentProps = ContentComponentProps,
+> {
+  currentStep: WalkthroughStep | undefined;
+  steps: WalkthroughStep[];
+  backdropColor: string;
+  animationDuration: number;
+  debug: boolean;
+  isActive: boolean;
+  isReady: boolean;
+  currentStepNumber: number | undefined;
+  animations: WalkthroughLayoutAnimations;
+  contentComponent?: ComponentType<P>;
+  useIsFocused: () => boolean;
   registerStep: (step: WalkthroughStep) => void;
   updateStep: (
     identifier: WalkthroughStep["identifier"],
@@ -27,24 +40,6 @@ export interface WalkthroughFunctions {
   next: () => void;
   goTo: (number: number) => void;
   previous: () => void;
-  setTransitionDuration: (duration: number) => void;
-  setBackdropColor: (color: string) => void;
-}
-
-export interface WalkthroughContextType<
-  P extends ContentComponentProps = ContentComponentProps,
-> extends WalkthroughFunctions {
-  currentStep: WalkthroughStep | undefined;
-  steps: WalkthroughStep[];
-  backdropColor: string;
-  transitionDuration: number;
-  debug: boolean;
-  isActive: boolean;
-  isReady: boolean;
-  currentStepNumber: number | undefined;
-  animations: WalkthroughLayoutAnimations;
-  contentComponent?: ComponentType<P>;
-  useIsFocused: () => boolean;
 }
 
 export interface LayoutAdjustments {
@@ -64,7 +59,8 @@ export interface LayoutAdjustments {
   addPadding?: number;
 }
 
-export interface ContentComponentProps extends WalkthroughContextType {
+export interface ContentComponentProps {
+  ctx: WalkthroughContextType;
   step: WalkthroughStep;
 }
 
@@ -112,17 +108,11 @@ export type PartialWalkthroughLayoutAnimations = {
 };
 
 /** Props for the backdrop mask. */
-export interface WalkthroughMaskProps {
-  mask: WalkthroughStepMask;
-  onPressBackdrop?: OnPressWithContextType;
-  onPressMask?: OnPressWithContextType;
+export interface WalkthroughMaskProps
+  extends
+    Pick<WalkthroughStep, "mask" | "onPressBackdrop" | "onPressMask">,
+    Partial<WalkthroughBackdropAnimations> {
   context: WalkthroughContextType;
-  backdropColor: string;
-  easing: WalkthroughEasing;
-  transitionDuration: number;
-  debug: boolean;
-  entering?: ComponentLayoutProps["entering"];
-  exiting?: ComponentLayoutProps["exiting"];
 }
 
 export interface WalkthroughStep<
@@ -160,18 +150,17 @@ export type UseWalkthroughStep<P extends ContentComponentProps> = PartialBy<
   "identifier" | "contentComponentKey" | "measureMask"
 >;
 
-export interface WalkthroughProviderProps<
+export interface WalkthroughOptions<
   P extends ContentComponentProps,
 > extends Partial<
   Pick<
     WalkthroughContextType<P>,
     | "useIsFocused"
     | "contentComponent"
-    | "transitionDuration"
+    | "animationDuration"
     | "backdropColor"
     | "debug"
   >
 > {
   animations?: PartialWalkthroughLayoutAnimations;
-  children?: ReactNode;
 }

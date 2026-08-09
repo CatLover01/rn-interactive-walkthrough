@@ -1,7 +1,6 @@
 import { FullScreenDemoScreen } from "./demos/FullScreenDemo";
 import { InteractiveTargetsScreen } from "./demos/InteractiveTargetsDemo";
 import { OverlayVarietyScreen } from "./demos/OverlayVarietyDemo";
-import { ProgrammaticScreen } from "./demos/ProgrammaticDemo";
 import { SmartTooltipsScreen } from "./demos/SmartTooltipsDemo";
 import { TapToAdvanceScreen } from "./demos/TapToAdvanceDemo";
 import { ThemedScreen } from "./demos/ThemedDemo";
@@ -49,14 +48,6 @@ export const demos: DemoDescriptor[] = [
     preview: "variety",
     screenTitle: "Overlay styles",
     screen: OverlayVarietyScreen,
-  },
-  {
-    id: "programmatic",
-    title: "Programmatic control",
-    description: "Jump between steps and tweak the look from anywhere.",
-    preview: "programmatic",
-    screenTitle: "Programmatic control",
-    screen: ProgrammaticScreen,
   },
   {
     id: "themed",

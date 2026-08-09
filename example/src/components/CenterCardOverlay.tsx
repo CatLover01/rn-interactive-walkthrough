@@ -12,12 +12,8 @@ export type CenterCardOverlayProps = ContentComponentProps & {
 export function CenterCardOverlay({
   title,
   text,
-  next,
-  previous,
-  stop,
-  currentStepNumber,
-  steps,
   step,
+  ctx: { next, previous, stop, currentStepNumber, steps },
 }: CenterCardOverlayProps) {
   const isFirst = steps[0]?.number === step.number;
   const isLast = steps[steps.length - 1]?.number === step.number;

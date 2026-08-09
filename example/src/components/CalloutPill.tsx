@@ -15,9 +15,7 @@ export type CalloutPillProps = ContentComponentProps & {
 export function CalloutPill({
   step,
   text,
-  next,
-  stop,
-  steps,
+  ctx: { next, stop, steps },
 }: CalloutPillProps) {
   const { width } = useSafeAreaFrame();
   const mask = step.computedMask ?? step.mask;

@@ -15,28 +15,28 @@ import type {
 } from "./types";
 
 export const getDefaultAnimations = (
-  transitionDuration: number,
+  duration: number,
 ): WalkthroughLayoutAnimations => ({
   backdrop: {
-    entering: FadeIn.duration(transitionDuration),
-    exiting: FadeOut.duration(transitionDuration),
+    entering: FadeIn.duration(duration),
+    exiting: FadeOut.duration(duration),
     easing: Easing.elastic(0.7),
   },
   content: {
-    entering: FadeIn.duration(transitionDuration),
-    exiting: FadeOut.duration(transitionDuration),
-    layout: LinearTransition.duration(transitionDuration),
+    entering: FadeIn.duration(duration),
+    exiting: FadeOut.duration(duration),
+    layout: LinearTransition.duration(duration),
   },
 });
 
-export const getAnimations = (
-  userAnimations: PartialWalkthroughLayoutAnimations | undefined,
-  transitionDuration: number,
+export const getMergedAnimations = (
+  animations: PartialWalkthroughLayoutAnimations | undefined,
+  duration: number,
 ): WalkthroughLayoutAnimations => {
-  const { backdrop, content } = getDefaultAnimations(transitionDuration);
+  const { backdrop, content } = getDefaultAnimations(duration);
   return {
-    backdrop: { ...backdrop, ...userAnimations?.backdrop },
-    content: { ...content, ...userAnimations?.content },
+    backdrop: { ...backdrop, ...animations?.backdrop },
+    content: { ...content, ...animations?.content },
   };
 };
 

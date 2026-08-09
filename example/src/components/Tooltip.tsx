@@ -19,11 +19,7 @@ export function Tooltip({
   step,
   title,
   text,
-  next,
-  previous,
-  stop,
-  currentStepNumber,
-  steps,
+  ctx: { next, previous, stop, currentStepNumber, steps },
 }: TooltipProps) {
   const mask = step.computedMask ?? step.mask;
   const { top, arrow, arrowLeft } = useTooltipPlacement(mask);

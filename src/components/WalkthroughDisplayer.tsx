@@ -70,12 +70,7 @@ export const WalkthroughDisplayer = () => {
     onPressBackdrop: currentStep.onPressBackdrop,
     onPressMask: currentStep.onPressMask,
     context,
-    backdropColor,
-    easing: backdrop.easing,
-    transitionDuration: context.transitionDuration,
-    debug,
-    entering: backdrop.entering,
-    exiting: backdrop.exiting,
+    ...backdrop,
   };
 
   const Component = currentStep.contentComponent ?? contentComponent;
@@ -114,9 +109,9 @@ export const WalkthroughDisplayer = () => {
           exiting={content.exiting}
         >
           <Component
-            step={currentStep}
             {...currentStep.contentComponentProps}
-            {...context}
+            step={currentStep}
+            ctx={context}
           />
         </Animated.View>
       )}

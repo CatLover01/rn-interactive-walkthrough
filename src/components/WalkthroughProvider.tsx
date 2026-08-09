@@ -1,45 +1,31 @@
 import sortBy from "lodash/sortBy";
-import {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useMemo,
-  useState,
-  type Ref,
-} from "react";
+import { useCallback, useMemo, useState, type PropsWithChildren } from "react";
 
 import { WalkthroughContext } from "../context";
 import type {
   ContentComponentProps,
   WalkthroughContextType,
-  WalkthroughFunctions,
-  WalkthroughProviderProps,
+  WalkthroughOptions,
   WalkthroughStep,
 } from "../types";
-import { defaultUseIsFocused, getAnimations } from "../utils";
+import { defaultUseIsFocused, getMergedAnimations } from "../utils";
 import { WalkthroughDisplayer } from "./WalkthroughDisplayer";
 
-const WalkthroughProviderComponent = <P extends ContentComponentProps>(
-  props: WalkthroughProviderProps<P>,
-  ref: Ref<WalkthroughFunctions>,
-) => {
-  const {
-    contentComponent,
-    transitionDuration: initialDuration = 300,
-    animations: userAnimations,
-    useIsFocused = defaultUseIsFocused,
-    backdropColor: initialBackdropColor = "#000000DA",
-    debug = false,
-    children,
-  } = props;
+export const WalkthroughProvider = <P extends ContentComponentProps>({
+  contentComponent,
+  animationDuration = 300,
+  animations: initialAnimations,
+  useIsFocused = defaultUseIsFocused,
+  backdropColor = "#000000DA",
+  debug = false,
+  children,
+}: PropsWithChildren<WalkthroughOptions<P>>) => {
   const [steps, setSteps] = useState<WalkthroughStep[]>([]);
   const [currentStepNumber, setCurrentStepNumber] = useState<number>();
 
-  const [backdropColor, setBackdropColor] = useState(initialBackdropColor);
-  const [transitionDuration, setTransitionDuration] = useState(initialDuration);
   const animations = useMemo(
-    () => getAnimations(userAnimations, transitionDuration),
-    [userAnimations, transitionDuration],
+    () => getMergedAnimations(initialAnimations, animationDuration),
+    [initialAnimations, animationDuration],
   );
 
   const isActive = typeof currentStepNumber === "number";
@@ -51,7 +37,7 @@ const WalkthroughProviderComponent = <P extends ContentComponentProps>(
     [isActive, currentStepNumber, steps],
   );
 
-  const registerStep = useCallback<WalkthroughFunctions["registerStep"]>(
+  const registerStep = useCallback<WalkthroughContextType["registerStep"]>(
     (step) => {
       setSteps((steps) =>
         sortBy(
@@ -63,7 +49,7 @@ const WalkthroughProviderComponent = <P extends ContentComponentProps>(
     [],
   );
 
-  const updateStep = useCallback<WalkthroughFunctions["updateStep"]>(
+  const updateStep = useCallback<WalkthroughContextType["updateStep"]>(
     (identifier, step) => {
       setSteps((steps) => {
         const oldStep = steps.find((s) => s.identifier === identifier);
@@ -82,27 +68,38 @@ const WalkthroughProviderComponent = <P extends ContentComponentProps>(
     [],
   );
 
-  const next = useCallback<WalkthroughFunctions["next"]>(() => {
+  const next = useCallback<WalkthroughContextType["next"]>(() => {
     setCurrentStepNumber((x) => (x ?? 0) + 1);
   }, []);
 
-  const previous = useCallback<WalkthroughFunctions["previous"]>(() => {
+  const previous = useCallback<WalkthroughContextType["previous"]>(() => {
     setCurrentStepNumber((x) => (x === 0 || x === undefined ? 0 : x - 1));
   }, []);
 
-  const start = useCallback<WalkthroughFunctions["start"]>(() => {
+  const start = useCallback<WalkthroughContextType["start"]>(() => {
     if (steps.length) {
       const step = steps[0]; // already ordered so take the first one
       setCurrentStepNumber(step.number);
     }
   }, [steps]);
 
-  const stop = useCallback<WalkthroughFunctions["stop"]>(() => {
+  const stop = useCallback<WalkthroughContextType["stop"]>(() => {
     setCurrentStepNumber(undefined);
   }, []);
 
-  const functions = useMemo<WalkthroughFunctions>(
+  const contextValue = useMemo<WalkthroughContextType<P>>(
     () => ({
+      isActive,
+      currentStepNumber,
+      currentStep,
+      steps,
+      debug,
+      animationDuration,
+      backdropColor,
+      useIsFocused,
+      isReady,
+      animations,
+      contentComponent,
       registerStep,
       updateStep,
       start,
@@ -110,42 +107,25 @@ const WalkthroughProviderComponent = <P extends ContentComponentProps>(
       next,
       previous,
       goTo: setCurrentStepNumber,
-      setTransitionDuration,
-      setBackdropColor,
-    }),
-    [registerStep, updateStep, start, stop, next, previous],
-  );
-
-  useImperativeHandle(ref, () => functions);
-
-  const contextValue = useMemo<WalkthroughContextType<P>>(
-    () => ({
-      ...functions,
-      isActive,
-      currentStepNumber,
-      currentStep,
-      steps,
-      debug,
-      transitionDuration,
-      backdropColor,
-      useIsFocused,
-      isReady,
-      animations,
-      contentComponent,
     }),
     [
-      functions,
       isActive,
       currentStepNumber,
       currentStep,
       steps,
       debug,
-      transitionDuration,
+      animationDuration,
       backdropColor,
       useIsFocused,
       isReady,
       animations,
       contentComponent,
+      registerStep,
+      updateStep,
+      start,
+      stop,
+      next,
+      previous,
     ],
   );
 
@@ -159,15 +139,3 @@ const WalkthroughProviderComponent = <P extends ContentComponentProps>(
     </WalkthroughContext.Provider>
   );
 };
-
-const WalkthroughProviderWithRef = forwardRef(WalkthroughProviderComponent);
-WalkthroughProviderWithRef.displayName = "WalkthroughProvider";
-
-// forwardRef cannot express a generic component, so the render function is
-// typed generically and the result narrowed to a generic call signature.
-// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-export const WalkthroughProvider = WalkthroughProviderWithRef as <
-  P extends ContentComponentProps,
->(
-  props: WalkthroughProviderProps<P> & { ref?: Ref<WalkthroughFunctions> },
-) => ReturnType<typeof WalkthroughProviderComponent>;

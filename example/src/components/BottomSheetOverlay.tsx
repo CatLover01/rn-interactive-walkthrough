@@ -13,12 +13,8 @@ export type BottomSheetOverlayProps = ContentComponentProps & {
 export function BottomSheetOverlay({
   title,
   text,
-  next,
-  previous,
-  stop,
-  currentStepNumber,
-  steps,
   step,
+  ctx: { next, previous, stop, currentStepNumber, steps },
 }: BottomSheetOverlayProps) {
   const insets = useSafeAreaInsets();
   const isFirst = steps[0]?.number === step.number;
