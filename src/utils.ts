@@ -1,6 +1,18 @@
-import { LinearTransition, FadeIn, FadeOut } from "react-native-reanimated";
+import {
+  Easing,
+  FadeIn,
+  FadeOut,
+  LinearTransition,
+} from "react-native-reanimated";
 
-import type { WalkthroughLayoutAnimations } from "./types";
+import type {
+  OnPressWithContextType,
+  PartialWalkthroughLayoutAnimations,
+  WalkthroughContextType,
+  WalkthroughLayoutAnimations,
+  WalkthroughMaskCoordinates,
+  WalkthroughStepMask,
+} from "./types";
 
 export const getDefaultAnimations = (
   transitionDuration: number,
@@ -8,7 +20,7 @@ export const getDefaultAnimations = (
   backdrop: {
     entering: FadeIn.duration(transitionDuration),
     exiting: FadeOut.duration(transitionDuration),
-    layout: LinearTransition.duration(transitionDuration),
+    easing: Easing.elastic(0.7),
   },
   content: {
     entering: FadeIn.duration(transitionDuration),
@@ -18,7 +30,7 @@ export const getDefaultAnimations = (
 });
 
 export const getAnimations = (
-  userAnimations: Partial<WalkthroughLayoutAnimations> | undefined,
+  userAnimations: PartialWalkthroughLayoutAnimations | undefined,
   transitionDuration: number,
 ): WalkthroughLayoutAnimations => {
   const { backdrop, content } = getDefaultAnimations(transitionDuration);
@@ -29,3 +41,22 @@ export const getAnimations = (
 };
 
 export const defaultUseIsFocused = () => true;
+
+export const toCoordinates = (
+  mask: WalkthroughStepMask,
+): WalkthroughMaskCoordinates => ({
+  x: mask.x,
+  y: mask.y,
+  width: mask.width,
+  height: mask.height,
+});
+
+export const handlePress = (
+  handler: OnPressWithContextType | undefined,
+  context: WalkthroughContextType,
+) =>
+  handler
+    ? () => {
+        handler(context);
+      }
+    : undefined;

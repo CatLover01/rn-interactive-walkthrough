@@ -7,10 +7,10 @@ import type {
   WalkthroughCallback,
   WalkthroughContextType,
   WalkthroughFunctions,
+  WalkthroughLayoutAnimations,
   WalkthroughProviderProps,
   WalkthroughStep,
   WalkthroughStepMask,
-  WalkthroughLayoutAnimations,
 } from "./types";
 
 export {

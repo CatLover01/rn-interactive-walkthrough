@@ -1,23 +1,18 @@
-import sortBy from "lodash/sortBy";
-import { useCallback, useLayoutEffect, useMemo, useRef } from "react";
-import { StyleSheet, type ViewStyle, Pressable } from "react-native";
+import { useCallback, useLayoutEffect, useRef } from "react";
+import { StyleSheet, Pressable } from "react-native";
 import Animated from "react-native-reanimated";
 
 import { useWalkthrough } from "../context";
-import type { WalkthroughStep, OnPressWithContextType } from "../types";
-
-interface IOverlayProps {
-  key: string;
-  style: ViewStyle;
-  onPress?: OnPressWithContextType;
-}
+import type { WalkthroughMaskProps, WalkthroughStep } from "../types";
+import { handlePress } from "../utils";
+import { ViewMask } from "./ViewMask";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export const WalkthroughDisplayer = () => {
   const context = useWalkthrough();
   const {
-    currentSteps,
+    currentStep,
     currentStepNumber,
     backdropColor,
     debug,
@@ -34,201 +29,97 @@ export const WalkthroughDisplayer = () => {
     [debug],
   );
 
-  const lastStepsRef = useRef<WalkthroughStep[]>([]);
+  const prevStepRef = useRef<WalkthroughStep | undefined>(undefined);
 
-  const currentStepsKey = currentSteps.map((s) => s.identifier).join("|");
+  const currentStepKey = currentStep?.identifier;
 
   useLayoutEffect(
     () => {
       const time = new Date();
+      const prevStep = prevStepRef.current;
       // Only mark finish if we are advancing to the next step (going backwards doesn't count as marking off this step).
       // Or if we are at the end and currentStepNumber is undefined
       if (
-        lastStepsRef.current.length &&
+        prevStep &&
         (typeof currentStepNumber !== "number" ||
-          lastStepsRef.current[0].number < currentStepNumber)
+          prevStep.number < currentStepNumber)
       ) {
-        logStep(
-          lastStepsRef.current[0].number,
-          `Finished at ${String(time.getTime())}`,
-        );
-        lastStepsRef.current.forEach((step) => {
-          step.onFinish?.({ time });
-        });
+        logStep(prevStep.number, `Finished at ${String(time.getTime())}`);
+        prevStep.onFinish?.({ time });
       }
 
-      if (currentSteps.length) {
+      if (currentStep) {
         logStep(currentStepNumber ?? 0, `Started at ${String(time.getTime())}`);
-        currentSteps.forEach((step) => {
-          step.onStart?.({ time });
-          step.measureMask();
-        });
+        currentStep.onStart?.({ time });
+        currentStep.measureMask();
       }
 
-      lastStepsRef.current = currentSteps;
+      prevStepRef.current = currentStep;
     },
-    // Need to do it based on currentSteps, since that changes when screens mount and things get added to the steps.
+    // Need to do it based on the active step, since that changes when screens mount and things get added to the steps.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentStepsKey],
+    [currentStepKey],
   );
 
-  const overlayProps = useMemo(() => {
-    // A full screen step gets a single full screen rect with a distinct key,
-    // so entering it fades the previous mask out and fades the dark backdrop in
-    // instead of layout-animating the hole off the bottom of the screen.
-    const fullScreenStep = currentSteps.find(
-      (step) => step.fullScreen === true,
-    );
-    if (fullScreenStep) {
-      return [
-        {
-          key: "fullscreenRect",
-          onPress: fullScreenStep.onPressBackdrop,
-          style: {
-            backgroundColor: backdropColor,
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            ...(debug ? { borderWidth: 1, borderColor: "red" } : {}),
-          },
-        },
-      ];
-    }
+  if (!currentStep) {
+    return null;
+  }
 
-    // We build the views from top to bottom
-    const sortedCurrentSteps: WalkthroughStep[] = sortBy(
-      currentSteps,
-      (step) => step.mask.y,
-    );
-    const arr: IOverlayProps[] = [];
-    let markerY = 0;
+  const maskProps: WalkthroughMaskProps = {
+    mask: currentStep.computedMask ?? currentStep.mask,
+    onPressBackdrop: currentStep.onPressBackdrop,
+    onPressMask: currentStep.onPressMask,
+    context,
+    backdropColor,
+    easing: backdrop.easing,
+    transitionDuration: context.transitionDuration,
+    debug,
+    entering: backdrop.entering,
+    exiting: backdrop.exiting,
+  };
 
-    sortedCurrentSteps.forEach((step, i) => {
-      const computedMask = step.computedMask ?? step.mask;
-
-      // Rectangle on the top.
-      arr.push({
-        key: `topRect-${String(i)}`,
-        onPress: step.onPressBackdrop,
-        style: {
-          backgroundColor: backdropColor,
-          top: markerY,
-          left: 0,
-          right: 0,
-          height: computedMask.y - markerY,
-          ...(debug ? { borderWidth: 1, borderColor: "red" } : {}),
-        },
-      });
-      // Rectangle on the left side.
-      arr.push({
-        key: `leftRect-${String(i)}`,
-        onPress: step.onPressBackdrop,
-        style: {
-          backgroundColor: backdropColor,
-          top: computedMask.y,
-          left: 0,
-          width: computedMask.x,
-          height: computedMask.height,
-          ...(debug ? { borderWidth: 1, borderColor: "blue" } : {}),
-        },
-      });
-      // Rectangle on the right side.
-      arr.push({
-        key: `rightRect-${String(i)}`,
-        onPress: step.onPressBackdrop,
-        style: {
-          backgroundColor: backdropColor,
-          top: computedMask.y,
-          left: computedMask.x + computedMask.width,
-          right: 0,
-          height: computedMask.height,
-          ...(debug ? { borderWidth: 1, borderColor: "green" } : {}),
-        },
-      });
-      // The bottom rectangle up to the next component (or bottom of the screen)
-      const nextStep =
-        i + 1 < sortedCurrentSteps.length
-          ? sortedCurrentSteps[i + 1]
-          : undefined;
-      if (!nextStep) {
-        const top = computedMask.y + computedMask.height;
-        arr.push({
-          // We only have one of these (at the end) so want to give this the same key so it can be reused in the animation.
-          key: `bottomRect`,
-          onPress: step.onPressBackdrop,
-          style: {
-            backgroundColor: backdropColor,
-            top,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            ...(debug ? { borderWidth: 1, borderColor: "orange" } : {}),
-          },
-        });
-      }
-
-      // If we aren't allowing interaction on the highlighted region, then just put a view over that as well so its not pressable.
-      if (computedMask.allowInteraction !== true) {
-        arr.push({
-          key: `coverRect-${String(i)}`,
-          onPress: step.onPressMask,
-          style: {
-            top: computedMask.y,
-            left: computedMask.x,
-            width: computedMask.width,
-            height: computedMask.height,
-            // Add a background color so in testing you can see that there is something over it.
-            ...(debug
-              ? {
-                  borderWidth: 1,
-                  borderColor: "forestgreen",
-                  backgroundColor: "#0000FF33",
-                }
-              : {}),
-          },
-        });
-      }
-      markerY = computedMask.y + computedMask.height;
-    });
-    return arr;
-  }, [currentSteps, backdropColor, debug]);
+  const Component = currentStep.contentComponent ?? contentComponent;
 
   return (
     <>
-      {overlayProps.map(({ key, onPress, style }) => (
+      {currentStep.fullScreen === true ? (
         <AnimatedPressable
-          key={key}
-          layout={backdrop.layout}
-          style={[style, { position: "absolute" }]}
-          onPress={
-            onPress
-              ? () => {
-                  onPress(context);
-                }
-              : undefined
-          }
+          key="fullscreenRect"
+          style={[
+            {
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: backdropColor,
+            },
+            ...(debug ? [{ borderWidth: 1, borderColor: "red" }] : []),
+          ]}
+          onPress={handlePress(currentStep.onPressBackdrop, context)}
           entering={backdrop.entering}
           exiting={backdrop.exiting}
         />
-      ))}
+      ) : (
+        <ViewMask {...maskProps} />
+      )}
 
-      {currentSteps.map((s) => {
-        const Component = s.contentComponent ?? contentComponent;
-        if (!Component) return null;
-        return (
-          <Animated.View
-            key={s.contentComponentKey}
-            pointerEvents="box-none"
-            style={StyleSheet.absoluteFill}
-            entering={content.entering}
-            layout={content.layout}
-            exiting={content.exiting}
-          >
-            <Component step={s} {...s.contentComponentProps} {...context} />
-          </Animated.View>
-        );
-      })}
+      {Component && (
+        <Animated.View
+          key={currentStep.contentComponentKey}
+          pointerEvents="box-none"
+          style={StyleSheet.absoluteFill}
+          entering={content.entering}
+          layout={content.layout}
+          exiting={content.exiting}
+        >
+          <Component
+            step={currentStep}
+            {...currentStep.contentComponentProps}
+            {...context}
+          />
+        </Animated.View>
+      )}
     </>
   );
 };

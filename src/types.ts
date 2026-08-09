@@ -1,6 +1,10 @@
 import type { ComponentType, ReactNode } from "react";
 import type { ViewProps } from "react-native";
-import type { AnimatedProps } from "react-native-reanimated";
+import type {
+  AnimatedProps,
+  EasingFunction,
+  EasingFunctionFactory,
+} from "react-native-reanimated";
 
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
@@ -30,7 +34,7 @@ export interface WalkthroughFunctions {
 export interface WalkthroughContextType<
   P extends ContentComponentProps = ContentComponentProps,
 > extends WalkthroughFunctions {
-  currentSteps: WalkthroughStep[];
+  currentStep: WalkthroughStep | undefined;
   steps: WalkthroughStep[];
   backdropColor: string;
   transitionDuration: number;
@@ -75,11 +79,50 @@ export type ComponentLayoutProps = Pick<
   "entering" | "exiting" | "layout"
 >;
 
+/** Easing curve applied to the mask transition between steps. */
+export type WalkthroughEasing = EasingFunction | EasingFunctionFactory;
+
+/** Position of a mask in screen coordinates. */
+export type WalkthroughMaskCoordinates = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+export interface WalkthroughBackdropAnimations {
+  /** Enter/exits for the backdrop pressables */
+  entering: ComponentLayoutProps["entering"];
+  exiting: ComponentLayoutProps["exiting"];
+  /** Easing curve for the mask transition between steps */
+  easing: WalkthroughEasing;
+}
+
 export interface WalkthroughLayoutAnimations {
-  /** Layout animations for the backdrop/pressable */
-  backdrop: ComponentLayoutProps;
+  /** Animations for the backdrop/pressable */
+  backdrop: WalkthroughBackdropAnimations;
   /** Layout animations for the step content container */
   content: ComponentLayoutProps;
+}
+
+/** The `animations` prop accepts partial overrides of any subset. */
+export type PartialWalkthroughLayoutAnimations = {
+  backdrop?: Partial<WalkthroughBackdropAnimations>;
+  content?: Partial<ComponentLayoutProps>;
+};
+
+/** Props for the backdrop mask. */
+export interface WalkthroughMaskProps {
+  mask: WalkthroughStepMask;
+  onPressBackdrop?: OnPressWithContextType;
+  onPressMask?: OnPressWithContextType;
+  context: WalkthroughContextType;
+  backdropColor: string;
+  easing: WalkthroughEasing;
+  transitionDuration: number;
+  debug: boolean;
+  entering?: ComponentLayoutProps["entering"];
+  exiting?: ComponentLayoutProps["exiting"];
 }
 
 export interface WalkthroughStep<
@@ -127,8 +170,8 @@ export interface WalkthroughProviderProps<
     | "transitionDuration"
     | "backdropColor"
     | "debug"
-    | "animations"
   >
 > {
+  animations?: PartialWalkthroughLayoutAnimations;
   children?: ReactNode;
 }

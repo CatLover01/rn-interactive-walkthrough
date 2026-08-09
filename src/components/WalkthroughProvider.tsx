@@ -45,8 +45,9 @@ const WalkthroughProviderComponent = <P extends ContentComponentProps>(
   const isActive = typeof currentStepNumber === "number";
   const isReady = useMemo(() => steps.some((s) => s.number === 1), [steps]);
 
-  const currentSteps = useMemo(
-    () => (isActive ? steps.filter((s) => s.number === currentStepNumber) : []),
+  const currentStep = useMemo(
+    () =>
+      isActive ? steps.find((s) => s.number === currentStepNumber) : undefined,
     [isActive, currentStepNumber, steps],
   );
 
@@ -122,7 +123,7 @@ const WalkthroughProviderComponent = <P extends ContentComponentProps>(
       ...functions,
       isActive,
       currentStepNumber,
-      currentSteps,
+      currentStep,
       steps,
       debug,
       transitionDuration,
@@ -136,7 +137,7 @@ const WalkthroughProviderComponent = <P extends ContentComponentProps>(
       functions,
       isActive,
       currentStepNumber,
-      currentSteps,
+      currentStep,
       steps,
       debug,
       transitionDuration,
@@ -154,8 +155,7 @@ const WalkthroughProviderComponent = <P extends ContentComponentProps>(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
     <WalkthroughContext.Provider value={contextValue as WalkthroughContextType}>
       {children}
-      {/*@aryk - If we have no steps registered, don't mount the displayer */}
-      {Boolean(steps.length) && <WalkthroughDisplayer />}
+      <WalkthroughDisplayer />
     </WalkthroughContext.Provider>
   );
 };
