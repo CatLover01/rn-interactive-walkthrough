@@ -15,11 +15,10 @@ export type CalloutPillProps = ContentComponentProps & {
 export function CalloutPill({
   step,
   text,
-  ctx: { next, stop, steps },
+  ctx: { next, stop, isLastStep },
 }: CalloutPillProps) {
   const { width } = useSafeAreaFrame();
   const mask = step.computedMask ?? step.mask;
-  const isLast = steps[steps.length - 1]?.number === step.number;
 
   const fitsRight =
     mask.x + mask.width + GAP + PILL_WIDTH < width - TOOLTIP_MARGIN;
@@ -33,10 +32,10 @@ export function CalloutPill({
       <View style={styles.actions}>
         <Pressable
           accessibilityRole="button"
-          onPress={isLast ? stop : next}
+          onPress={isLastStep ? stop : next}
           style={({ pressed }) => [styles.next, pressed && styles.nextPressed]}
         >
-          <Text style={styles.nextText}>{isLast ? "Done" : "Next"}</Text>
+          <Text style={styles.nextText}>{isLastStep ? "Done" : "Next"}</Text>
         </Pressable>
       </View>
     </View>

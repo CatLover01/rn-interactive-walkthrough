@@ -37,6 +37,16 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
     [isActive, currentStepNumber, steps],
   );
 
+  const isFirstStep = useMemo(
+    () => currentStepNumber === 1,
+    [currentStepNumber],
+  );
+
+  const isLastStep = useMemo(
+    () => currentStepNumber === steps.length,
+    [currentStepNumber, steps],
+  );
+
   const registerStep = useCallback<WalkthroughContextType["registerStep"]>(
     (step) => {
       setSteps((steps) =>
@@ -89,15 +99,16 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
 
   const contextValue = useMemo<WalkthroughContextType<P>>(
     () => ({
-      isActive,
-      currentStepNumber,
       currentStep,
+      currentStepNumber,
       steps,
-      debug,
-      animationDuration,
-      backdropColor,
-      useIsFocused,
+      isFirstStep,
+      isLastStep,
       isReady,
+      isActive,
+      debug,
+      backdropColor,
+      animationDuration,
       animations,
       contentComponent,
       registerStep,
@@ -107,17 +118,19 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
       next,
       previous,
       goTo: setCurrentStepNumber,
+      useIsFocused,
     }),
     [
-      isActive,
-      currentStepNumber,
       currentStep,
+      currentStepNumber,
       steps,
-      debug,
-      animationDuration,
-      backdropColor,
-      useIsFocused,
+      isFirstStep,
+      isLastStep,
       isReady,
+      isActive,
+      debug,
+      backdropColor,
+      animationDuration,
       animations,
       contentComponent,
       registerStep,
@@ -126,6 +139,7 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
       stop,
       next,
       previous,
+      useIsFocused,
     ],
   );
 

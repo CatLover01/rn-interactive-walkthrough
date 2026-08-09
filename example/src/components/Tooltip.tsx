@@ -19,12 +19,18 @@ export function Tooltip({
   step,
   title,
   text,
-  ctx: { next, previous, stop, currentStepNumber, steps },
+  ctx: {
+    next,
+    previous,
+    stop,
+    currentStepNumber,
+    steps,
+    isFirstStep,
+    isLastStep,
+  },
 }: TooltipProps) {
   const mask = step.computedMask ?? step.mask;
   const { top, arrow, arrowLeft } = useTooltipPlacement(mask);
-  const isFirst = steps[0]?.number === step.number;
-  const isLast = steps[steps.length - 1]?.number === step.number;
   const stepNumber = currentStepNumber ?? step.number;
 
   return (
@@ -53,8 +59,8 @@ export function Tooltip({
         next={next}
         previous={previous}
         stop={stop}
-        isFirst={isFirst}
-        isLast={isLast}
+        isFirst={isFirstStep}
+        isLast={isLastStep}
       />
     </View>
   );

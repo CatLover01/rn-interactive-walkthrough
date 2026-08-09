@@ -14,11 +14,17 @@ export function BottomSheetOverlay({
   title,
   text,
   step,
-  ctx: { next, previous, stop, currentStepNumber, steps },
+  ctx: {
+    next,
+    previous,
+    stop,
+    currentStepNumber,
+    steps,
+    isFirstStep,
+    isLastStep,
+  },
 }: BottomSheetOverlayProps) {
   const insets = useSafeAreaInsets();
-  const isFirst = steps[0]?.number === step.number;
-  const isLast = steps[steps.length - 1]?.number === step.number;
   const stepNumber = currentStepNumber ?? step.number;
 
   return (
@@ -36,8 +42,8 @@ export function BottomSheetOverlay({
           next={next}
           previous={previous}
           stop={stop}
-          isFirst={isFirst}
-          isLast={isLast}
+          isFirst={isFirstStep}
+          isLast={isLastStep}
         />
       </View>
     </View>

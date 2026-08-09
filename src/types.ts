@@ -20,26 +20,28 @@ export interface WalkthroughContextType<
   P extends ContentComponentProps = ContentComponentProps,
 > {
   currentStep: WalkthroughStep | undefined;
+  currentStepNumber: number | undefined;
   steps: WalkthroughStep[];
+  isFirstStep: boolean;
+  isLastStep: boolean;
+  isReady: boolean;
+  isActive: boolean;
+  debug: boolean;
   backdropColor: string;
   animationDuration: number;
-  debug: boolean;
-  isActive: boolean;
-  isReady: boolean;
-  currentStepNumber: number | undefined;
   animations: WalkthroughLayoutAnimations;
-  contentComponent?: ComponentType<P>;
-  useIsFocused: () => boolean;
+  contentComponent?: ComponentType;
   registerStep: (step: WalkthroughStep) => void;
   updateStep: (
     identifier: WalkthroughStep["identifier"],
-    step: Partial<WalkthroughStep>,
+    step: Partial<P>,
   ) => void;
   start: () => void;
   stop: () => void;
   next: () => void;
-  goTo: (number: number) => void;
   previous: () => void;
+  goTo: (number: number) => void;
+  useIsFocused: () => boolean;
 }
 
 export interface LayoutAdjustments {

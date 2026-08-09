@@ -13,10 +13,16 @@ export function CenterCardOverlay({
   title,
   text,
   step,
-  ctx: { next, previous, stop, currentStepNumber, steps },
+  ctx: {
+    next,
+    previous,
+    stop,
+    currentStepNumber,
+    steps,
+    isFirstStep,
+    isLastStep,
+  },
 }: CenterCardOverlayProps) {
-  const isFirst = steps[0]?.number === step.number;
-  const isLast = steps[steps.length - 1]?.number === step.number;
   const stepNumber = currentStepNumber ?? step.number;
 
   return (
@@ -31,8 +37,8 @@ export function CenterCardOverlay({
           next={next}
           previous={previous}
           stop={stop}
-          isFirst={isFirst}
-          isLast={isLast}
+          isFirst={isFirstStep}
+          isLast={isLastStep}
         />
       </View>
     </View>
