@@ -39,9 +39,9 @@ const DimRect = ({ kind, mask, color, onPress }: DimRectProps) => {
       case "top":
         return { top: 0, left: 0, right: 0, height: y };
       case "left":
-        return { top: y, left: 0, bottom: 0, width: x };
+        return { top: y, left: 0, width: x, height };
       case "right":
-        return { top: y, left: x + width, right: 0, bottom: 0 };
+        return { top: y, left: x + width, right: 0, height };
       case "bottom":
         return { top: y + height, left: 0, right: 0, bottom: 0 };
     }
