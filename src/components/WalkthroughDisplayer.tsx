@@ -73,6 +73,29 @@ export const WalkthroughDisplayer = () => {
   );
 
   const overlayProps = useMemo(() => {
+    // A full screen step gets a single full screen rect with a distinct key,
+    // so entering it fades the previous mask out and fades the dark backdrop in
+    // instead of layout-animating the hole off the bottom of the screen.
+    const fullScreenStep = currentSteps.find(
+      (step) => step.fullScreen === true,
+    );
+    if (fullScreenStep) {
+      return [
+        {
+          key: "fullscreenRect",
+          onPress: fullScreenStep.onPressBackdrop,
+          style: {
+            backgroundColor: backdropColor,
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            ...(debug ? { borderWidth: 1, borderColor: "red" } : {}),
+          },
+        },
+      ];
+    }
+
     // We build the views from top to bottom
     const sortedCurrentSteps: WalkthroughStep[] = sortBy(
       currentSteps,

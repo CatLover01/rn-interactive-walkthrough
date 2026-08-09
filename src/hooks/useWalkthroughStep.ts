@@ -149,6 +149,7 @@ export const useWalkthroughStep = <
   useLayoutEffect(() => {
     propsRef.current = {
       ...props,
+      fullScreen,
       number,
       identifier: resolvedIdentifier,
       contentComponentKey: resolvedIdentifier,
