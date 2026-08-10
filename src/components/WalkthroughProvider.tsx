@@ -11,6 +11,15 @@ import type {
 import { defaultUseIsFocused, getMergedAnimations } from "../utils";
 import { WalkthroughDisplayer } from "./WalkthroughDisplayer";
 
+/**
+ * Wraps your app and provides the walkthrough to all consumers through
+ * {@link useWalkthrough}.
+ *
+ * Renders the overlay (backdrop, mask and step content) on top of its
+ * children, and exposes the shared state (current step, progress) plus the
+ * actions to drive the walkthrough. See {@link WalkthroughOptions} for the
+ * accepted props.
+ * */
 export const WalkthroughProvider = <P extends ContentComponentProps>({
   contentComponent,
   animationDuration = 300,

@@ -6,49 +6,63 @@ description: Build overlay components that render tooltips, callouts, and full-s
 
 # Overlays
 
-The `OverlayComponent` you pass to `useWalkthroughStep` is what gets rendered on
-top of the mask while the step is active. It receives `IOverlayComponentProps`,
-which provides the current `step` (including its `mask`), plus the walkthrough
-context such as `next`, `previous`, `goTo`, and `stop`.
+The `contentComponent` you pass to `useWalkthroughStep` is what gets rendered on
+top of the mask while the step is active. It receives `ContentComponentProps`,
+which provides the current `step` (including its `mask`) and the walkthrough
+context `ctx` (with `next`, `previous`, `goTo`, and `stop`).
 
 You are free to render anything you like, the library just provides the context
 and the mask position.
 
-## Full-screen overlays
+## A minimal content component
 
-Set `fullScreen: true` to blank out the entire screen and render your overlay on
-top of it. This is great for welcome screens and introductions.
-
-To pass your own content, extend `IOverlayComponentProps` and supply the extra
-props through `overlayComponentProps`.
+A content component is a plain React component. It receives `ContentComponentProps`
+(`ctx` (the walkthrough context) and `step` (the current step)), plus whatever
+extra props the step configured through `contentComponentProps`.
 
 ```tsx
-import { IOverlayComponentProps } from "rn-interactive-walkthrough";
+import type { ContentComponentProps } from "rn-interactive-walkthrough";
 import { View, Text, Button } from "react-native";
 
-interface WelcomeMessageOverlayProps extends IOverlayComponentProps {
+interface WelcomeMessageProps extends ContentComponentProps {
   title: string;
 }
 
-const WelcomeMessageOverlay = ({
-  title,
-  next,
-}: WelcomeMessageOverlayProps) => {
+const WelcomeMessage = ({ title, ctx }: WelcomeMessageProps) => {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>{title}</Text>
-      <Button title="Next" onPress={next} />
+      <Button title="Next" onPress={ctx.next} />
     </View>
   );
 };
 ```
 
 ```tsx
-const { onLayout, start } = useWalkthroughStep({
+const { onLayout } = useWalkthroughStep({
+  number: 1,
+  contentComponent: WelcomeMessage,
+  contentComponentProps: {
+    title: "Let's take a quick tour!",
+  },
+});
+```
+
+The generic on `useWalkthroughStep<P>` ties `contentComponent` and
+`contentComponentProps` to the same `P`, so your extra props stay fully
+type-safe.
+
+## Full-screen overlays
+
+Set `fullScreen: true` to blank out the entire screen and render your overlay on
+top of it. This is great for welcome screens and introductions.
+
+```tsx
+const { onLayout } = useWalkthroughStep({
   number: 1,
   fullScreen: true,
-  OverlayComponent: WelcomeMessageOverlay,
-  overlayComponentProps: {
+  contentComponent: WelcomeMessage,
+  contentComponentProps: {
     title: "Let's take a quick tour!",
   },
 });
@@ -56,23 +70,20 @@ const { onLayout, start } = useWalkthroughStep({
 
 ## Overlays positioned relative to a mask
 
-For non-full-screen steps, destructure `step: { mask }` to position your tooltip
-relative to the highlighted area. `mask` provides `x`, `y`, `width`, and
-`height` in absolute screen coordinates.
+For non-full-screen steps, destructure `step` to position your tooltip relative
+to the highlighted area. The mask provides `x`, `y`, `width`, and `height` in
+absolute screen coordinates.
 
 ```tsx
-import { IOverlayComponentProps } from "rn-interactive-walkthrough";
+import type { ContentComponentProps } from "rn-interactive-walkthrough";
 
-interface WalkthroughTooltipProps extends IOverlayComponentProps {
+interface WalkthroughTooltipProps extends ContentComponentProps {
   title: string;
   body: string;
 }
 
-const WalkthroughTooltip = ({
-  title,
-  body,
-  step: { mask },
-}: WalkthroughTooltipProps) => {
+const WalkthroughTooltip = ({ title, body, step }: WalkthroughTooltipProps) => {
+  const mask = step.computedMask ?? step.mask;
   return (
     <View
       style={{
@@ -91,18 +102,22 @@ const WalkthroughTooltip = ({
 ```tsx
 const { onLayout } = useWalkthroughStep({
   number: 2,
-  OverlayComponent: WalkthroughTooltip,
-  overlayComponentProps: {
+  contentComponent: WalkthroughTooltip,
+  contentComponentProps: {
     title: "Nearby users",
     body: "These are all your friends nearby!",
   },
 });
 ```
 
+`step.mask` is the raw measured rectangle; `step.computedMask` is the mask after
+`layoutAdjustments` have been applied. The library renders the computed mask, so
+position against `step.computedMask ?? step.mask` to stay in sync.
+
 Because the overlay is just a React component, you can render it as a callout
 with an arrow, a modal, a bottom sheet, or whatever fits your design. Navigation
-functions like `next` and `previous` are available on the same props, so add them
-to your component whenever you need buttons.
+functions like `next` and `previous` are available on `ctx`, so add them to your
+component whenever you need buttons.
 
 ## Making the mask pressable
 
@@ -114,7 +129,7 @@ under the mask.
 const { onLayout } = useWalkthroughStep({
   number: 2,
   maskAllowInteraction: true,
-  OverlayComponent: WalkthroughTooltip,
+  contentComponent: WalkthroughTooltip,
 });
 ```
 
@@ -131,18 +146,18 @@ the tour.
 ```tsx
 const { onLayout } = useWalkthroughStep({
   number: 2,
-  onPressMask: (ctx) => ctx.next(),
-  onPressBackdrop: (ctx) => ctx.stop(),
-  OverlayComponent: WalkthroughTooltip,
+  onPressMask: (ctx) => ctx?.next(),
+  onPressBackdrop: (ctx) => ctx?.stop(),
+  contentComponent: WalkthroughTooltip,
 });
 ```
 
-## Passing props to an overlay
+## Passing props to a content component
 
-Extra props are passed to your overlay via `overlayComponentProps`, and you add
-them to your component's props by extending `IOverlayComponentProps`. The
-examples above show this pattern with `title` and `body`.
+Extra props are passed to your content component via `contentComponentProps`,
+and you add them to your component's props by extending `ContentComponentProps`.
+The examples above show this pattern with `title` and `body`.
 
-The API reference documents the full `IOverlayComponentProps` interface, and the
+The API reference documents the full `ContentComponentProps` interface, and the
 per-step generic on `useWalkthroughStep<P>` lets you keep your props fully
 type-safe.

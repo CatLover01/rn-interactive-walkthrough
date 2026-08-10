@@ -17,6 +17,19 @@ import type {
   WalkthroughStepMask,
 } from "../types";
 
+/**
+ * Registers a walkthrough step and tracks the mask of the view it should
+ * highlight.
+ *
+ * Attach the returned `onLayout` to the target view: the hook measures it and
+ * registers a step whose {@link WalkthroughStep.mask} matches the measured
+ * rectangle (adjusted by {@link WalkthroughStep.layoutAdjustments}). When the
+ * step is active, its content component renders above the mask.
+ *
+ * The step is re-registered (upserted by {@link WalkthroughStep.identifier})
+ * whenever its target moves, as long as {@link WalkthroughStep.layoutLock} is
+ * not set.
+ * */
 export const useWalkthroughStep = <
   P extends ContentComponentProps = ContentComponentProps,
 >({

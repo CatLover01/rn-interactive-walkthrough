@@ -20,22 +20,23 @@ const FeatureList: FeatureItem[] = [
     ),
   },
   {
-    title: 'Multiple Masks per Step',
+    title: 'Any Overlay You Want',
     description: (
       <>
-        Spotlight several parts of the screen at once in a single step. Each
-        mask can be independently interactable or blocked, with its own press
-        handlers.
+        The overlay is just a React component: tooltips, callouts, bottom
+        sheets, or full-screen cards. Each step can use a different one, and
+        props flow through <code>contentComponentProps</code> with full
+        type-safety.
       </>
     ),
   },
   {
-    title: 'Native Performance',
+    title: 'Smooth, Native Animations',
     description: (
       <>
-        Smooth transitions use <code>LayoutAnimation</code>, running natively on
-        Android and iOS. No native linking required, and it works out of the box
-        with Expo.
+        Transitions run on the UI thread with{' '}
+        <code>react-native-reanimated</code>, morphing the mask from step to
+        step. No native linking required, and it works out of the box with Expo.
       </>
     ),
   },

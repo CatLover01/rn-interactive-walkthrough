@@ -26,18 +26,18 @@ export default function App() {
 
 ## 2. Define a step with `useWalkthroughStep`
 
-Call `useWalkthroughStep` inside any component, passing a step `number` and an
-`OverlayComponent`. Then attach the returned `onLayout` handler to the `View`
+Call `useWalkthroughStep` inside any component, passing a step `number` and a
+`contentComponent`. Then attach the returned `onLayout` handler to the `View`
 you want to highlight.
 
 ```tsx
 import { useWalkthroughStep } from "rn-interactive-walkthrough";
-import { NearbyUsersOverlay } from "./Overlays";
+import { NearbyUsersTooltip } from "./Tooltips";
 
 export default function HomeScreen() {
   const { onLayout } = useWalkthroughStep({
     number: 1,
-    OverlayComponent: NearbyUsersOverlay,
+    contentComponent: NearbyUsersTooltip,
   });
 
   return (
@@ -55,28 +55,20 @@ draw the mask (the highlighted area) on the screen.
 
 ## 3. Start the walkthrough
 
-Use the `start` function, either from the context, a ref to the provider, or
-directly from a step hook.
+Use the `start` function from the walkthrough context, e.g. with a button:
 
 ```tsx
-import { useWalkthroughStep } from "rn-interactive-walkthrough";
+import { useWalkthrough } from "rn-interactive-walkthrough";
 
-export default function HomeScreen() {
-  const { onLayout, start, isReady } = useWalkthroughStep({
-    number: 1,
-    OverlayComponent: NearbyUsersOverlay,
-  });
-
-  React.useEffect(() => {
-    start();
-  }, [start]);
+function StartTourButton() {
+  const { start, isReady } = useWalkthrough();
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ height: 10 }} onLayout={onLayout}>
-        <Text>Here is my app!</Text>
-      </View>
-    </View>
+    <Button
+      title="Start the tour"
+      disabled={!isReady}
+      onPress={start}
+    />
   );
 }
 ```
@@ -87,28 +79,24 @@ check before starting.
 
 ## 4. Navigate steps
 
-Every overlay receives the walkthrough context, so `next`, `previous`, and
-`goTo` are available to move the user through the tour. `IOverlayComponentProps`
-gives you the current `step`, and you extend it to add your own props, which are
-passed through `overlayComponentProps`.
+Every content component receives the walkthrough context, so `next`, `previous`,
+and `goTo` are available to move the user through the tour. Extend
+`ContentComponentProps` to add your own props, which are passed through
+`contentComponentProps`.
 
 ```tsx
-import { IOverlayComponentProps } from "rn-interactive-walkthrough";
+import type { ContentComponentProps } from "rn-interactive-walkthrough";
 
-interface NearbyUsersOverlayProps extends IOverlayComponentProps {
+interface NearbyUsersTooltipProps extends ContentComponentProps {
   title: string;
 }
 
-const NearbyUsersOverlay = ({
-  title,
-  next,
-  previous,
-}: NearbyUsersOverlayProps) => {
+const NearbyUsersTooltip = ({ title, ctx }: NearbyUsersTooltipProps) => {
   return (
     <View>
       <Text>{title}</Text>
-      <Button title="Back" onPress={previous} />
-      <Button title="Next" onPress={next} />
+      <Button title="Back" onPress={ctx.previous} />
+      <Button title="Next" onPress={ctx.next} />
     </View>
   );
 };
@@ -117,8 +105,8 @@ const NearbyUsersOverlay = ({
 ```tsx
 const { onLayout } = useWalkthroughStep({
   number: 2,
-  OverlayComponent: NearbyUsersOverlay,
-  overlayComponentProps: {
+  contentComponent: NearbyUsersTooltip,
+  contentComponentProps: {
     title: "These are all your friends nearby!",
   },
 });

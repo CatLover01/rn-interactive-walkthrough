@@ -14,8 +14,8 @@ Get started building by installing rn-interactive-walkthrough or by following th
 
 Get started by **installing the library**.
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 <Tabs>
   <TabItem value="npm" label="npm" default>
@@ -24,16 +24,25 @@ import TabItem from '@theme/TabItem';
   <TabItem value="yarn" label="yarn">
     <pre>yarn add rn-interactive-walkthrough</pre>
   </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    <pre>pnpm add rn-interactive-walkthrough</pre>
+  </TabItem>
 </Tabs>
 
-### React Native version support
+### Requirements
 
-| React Native Version | rn-interactive-walkthrough version |
-| -------------------- | ---------------------------------- |
-| 0.65+                | any version                        |
+The library relies on a few peer dependencies. Make sure these are installed in
+your project:
+
+| Package                   | Minimum version |
+| ------------------------- | --------------- |
+| `react`                   | 17.0            |
+| `react-native`            | 0.63            |
+| `react-native-reanimated` | 3.0             |
 
 :::note
 
-The library should work with React Native 0.65 and up, but is only tested against the latest React Native version.
+The library is only tested against the latest React Native version, but these
+are the lowest versions it is known to work with.
 
 :::

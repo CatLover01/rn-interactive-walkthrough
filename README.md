@@ -46,7 +46,7 @@ import { useWalkthroughStep } from "rn-interactive-walkthrough";
 function HomeScreen() {
   const { onLayout } = useWalkthroughStep({
     number: 1,
-    OverlayComponent: NearbyUsersOverlay,
+    contentComponent: NearbyUsersTooltip,
   });
 
   return (
