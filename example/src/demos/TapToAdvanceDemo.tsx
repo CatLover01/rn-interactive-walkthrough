@@ -10,6 +10,7 @@ export function TapToAdvanceScreen() {
   const step1 = useWalkthroughStep({
     number: 1,
     layoutAdjustments: { addPadding: 8 },
+    maskBorderRadius: 16,
     onPressMask: (ctx) => ctx?.next(),
     onPressBackdrop: (ctx) => ctx?.stop(),
     contentComponent: Tooltip,
@@ -22,6 +23,7 @@ export function TapToAdvanceScreen() {
   const step2 = useWalkthroughStep({
     number: 2,
     layoutAdjustments: { addPadding: 8 },
+    maskBorderRadius: 16,
     onPressMask: (ctx) => ctx?.next(),
     onPressBackdrop: (ctx) => ctx?.stop(),
     contentComponent: Tooltip,

@@ -22,6 +22,7 @@ export const useWalkthroughStep = <
 >({
   fullScreen,
   identifier,
+  maskBorderRadius,
   number,
   ...props
 }: UseWalkthroughStep<P>) => {
@@ -54,9 +55,10 @@ export const useWalkthroughStep = <
       if (base === null) {
         return;
       }
-      const { maskAllowInteraction, ...rest } = base;
+      const { maskAllowInteraction, maskBorderRadius: radius, ...rest } = base;
       const mask: WalkthroughStepMask = {
         allowInteraction: maskAllowInteraction,
+        borderRadius: radius,
         ...maskProps,
       };
 
@@ -75,6 +77,7 @@ export const useWalkthroughStep = <
           ...step,
           computedMask: {
             allowInteraction: mask.allowInteraction,
+            borderRadius: mask.borderRadius,
             x: Math.min(
               Math.max(
                 la.minX ?? -Number.POSITIVE_INFINITY,
@@ -150,6 +153,7 @@ export const useWalkthroughStep = <
     propsRef.current = {
       ...props,
       fullScreen,
+      maskBorderRadius,
       number,
       identifier: resolvedIdentifier,
       contentComponentKey: resolvedIdentifier,

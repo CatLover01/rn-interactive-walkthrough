@@ -14,6 +14,8 @@ export interface WalkthroughStepMask {
   width: number;
   height: number;
   allowInteraction?: boolean;
+  /** Round the corners of the hole. The backdrop fills the area outside the rounded corners. */
+  borderRadius?: number;
 }
 
 export interface WalkthroughContextType<
@@ -145,6 +147,8 @@ export type UseWalkthroughStepStrict<P extends ContentComponentProps> = Omit<
   "mask"
 > & {
   maskAllowInteraction?: boolean;
+  /** Round the corners of the hole. The backdrop fills the area outside the rounded corners. */
+  maskBorderRadius?: number;
 };
 
 export type UseWalkthroughStep<P extends ContentComponentProps> = PartialBy<
