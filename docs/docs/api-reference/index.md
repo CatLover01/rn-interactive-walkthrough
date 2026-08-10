@@ -250,7 +250,7 @@ The color of the backdrop behind the mask, from [WalkthroughOptions.backdropColo
 
 ##### contentComponent?
 
-> `optional` **contentComponent?**: `ComponentType`
+> `optional` **contentComponent?**: `ComponentType`\<`P`\>
 
 The fallback content component used by steps that don't specify their own
 [WalkthroughStep.contentComponent](#api-contentcomponent-2). See [WalkthroughOptions.contentComponent](#api-contentcomponent-1).
@@ -530,7 +530,7 @@ The color of the backdrop behind the mask, from [WalkthroughOptions.backdropColo
 
 ##### contentComponent?
 
-> `optional` **contentComponent?**: `ComponentType`
+> `optional` **contentComponent?**: `ComponentType`\<`P`\>
 
 The fallback content component used by steps that don't specify their own
 [WalkthroughStep.contentComponent](#api-contentcomponent-2). See [WalkthroughOptions.contentComponent](#api-contentcomponent-1).

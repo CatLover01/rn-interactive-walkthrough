@@ -154,10 +154,50 @@ const { onLayout } = useWalkthroughStep({
 
 ## Passing props to a content component
 
-Extra props are passed to your content component via `contentComponentProps`,
-and you add them to your component's props by extending `ContentComponentProps`.
-The examples above show this pattern with `title` and `body`.
+Extra props are passed to your content component via `contentComponentProps`, and
+you add them to your component's props by extending `ContentComponentProps`. The
+examples above show this pattern with `title` and `body`.
 
-The API reference documents the full `ContentComponentProps` interface, and the
-per-step generic on `useWalkthroughStep<P>` lets you keep your props fully
-type-safe.
+You can also set a `contentComponent` on the `WalkthroughProvider` to use the
+same component for every step. This lets you avoid specifying the component on
+each `useWalkthroughStep`.
+
+```tsx
+const App = () => {
+  return (
+    <WalkthroughProvider contentComponent={WalkthroughTooltip}>
+      {/* Your app */}
+    </WalkthroughProvider>
+  );
+};
+```
+
+When using a provider-level content component, pass its props type as the
+generic to `useWalkthroughStep` so that `contentComponentProps` is typed
+correctly:
+
+```tsx
+const { onLayout } = useWalkthroughStep<WalkthroughTooltipProps>({
+  number: 2,
+  contentComponentProps: {
+    title: "Nearby users",
+    body: "These are all your friends nearby!",
+  },
+});
+```
+
+The provider's `contentComponent` is only a default. You can always override it
+for an individual step:
+
+```tsx
+const { onLayout } = useWalkthroughStep({
+  number: 3,
+  contentComponent: WelcomeMessage,
+  contentComponentProps: {
+    title: "Let's take a quick tour!",
+  },
+});
+```
+
+This allows you to use one shared content component by default while still
+customizing individual steps when needed.

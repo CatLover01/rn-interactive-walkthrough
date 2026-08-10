@@ -66,7 +66,7 @@ export interface WalkthroughContextType<
    * The fallback content component used by steps that don't specify their own
    * {@link WalkthroughStep.contentComponent}. See {@link WalkthroughOptions.contentComponent}.
    * */
-  contentComponent?: ComponentType;
+  contentComponent?: ComponentType<P>;
   /**
    * Registers a step, replacing any previously registered step with the same
    * {@link WalkthroughStep.identifier}. This is the upsert used by
