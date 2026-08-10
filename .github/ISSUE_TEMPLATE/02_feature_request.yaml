@@ -1,0 +1,30 @@
+name: Feature request
+description: Suggest an idea for this project
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your suggestion! Before proceeding:
+        - Check the [docs](https://catlover01.github.io/rn-interactive-walkthrough/) to see if this feature already exists
+        - Search [existing issues](https://github.com/CatLover01/rn-interactive-walkthrough/issues) for similar requests
+  - type: textarea
+    attributes:
+      label: Problem Description
+      description: What problem are you trying to solve? E.g. I'm always frustrated when...
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: What platform(s) should this be implemented on?
+      multiple: true
+      options:
+        - Android
+        - iOS
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Proposed Solution
+      description: Describe your suggested solution.

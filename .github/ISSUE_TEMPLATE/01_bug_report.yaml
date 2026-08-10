@@ -1,0 +1,50 @@
+name: Bug report
+description: Create a bug report
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to file a bug report! Please fill out this entire form.
+  - type: checkboxes
+    attributes:
+      label: I have searched open and closed issues for this issue.
+      options:
+        - label: I have searched open and closed issues.
+          required: true
+  - type: dropdown
+    attributes:
+      label: What platform(s) does this occur on?
+      multiple: true
+      options:
+        - Android
+        - iOS
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Description
+      description: |
+        Briefly describe what you expected to happen and what actually happened.
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Minimal reproducible example
+      description: |
+        Optional, but strongly encouraged: Provide a minimal GitHub repository that reproduces the issue, without unnecessary dependencies.
+
+        If possible, use the example app. You can link to the repository or provide a standalone App.tsx file.
+  - type: textarea
+    attributes:
+      label: Reproduction Steps
+      description: Steps to reproduce, with a minimal code sample.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      render: text
+      label: Your computer environment
+      description: Run the `npx react-native info` command and paste its output in the field below.
+    validations:
+      required: true
