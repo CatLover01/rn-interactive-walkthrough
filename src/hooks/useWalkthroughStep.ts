@@ -64,7 +64,6 @@ export const useWalkthroughStep = <
         ...rest,
         number,
         identifier: resolvedIdentifier,
-        contentComponentKey: resolvedIdentifier,
         mask,
         computedMask: mask,
       };
@@ -152,7 +151,6 @@ export const useWalkthroughStep = <
       fullScreen,
       number,
       identifier: resolvedIdentifier,
-      contentComponentKey: resolvedIdentifier,
       measureMask: measuredMask,
     };
   });

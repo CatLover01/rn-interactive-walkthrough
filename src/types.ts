@@ -122,7 +122,6 @@ export interface WalkthroughStep<
 > {
   number: number;
   identifier: string;
-  contentComponentKey: string;
   contentComponentProps?: Omit<P, keyof ContentComponentProps>;
   contentComponent?: ComponentType<P>;
   fullScreen?: boolean;
@@ -149,7 +148,7 @@ export type UseWalkthroughStepStrict<P extends ContentComponentProps> = Omit<
 
 export type UseWalkthroughStep<P extends ContentComponentProps> = PartialBy<
   UseWalkthroughStepStrict<P>,
-  "identifier" | "contentComponentKey" | "measureMask"
+  "identifier" | "measureMask"
 >;
 
 export interface WalkthroughOptions<

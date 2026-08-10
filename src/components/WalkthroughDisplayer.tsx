@@ -101,7 +101,7 @@ export const WalkthroughDisplayer = () => {
 
       {Component && (
         <Animated.View
-          key={currentStep.contentComponentKey}
+          key={currentStep.identifier}
           pointerEvents="box-none"
           style={StyleSheet.absoluteFill}
           entering={content.entering}
