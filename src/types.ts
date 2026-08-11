@@ -27,7 +27,7 @@ export interface WalkthroughStepMask {
    * Whether touches inside the mask should pass through to the target view
    * instead of being swallowed by the walkthrough overlay.
    * */
-  allowInteraction?: boolean;
+  allowInteraction: boolean;
 }
 
 /**

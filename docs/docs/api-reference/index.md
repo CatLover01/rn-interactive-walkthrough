@@ -800,9 +800,9 @@ hook by measuring the view, but can be supplied by hand, see
 
 <a id="api-allowinteraction"></a>
 
-##### allowInteraction?
+##### allowInteraction
 
-> `optional` **allowInteraction?**: `boolean`
+> **allowInteraction**: `boolean`
 
 Whether touches inside the mask should pass through to the target view
 instead of being swallowed by the walkthrough overlay.

@@ -13,6 +13,7 @@ import type {
   ContentComponentProps,
   UseWalkthroughStep,
   UseWalkthroughStepStrict,
+  WalkthroughMaskCoordinates,
   WalkthroughStep,
   WalkthroughStepMask,
 } from "../types";
@@ -68,12 +69,12 @@ export const useWalkthroughStep = <
   const propsRef = useRef<UseWalkthroughStepStrict<P> | null>(null);
 
   const registerStepWithProps = useCallback(
-    (maskProps: WalkthroughStepMask) => {
+    (maskProps: WalkthroughMaskCoordinates) => {
       const base = propsRef.current;
       if (base === null) {
         return;
       }
-      const { maskAllowInteraction, ...rest } = base;
+      const { maskAllowInteraction = false, ...rest } = base;
       const mask: WalkthroughStepMask = {
         allowInteraction: maskAllowInteraction,
         ...maskProps,

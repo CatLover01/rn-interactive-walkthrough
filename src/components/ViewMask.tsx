@@ -110,7 +110,7 @@ export const ViewMask = ({
       <DimRect kind="left" {...dimRectProps} />
       <DimRect kind="right" {...dimRectProps} />
       <DimRect kind="bottom" {...dimRectProps} />
-      {mask.allowInteraction !== true && (
+      {!mask.allowInteraction && (
         <AnimatedPressable
           style={[
             { position: "absolute" },
