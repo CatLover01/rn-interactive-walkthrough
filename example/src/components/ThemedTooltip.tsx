@@ -1,12 +1,16 @@
 import { StyleSheet, Text, View } from "react-native";
-import type { ContentComponentProps } from "rn-interactive-walkthrough";
+import { useSafeAreaFrame } from "react-native-safe-area-context";
+import {
+  useContentPlacement,
+  type ContentComponentProps,
+} from "rn-interactive-walkthrough";
 
 import {
   ARROW_HEIGHT,
   ARROW_WIDTH,
   TOOLTIP_MARGIN,
-  useTooltipPlacement,
-} from "../hooks/useTooltipPlacement";
+  getTooltipArrow,
+} from "../hooks/tooltip";
 import { colors } from "../theme";
 import { OverlayFooter } from "./OverlayFooter";
 
@@ -30,14 +34,19 @@ export function ThemedTooltip({
   },
 }: ThemedTooltipProps) {
   const mask = step.computedMask ?? step.mask;
-  const { top, arrow, arrowLeft } = useTooltipPlacement(mask);
+  const { onLayout, top, side, ready } = useContentPlacement(mask);
+  const { width } = useSafeAreaFrame();
+  const { arrow, arrowLeft } = getTooltipArrow(side, mask, width);
   const stepNumber = currentStepNumber ?? step.number;
 
   return (
     <View
+      onLayout={onLayout}
+      pointerEvents={ready ? "auto" : "none"}
       style={[
         styles.card,
         { left: TOOLTIP_MARGIN, right: TOOLTIP_MARGIN, top },
+        !ready && styles.hidden,
       ]}
     >
       <View
@@ -64,6 +73,9 @@ export function ThemedTooltip({
 }
 
 const styles = StyleSheet.create({
+  hidden: {
+    opacity: 0,
+  },
   card: {
     position: "absolute",
     backgroundColor: colors.surface,

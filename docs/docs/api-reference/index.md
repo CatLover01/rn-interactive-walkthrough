@@ -854,6 +854,102 @@ These come from react-native-reanimated's `AnimatedProps<ViewProps>`.
 
 ***
 
+<a id="api-contentplacement"></a>
+
+### ContentPlacement
+
+> **ContentPlacement** = \{ `onLayout`: (`event`: `LayoutChangeEvent`) => `void`; `ready`: `boolean`; `side`: [`ContentPlacementSide`](#api-contentplacementside-1); `top`: `number`; \}
+
+The result of [useContentPlacement](#api-usecontentplacement).
+
+#### Properties
+
+<a id="api-onlayout"></a>
+
+##### onLayout
+
+> **onLayout**: (`event`: `LayoutChangeEvent`) => `void`
+
+Attach this to the content's `onLayout` so the hook can measure its real
+size before deciding where to place it.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `event` | `LayoutChangeEvent` |
+
+###### Returns
+
+`void`
+
+<a id="api-ready"></a>
+
+##### ready
+
+> **ready**: `boolean`
+
+`false` until the content has been measured and placed. Keep the content
+hidden (e.g. `opacity: 0`) until this flips to `true` so it never renders
+at its provisional position.
+
+<a id="api-side"></a>
+
+##### side
+
+> **side**: [`ContentPlacementSide`](#api-contentplacementside-1)
+
+Whether the content landed above or below the mask.
+
+<a id="api-top"></a>
+
+##### top
+
+> **top**: `number`
+
+The final distance from the top of the screen, inside the safe area.
+
+***
+
+<a id="api-contentplacementoptions"></a>
+
+### ContentPlacementOptions
+
+> **ContentPlacementOptions** = \{ `gap?`: `number`; `margin?`: `number`; \}
+
+Options for [useContentPlacement](#api-usecontentplacement).
+
+#### Properties
+
+<a id="api-gap"></a>
+
+##### gap?
+
+> `optional` **gap?**: `number`
+
+Minimum distance between the content and the mask. Defaults to `12`.
+
+<a id="api-margin"></a>
+
+##### margin?
+
+> `optional` **margin?**: `number`
+
+Minimum distance between the content and the safe-area edges (top and
+bottom bars are excluded from the up/down decision). Defaults to `20`.
+
+***
+
+<a id="api-contentplacementside-1"></a>
+
+### ContentPlacementSide
+
+> **ContentPlacementSide** = `"above"` \| `"below"`
+
+Whether the content ended up above or below the mask.
+
+***
+
 <a id="api-onpresswithcontexttype"></a>
 
 ### OnPressWithContextType
@@ -980,6 +1076,38 @@ Same as [WalkthroughStepMask](#api-walkthroughstepmask-1) but without
 measures the target.
 
 ## Functions
+
+<a id="api-usecontentplacement"></a>
+
+### useContentPlacement()
+
+> **useContentPlacement**(`mask`: [`WalkthroughMaskCoordinates`](#api-walkthroughmaskcoordinates), `options?`: [`ContentPlacementOptions`](#api-contentplacementoptions)): [`ContentPlacement`](#api-contentplacement)
+
+Positions content (like a tooltip) relative to a mask while keeping it
+entirely inside the safe area.
+
+The mask coordinates must be relative to the same frame as
+react-native-safe-area-context (e.g. as measured by
+[useWalkthroughStep](#api-usewalkthroughstep-1)). The hook measures the content's real size via
+[ContentPlacement.onLayout](#api-onlayout), then decides whether it fits below the
+mask or has to flip above it. Unsafe areas are excluded from that decision:
+a bottom bar or top bar is never counted as usable space, and the final
+[ContentPlacement.top](#api-top) is clamped so the whole content stays within
+the safe frame. The up/down choice is only used for measuring; the placed
+position always respects the safe area.
+
+#### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `mask` | [`WalkthroughMaskCoordinates`](#api-walkthroughmaskcoordinates) | The mask to position the content against. |
+| `options` | [`ContentPlacementOptions`](#api-contentplacementoptions) | Gap and safe-area margin. See [ContentPlacementOptions](#api-contentplacementoptions). |
+
+#### Returns
+
+[`ContentPlacement`](#api-contentplacement)
+
+***
 
 <a id="api-usewalkthrough"></a>
 

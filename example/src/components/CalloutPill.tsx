@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaFrame } from "react-native-safe-area-context";
 import type { ContentComponentProps } from "rn-interactive-walkthrough";
 
-import { TOOLTIP_MARGIN } from "../hooks/useTooltipPlacement";
+import { TOOLTIP_MARGIN } from "../hooks/tooltip";
 import { colors } from "../theme";
 
 const PILL_WIDTH = 210;
