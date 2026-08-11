@@ -243,7 +243,10 @@ export type PartialWalkthroughLayoutAnimations = {
  * */
 export interface WalkthroughMaskProps
   extends
-    Pick<WalkthroughStep, "mask" | "onPressBackdrop" | "onPressMask">,
+    Pick<
+      WalkthroughStep,
+      "mask" | "onPressBackdrop" | "onPressMask" | "animationDuration"
+    >,
     Partial<WalkthroughBackdropAnimations> {
   /** The shared walkthrough context. */
   context: WalkthroughContextType;
@@ -298,6 +301,14 @@ export interface WalkthroughStep<
    * scroll.
    * */
   layoutLock?: boolean;
+  /**
+   * Overrides the mask transition duration (in ms) for this step.
+   *
+   * The mask morphs between steps over the provider's `animationDuration`
+   * (default 300ms). This lets a single step use a different duration. Falls
+   * back to the provider's duration when omitted.
+   * */
+  animationDuration?: number;
   /** Called when this step becomes active. */
   onStart?: (props: WalkthroughCallback) => void;
   /** Called when the walkthrough moves past this step. */

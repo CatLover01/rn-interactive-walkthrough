@@ -62,9 +62,11 @@ export const ViewMask = ({
   easing,
   entering,
   exiting,
+  animationDuration: durationOverride,
   context,
 }: WalkthroughMaskProps) => {
   const { animationDuration, backdropColor, debug } = context;
+  const duration = durationOverride ?? animationDuration;
   const rounded = useSharedValue<WalkthroughMaskCoordinates>(
     toCoordinates(mask),
   );
@@ -73,10 +75,10 @@ export const ViewMask = ({
   // runs because it is assigned at the top level of the shared value.
   useEffect(() => {
     rounded.value = withTiming(toCoordinates(mask), {
-      duration: animationDuration,
+      duration,
       easing,
     });
-  }, [rounded, mask, easing, animationDuration]);
+  }, [rounded, mask, easing, duration]);
 
   const handleBackdropPress = handlePress(onPressBackdrop, context);
   const handleMaskPress = handlePress(onPressMask, context);
