@@ -119,7 +119,9 @@ const config: Config = {
     },
   } satisfies Preset.ThemeConfig,
 
-  themes: [["@easyops-cn/docusaurus-search-local", { hashed: true }]],
+  themes: [
+    ["@easyops-cn/docusaurus-search-local", { hashed: true, indexBlog: false }],
+  ],
 };
 
 export default config;
