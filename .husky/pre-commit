@@ -2,3 +2,4 @@ npm run lint
 npm run typecheck
 npm run prepare
 npm --prefix example run typecheck
+npm --prefix docs run docs:check
