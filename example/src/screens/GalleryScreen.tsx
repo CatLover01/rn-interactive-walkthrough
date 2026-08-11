@@ -19,6 +19,7 @@ export function GalleryScreen({ onOpen }: GalleryScreenProps) {
 
   const headerStep = useWalkthroughStep({
     number: 1,
+    layoutLock: true,
     layoutAdjustments: { addPadding: 4 },
     onPressBackdrop: (ctx) => ctx?.stop(),
     contentComponent: Tooltip,
@@ -30,6 +31,7 @@ export function GalleryScreen({ onOpen }: GalleryScreenProps) {
 
   const firstCardStep = useWalkthroughStep({
     number: 2,
+    layoutLock: true,
     layoutAdjustments: { addPadding: 4 },
     onPressBackdrop: (ctx) => ctx?.stop(),
     contentComponent: Tooltip,
@@ -41,6 +43,7 @@ export function GalleryScreen({ onOpen }: GalleryScreenProps) {
 
   const secondCardStep = useWalkthroughStep({
     number: 3,
+    layoutLock: true,
     layoutAdjustments: { addPadding: 4 },
     onPressBackdrop: (ctx) => ctx?.stop(),
     contentComponent: Tooltip,
