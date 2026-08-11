@@ -136,16 +136,42 @@ import { Easing } from "react-native-reanimated";
 - `content.entering` / `content.exiting` / `content.layout`: layout animations
   for the step content container
 
-## Locking a mask's position
+## Targets in scrollable containers
 
-If a highlighted view sits inside a scrollable container, its position changes as
-the user scrolls. Pass `layoutLock: true` so `onLayout` is only honored once and
-the mask does not keep re-measuring.
+If a highlighted view sits inside a `ScrollView`, its on-screen position changes
+as the user scrolls. The library doesn't auto-scroll targets into view. Instead,
+an interactive tour guides the user to reach a target themselves, and you can
+keep the mask glued to a target while the user drags by re-measuring from the
+scroll events. `measureMask()` measures the live window position, so it stays
+accurate no matter how far you scroll:
 
 ```tsx
-const { onLayout } = useWalkthroughStep({
-  number: 2,
-  layoutLock: true,
-  contentComponent: ButtonOverlay,
-});
+function ScrollableScreen() {
+  const { currentStep } = useWalkthrough();
+  const scrollRef = useRef<ScrollView>(null);
+
+  const { onLayout } = useWalkthroughStep({
+    number: 2,
+    layoutLock: true,
+    contentComponent: ButtonOverlay,
+  });
+
+  return (
+    <ScrollView
+      ref={scrollRef}
+      onScroll={() => currentStep?.measureMask()}
+      onScrollEndDrag={() => currentStep?.measureMask()}
+      onMomentumScrollEnd={() => currentStep?.measureMask()}
+      scrollEventThrottle={16}
+    >
+      {/* ...long content... */}
+      <View onLayout={onLayout}>{/* highlighted target */}</View>
+    </ScrollView>
+  );
+}
 ```
+
+The `onScroll` handler keeps the mask glued to the target while the user
+scrolls, and the scroll-end handlers snap it to its final position once the
+scroll settles. `layoutLock` stops `onLayout` from re-measuring with a stale
+position.
