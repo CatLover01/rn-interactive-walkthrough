@@ -1,7 +1,7 @@
-import { WalkthroughProvider } from "./components/WalkthroughProvider";
-import { useWalkthrough } from "./context";
-import { useWalkthroughStep } from "./hooks/useWalkthroughStep";
-import type {
+export { WalkthroughProvider } from "./components/WalkthroughProvider";
+export { useWalkthrough } from "./context";
+export { useWalkthroughStep } from "./hooks/useWalkthroughStep";
+export type {
   ComponentLayoutProps,
   ContentComponentProps,
   LayoutAdjustments,
@@ -19,25 +19,3 @@ import type {
   WalkthroughStepMask,
   PartialWalkthroughLayoutAnimations,
 } from "./types";
-
-export {
-  WalkthroughProvider,
-  useWalkthrough,
-  useWalkthroughStep,
-  type WalkthroughStepMask,
-  type WalkthroughContextType,
-  type ContentComponentProps,
-  type WalkthroughStep,
-  type UseWalkthroughStep,
-  type UseWalkthroughStepStrict,
-  type WalkthroughCallback,
-  type WalkthroughBackdropAnimations,
-  type ComponentLayoutProps,
-  type WalkthroughLayoutAnimations,
-  type LayoutAdjustments,
-  type OnPressWithContextType,
-  type WalkthroughEasing,
-  type WalkthroughMaskCoordinates,
-  type WalkthroughOptions,
-  type PartialWalkthroughLayoutAnimations,
-};
