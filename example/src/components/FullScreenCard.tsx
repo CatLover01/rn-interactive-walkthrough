@@ -64,11 +64,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: colors.border,
-    shadowColor: "#000000",
-    shadowOpacity: 0.24,
-    shadowRadius: 30,
-    shadowOffset: { width: 0, height: 16 },
-    elevation: 18,
+    boxShadow: [
+      {
+        offsetX: 0,
+        offsetY: 16,
+        blurRadius: 30,
+        spreadDistance: 0,
+        color: "rgba(0, 0, 0, 0.24)",
+      },
+    ],
   },
   cardDark: {
     backgroundColor: colors.darkSurface,

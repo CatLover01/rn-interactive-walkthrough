@@ -83,11 +83,15 @@ const styles = StyleSheet.create({
     padding: 18,
     borderWidth: 1,
     borderColor: colors.border,
-    shadowColor: "#000000",
-    shadowOpacity: 0.35,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 12 },
-    elevation: 16,
+    boxShadow: [
+      {
+        offsetX: 0,
+        offsetY: 12,
+        blurRadius: 24,
+        spreadDistance: 0,
+        color: "rgba(0, 0, 0, 0.35)",
+      },
+    ],
   },
   arrow: {
     position: "absolute",

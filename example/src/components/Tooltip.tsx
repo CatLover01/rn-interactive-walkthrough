@@ -84,11 +84,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.tooltipBg,
     borderRadius: 16,
     padding: 18,
-    shadowColor: "#000000",
-    shadowOpacity: 0.3,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 12 },
-    elevation: 16,
+    boxShadow: [
+      {
+        offsetX: 0,
+        offsetY: 12,
+        blurRadius: 24,
+        spreadDistance: 0,
+        color: "rgba(0, 0, 0, 0.3)",
+      },
+    ],
   },
   arrow: {
     position: "absolute",

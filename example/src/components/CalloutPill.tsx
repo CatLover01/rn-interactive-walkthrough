@@ -49,11 +49,15 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    shadowColor: "#000000",
-    shadowOpacity: 0.2,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 10,
+    boxShadow: [
+      {
+        offsetX: 0,
+        offsetY: 6,
+        blurRadius: 14,
+        spreadDistance: 0,
+        color: "rgba(0, 0, 0, 0.2)",
+      },
+    ],
   },
   dot: {
     position: "absolute",

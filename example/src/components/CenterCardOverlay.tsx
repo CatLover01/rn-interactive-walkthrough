@@ -64,11 +64,15 @@ const styles = StyleSheet.create({
     padding: 22,
     borderWidth: 1,
     borderColor: colors.border,
-    shadowColor: "#000000",
-    shadowOpacity: 0.2,
-    shadowRadius: 28,
-    shadowOffset: { width: 0, height: 14 },
-    elevation: 16,
+    boxShadow: [
+      {
+        offsetX: 0,
+        offsetY: 14,
+        blurRadius: 28,
+        spreadDistance: 0,
+        color: "rgba(0, 0, 0, 0.2)",
+      },
+    ],
   },
   step: {
     color: colors.accent,
