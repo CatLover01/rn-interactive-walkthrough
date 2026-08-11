@@ -3,7 +3,7 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "rn-interactive-walkthrough": ["../../src/index"]
+      "rn-interactive-walkthrough": ["../src/index"]
     }
   }
 }

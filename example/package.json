@@ -18,6 +18,7 @@
     "rn-interactive-walkthrough": "file:../"
   },
   "devDependencies": {
-    "metro-config": "^0.87.0"
+    "metro-config": "^0.87.0",
+    "typescript": "^6.0.3"
   }
 }
