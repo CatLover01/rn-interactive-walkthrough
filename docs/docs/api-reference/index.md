@@ -1131,7 +1131,7 @@ code (start, stop, next, previous, goTo).
 
 ### useWalkthroughStep()
 
-> **useWalkthroughStep**\<`P`\>(`__namedParameters`: [`UseWalkthroughStep`](#api-usewalkthroughstep)\<`P`\>): \{ `isVisible`: `boolean`; `onLayout`: (`event`: `LayoutChangeEvent`) => `void`; `onMeasure`: (`_x`: `number`, `_y`: `number`, `width`: `number`, `height`: `number`, `x`: `number`, `y`: `number`) => `void`; `step`: [`WalkthroughStep`](#api-walkthroughstep)\<[`ContentComponentProps`](#api-contentcomponentprops)\> \| `undefined`; \}
+> **useWalkthroughStep**\<`P`\>(`__namedParameters`: [`UseWalkthroughStep`](#api-usewalkthroughstep)\<`P`\>): \{ `isVisible`: `boolean`; `onLayout`: (`event`: `LayoutChangeEvent`) => `void`; `onMeasure`: (`x`: `number`, `y`: `number`, `width`: `number`, `height`: `number`) => `void`; `step`: [`WalkthroughStep`](#api-walkthroughstep)\<[`ContentComponentProps`](#api-contentcomponentprops)\> \| `undefined`; \}
 
 Registers a walkthrough step and tracks the mask of the view it should
 highlight.
@@ -1159,13 +1159,13 @@ not set.
 
 #### Returns
 
-\{ `isVisible`: `boolean`; `onLayout`: (`event`: `LayoutChangeEvent`) => `void`; `onMeasure`: (`_x`: `number`, `_y`: `number`, `width`: `number`, `height`: `number`, `x`: `number`, `y`: `number`) => `void`; `step`: [`WalkthroughStep`](#api-walkthroughstep)\<[`ContentComponentProps`](#api-contentcomponentprops)\> \| `undefined`; \}
+\{ `isVisible`: `boolean`; `onLayout`: (`event`: `LayoutChangeEvent`) => `void`; `onMeasure`: (`x`: `number`, `y`: `number`, `width`: `number`, `height`: `number`) => `void`; `step`: [`WalkthroughStep`](#api-walkthroughstep)\<[`ContentComponentProps`](#api-contentcomponentprops)\> \| `undefined`; \}
 
 | Name | Type |
 | ------ | ------ |
 | `isVisible` | `boolean` |
 | `onLayout()` | (`event`: `LayoutChangeEvent`) => `void` |
-| `onMeasure()` | (`_x`: `number`, `_y`: `number`, `width`: `number`, `height`: `number`, `x`: `number`, `y`: `number`) => `void` |
+| `onMeasure()` | (`x`: `number`, `y`: `number`, `width`: `number`, `height`: `number`) => `void` |
 | `step` | [`WalkthroughStep`](#api-walkthroughstep)\<[`ContentComponentProps`](#api-contentcomponentprops)\> \| `undefined` |
 
 ***

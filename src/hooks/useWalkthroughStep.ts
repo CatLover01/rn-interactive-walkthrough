@@ -125,45 +125,45 @@ export const useWalkthroughStep = <
   );
 
   const onMeasure = useCallback(
-    (
-      _x: number,
-      _y: number,
-      width: number,
-      height: number,
-      x: number,
-      y: number,
-    ) => {
+    (x: number, y: number, width: number, height: number) => {
       registerStepWithProps({ width, height, x, y });
     },
     [registerStepWithProps],
   );
+
+  // Latest registered step for this hook. `measureMask` may be stored on the
+  // step by the provider from an earlier render, so reading the step through a
+  // ref keeps that closure from capturing a stale value.
+  const stepRef = useRef<WalkthroughStep | undefined>(undefined);
+  stepRef.current = step;
 
   const measuredMask = useCallback(() => {
     const target = targetRef.current;
     if (target === null) {
       return;
     }
-    target.measure((_x, _y, width, height, x, y) => {
+    target.measureInWindow((x, y, width, height) => {
       if (
         Number.isFinite(x) &&
         Number.isFinite(y) &&
         Number.isFinite(width) &&
         Number.isFinite(height)
       ) {
+        const currentStep = stepRef.current;
         const newPosition =
-          step &&
+          currentStep &&
           // If component is unmounted, then this will be undefined
-          (step.mask.x !== x ||
-            step.mask.y !== y ||
-            step.mask.width !== width ||
-            step.mask.height !== height);
+          (currentStep.mask.x !== x ||
+            currentStep.mask.y !== y ||
+            currentStep.mask.width !== width ||
+            currentStep.mask.height !== height);
 
         if (newPosition === true) {
           registerStepWithProps({ width, height, x, y });
         }
       }
     });
-  }, [step, registerStepWithProps]);
+  }, [registerStepWithProps]);
 
   useLayoutEffect(() => {
     propsRef.current = {
@@ -219,10 +219,10 @@ export const useWalkthroughStep = <
   const layoutLockRef = useRef(false);
   const onLayout = useCallback(
     (event: LayoutChangeEvent) => {
+      const target = event.target;
+      targetRef.current = target;
       if (!layoutLockRef.current) {
-        const target = event.target;
-        targetRef.current = target;
-        target.measure(onMeasure);
+        target.measureInWindow(onMeasure);
       }
       layoutLockRef.current = props.layoutLock === true;
     },
