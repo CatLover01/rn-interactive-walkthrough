@@ -22,8 +22,8 @@ const config: Config = {
   onBrokenLinks: "throw",
   // typedoc's <a id> anchors are invisible to the broken-anchor checker
   // (facebook/docusaurus#9808), so the api-reference page reports false
-  // positives. There is no per-page option, so warn instead of throw.
-  onBrokenAnchors: "warn",
+  // positives. There is no per-page option, so ignore instead of throw.
+  onBrokenAnchors: "ignore",
   markdown: {
     hooks: {
       onBrokenMarkdownLinks: "throw",
