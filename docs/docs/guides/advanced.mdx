@@ -175,3 +175,17 @@ The `onScroll` handler keeps the mask glued to the target while the user
 scrolls, and the scroll-end handlers snap it to its final position once the
 scroll settles. `layoutLock` stops `onLayout` from re-measuring with a stale
 position.
+
+### Per-step animation duration
+
+The mask morphs between steps over the provider's `animationDuration` (default
+`300ms`). You can tune it per step without a global change:
+
+```tsx
+useWalkthroughStep({
+  number: 2,
+  animationDuration: 150,
+});
+```
+
+The backdrop fade still uses the provider-wide duration.

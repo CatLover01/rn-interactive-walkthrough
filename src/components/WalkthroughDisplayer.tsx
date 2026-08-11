@@ -69,6 +69,7 @@ export const WalkthroughDisplayer = () => {
     mask: currentStep.computedMask ?? currentStep.mask,
     onPressBackdrop: currentStep.onPressBackdrop,
     onPressMask: currentStep.onPressMask,
+    animationDuration: currentStep.animationDuration,
     context,
     ...backdrop,
   };

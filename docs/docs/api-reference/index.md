@@ -610,6 +610,18 @@ This is the full, resolved shape of a step as stored by the
 
 #### Properties
 
+<a id="api-animationduration-2"></a>
+
+##### animationDuration?
+
+> `optional` **animationDuration?**: `number`
+
+Overrides the mask transition duration (in ms) for this step.
+
+The mask morphs between steps over the provider's `animationDuration`
+(default 300ms). This lets a single step use a different duration. Falls
+back to the provider's duration when omitted.
+
 <a id="api-computedmask"></a>
 
 ##### computedMask?
