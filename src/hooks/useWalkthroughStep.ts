@@ -39,8 +39,14 @@ export const useWalkthroughStep = <
   ...props
 }: UseWalkthroughStep<P>) => {
   const { width, height } = useWindowDimensions();
-  const { registerStep, steps, currentStepNumber, stop, useIsFocused } =
-    useWalkthrough();
+  const {
+    registerStep,
+    steps,
+    currentStepNumber,
+    stop,
+    useIsFocused,
+    layoutAdjustments,
+  } = useWalkthrough();
 
   const targetRef = useRef<ReactNativeElement | null>(null);
 
@@ -81,8 +87,8 @@ export const useWalkthroughStep = <
         computedMask: mask,
       };
 
-      if (step.layoutAdjustments) {
-        const la = step.layoutAdjustments;
+      if (layoutAdjustments || step.layoutAdjustments) {
+        const la = { ...layoutAdjustments, ...step.layoutAdjustments };
         step = {
           ...step,
           computedMask: {
@@ -114,7 +120,7 @@ export const useWalkthroughStep = <
       // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
       registerStep(step as unknown as WalkthroughStep);
     },
-    [registerStep, number, resolvedIdentifier],
+    [registerStep, number, resolvedIdentifier, layoutAdjustments],
   );
 
   const onMeasure = useCallback(

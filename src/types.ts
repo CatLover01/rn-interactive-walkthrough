@@ -62,6 +62,8 @@ export interface WalkthroughContextType<
   animationDuration: number;
   /** The merged animation configuration used by the displayer. */
   animations: WalkthroughLayoutAnimations;
+  /** Adjusts the measured mask, e.g. to add padding. */
+  layoutAdjustments?: LayoutAdjustments;
   /**
    * The fallback content component used by steps that don't specify their own
    * {@link WalkthroughStep.contentComponent}. See {@link WalkthroughOptions.contentComponent}.
@@ -114,7 +116,6 @@ export interface LayoutAdjustments {
   maxX?: number;
   /** The maximum y the computed mask may have. */
   maxY?: number;
-
   /** Adds to (or subtracts from) the mask's x. */
   addX?: number;
   /** Adds to (or subtracts from) the mask's y. */
@@ -286,7 +287,10 @@ export interface WalkthroughStep<
    * everything and the content renders on top.
    * */
   fullScreen?: boolean;
-  /** Adjusts the measured mask, e.g. to add padding. */
+  /**
+   * Adjusts the measured mask. Merged with {@link WalkthroughOptions.layoutAdjustments}
+   * per key, with the step's values taking precedence.
+   * */
   layoutAdjustments?: LayoutAdjustments;
   /**
    * Only allow the `onLayout` to get set once. This is useful on for example,
@@ -370,6 +374,7 @@ export interface WalkthroughOptions<
     | "contentComponent"
     | "animationDuration"
     | "backdropColor"
+    | "layoutAdjustments"
     | "debug"
   >
 > {

@@ -329,6 +329,14 @@ Whether the current step is the last registered one.
 
 Whether a step with `number === 1` is registered, so `start()` can run.
 
+<a id="api-layoutadjustments-1"></a>
+
+##### layoutAdjustments?
+
+> `optional` **layoutAdjustments?**: [`LayoutAdjustments`](#api-layoutadjustments)
+
+Adjusts the measured mask, e.g. to add padding.
+
 <a id="api-next"></a>
 
 ##### next
@@ -481,7 +489,7 @@ provider and the context agree on their shape), plus the optional
 
 #### Extends
 
-- `Partial`\<`Pick`\<[`WalkthroughContextType`](#api-walkthroughcontexttype)\<`P`\>, `"useIsFocused"` \| `"contentComponent"` \| `"animationDuration"` \| `"backdropColor"` \| `"debug"`\>\>
+- `Partial`\<`Pick`\<[`WalkthroughContextType`](#api-walkthroughcontexttype)\<`P`\>, `"useIsFocused"` \| `"contentComponent"` \| `"animationDuration"` \| `"backdropColor"` \| `"layoutAdjustments"` \| `"debug"`\>\>
 
 #### Type Parameters
 
@@ -551,6 +559,18 @@ Whether debug logging is enabled, from [WalkthroughOptions.debug](#api-debug-1).
 
 `Partial.debug`
 
+<a id="api-layoutadjustments-2"></a>
+
+##### layoutAdjustments?
+
+> `optional` **layoutAdjustments?**: [`LayoutAdjustments`](#api-layoutadjustments)
+
+Adjusts the measured mask, e.g. to add padding.
+
+###### Inherited from
+
+`Partial.layoutAdjustments`
+
 <a id="api-useisfocused-1"></a>
 
 ##### useIsFocused?
@@ -596,7 +616,7 @@ This is the full, resolved shape of a step as stored by the
 
 > `optional` **computedMask?**: [`WalkthroughStepMask`](#api-walkthroughstepmask-1)
 
-The final mask used for rendering, after [layoutAdjustments](#api-layoutadjustments-1) are
+The final mask used for rendering, after [layoutAdjustments](#api-layoutadjustments-3) are
 applied. Falls back to [mask](#api-mask) when not set.
 
 <a id="api-contentcomponent-2"></a>
@@ -637,13 +657,14 @@ A stable unique id for this step. Used to dedupe registration and as the
 React key for the content container in the displayer. Defaults to the
 string of `number` when omitted.
 
-<a id="api-layoutadjustments-1"></a>
+<a id="api-layoutadjustments-3"></a>
 
 ##### layoutAdjustments?
 
 > `optional` **layoutAdjustments?**: [`LayoutAdjustments`](#api-layoutadjustments)
 
-Adjusts the measured mask, e.g. to add padding.
+Adjusts the measured mask. Merged with [WalkthroughOptions.layoutAdjustments](#api-layoutadjustments-2)
+per key, with the step's values taking precedence.
 
 <a id="api-layoutlock"></a>
 
@@ -977,7 +998,7 @@ highlight.
 
 Attach the returned `onLayout` to the target view: the hook measures it and
 registers a step whose [WalkthroughStep.mask](#api-mask) matches the measured
-rectangle (adjusted by [WalkthroughStep.layoutAdjustments](#api-layoutadjustments-1)). When the
+rectangle (adjusted by [WalkthroughStep.layoutAdjustments](#api-layoutadjustments-3)). When the
 step is active, its content component renders above the mask.
 
 The step is re-registered (upserted by [WalkthroughStep.identifier](#api-identifier))
