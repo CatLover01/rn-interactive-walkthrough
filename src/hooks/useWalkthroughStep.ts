@@ -47,6 +47,7 @@ export const useWalkthroughStep = <
     stop,
     useIsFocused,
     layoutAdjustments,
+    maskAllowInteraction: providerMaskAllowInteraction,
   } = useWalkthrough();
 
   const targetRef = useRef<ReactNativeElement | null>(null);
@@ -74,9 +75,9 @@ export const useWalkthroughStep = <
       if (base === null) {
         return;
       }
-      const { maskAllowInteraction = false, ...rest } = base;
+      const { maskAllowInteraction, ...rest } = base;
       const mask: WalkthroughStepMask = {
-        allowInteraction: maskAllowInteraction,
+        allowInteraction: maskAllowInteraction ?? providerMaskAllowInteraction,
         ...maskProps,
       };
 
@@ -121,7 +122,13 @@ export const useWalkthroughStep = <
       // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
       registerStep(step as unknown as WalkthroughStep);
     },
-    [registerStep, number, resolvedIdentifier, layoutAdjustments],
+    [
+      registerStep,
+      number,
+      resolvedIdentifier,
+      layoutAdjustments,
+      providerMaskAllowInteraction,
+    ],
   );
 
   const onMeasure = useCallback(

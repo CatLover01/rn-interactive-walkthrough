@@ -337,6 +337,14 @@ Whether a step with `number === 1` is registered, so `start()` can run.
 
 Adjusts the measured mask, e.g. to add padding.
 
+<a id="api-maskallowinteraction"></a>
+
+##### maskAllowInteraction
+
+> **maskAllowInteraction**: `boolean`
+
+Whether touches inside the mask should pass through to the target view. Defaults to `false`.
+
 <a id="api-next"></a>
 
 ##### next
@@ -489,7 +497,7 @@ provider and the context agree on their shape), plus the optional
 
 #### Extends
 
-- `Partial`\<`Pick`\<[`WalkthroughContextType`](#api-walkthroughcontexttype)\<`P`\>, `"useIsFocused"` \| `"contentComponent"` \| `"animationDuration"` \| `"backdropColor"` \| `"layoutAdjustments"` \| `"debug"`\>\>
+- `Partial`\<`Pick`\<[`WalkthroughContextType`](#api-walkthroughcontexttype)\<`P`\>, `"useIsFocused"` \| `"contentComponent"` \| `"animationDuration"` \| `"backdropColor"` \| `"layoutAdjustments"` \| `"maskAllowInteraction"` \| `"debug"`\>\>
 
 #### Type Parameters
 
@@ -570,6 +578,18 @@ Adjusts the measured mask, e.g. to add padding.
 ###### Inherited from
 
 `Partial.layoutAdjustments`
+
+<a id="api-maskallowinteraction-1"></a>
+
+##### maskAllowInteraction?
+
+> `optional` **maskAllowInteraction?**: `boolean`
+
+Whether touches inside the mask should pass through to the target view. Defaults to `false`.
+
+###### Inherited from
+
+`Partial.maskAllowInteraction`
 
 <a id="api-useisfocused-1"></a>
 
@@ -1043,7 +1063,7 @@ Because the hook measures the target itself, callers never provide a full
 
 | Name | Type | Description |
 | ------ | ------ | ------ |
-| `maskAllowInteraction?` | `boolean` | Whether touches inside the mask should pass through to the target view. Equivalent to [WalkthroughStepMask.allowInteraction](#api-allowinteraction). Defaults to `false` (the target is blocked while highlighted). |
+| `maskAllowInteraction?` | `boolean` | Whether touches inside the mask should pass through to the target view. Equivalent to [WalkthroughStepMask.allowInteraction](#api-allowinteraction) Defaults to the provider's [WalkthroughOptions.maskAllowInteraction](#api-maskallowinteraction-1) value, which defaults to `false` (the target is blocked while highlighted). |
 
 #### Type Parameters
 

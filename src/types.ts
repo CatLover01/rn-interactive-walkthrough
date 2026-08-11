@@ -64,6 +64,8 @@ export interface WalkthroughContextType<
   animations: WalkthroughLayoutAnimations;
   /** Adjusts the measured mask, e.g. to add padding. */
   layoutAdjustments?: LayoutAdjustments;
+  /** Whether touches inside the mask should pass through to the target view. Defaults to `false`. */
+  maskAllowInteraction: boolean;
   /**
    * The fallback content component used by steps that don't specify their own
    * {@link WalkthroughStep.contentComponent}. See {@link WalkthroughOptions.contentComponent}.
@@ -350,9 +352,11 @@ export type UseWalkthroughStepStrict<P extends ContentComponentProps> = Omit<
 > & {
   /**
    * Whether touches inside the mask should pass through to the target view.
-   * Equivalent to {@link WalkthroughStepMask.allowInteraction}. Defaults to
-   * `false` (the target is blocked while highlighted).
-   * */
+   * Equivalent to {@link WalkthroughStepMask.allowInteraction}
+   *
+   * Defaults to the provider's {@link WalkthroughOptions.maskAllowInteraction}
+   * value, which defaults to `false` (the target is blocked while highlighted).
+   */
   maskAllowInteraction?: boolean;
 };
 
@@ -386,6 +390,7 @@ export interface WalkthroughOptions<
     | "animationDuration"
     | "backdropColor"
     | "layoutAdjustments"
+    | "maskAllowInteraction"
     | "debug"
   >
 > {
