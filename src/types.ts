@@ -28,6 +28,8 @@ export interface WalkthroughStepMask {
    * instead of being swallowed by the walkthrough overlay.
    * */
   allowInteraction?: boolean;
+  /** Round the corners of the hole. The backdrop fills the area outside the rounded corners. */
+  borderRadius?: number;
 }
 
 /**
@@ -354,6 +356,8 @@ export type UseWalkthroughStepStrict<P extends ContentComponentProps> = Omit<
    * `false` (the target is blocked while highlighted).
    * */
   maskAllowInteraction?: boolean;
+  /** Round the corners of the hole. The backdrop fills the area outside the rounded corners. */
+  maskBorderRadius?: number;
 };
 
 /**
