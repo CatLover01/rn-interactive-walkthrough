@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.0](https://github.com/CatLover01/rn-interactive-walkthrough/compare/v0.4.0...v1.0.0) (2026-08-12)
+
+### Features
+
+* add configurable pulsing mask animation ([bb5a0c0](https://github.com/CatLover01/rn-interactive-walkthrough/commit/bb5a0c04600941ed744bc3791eb1d8bf81583c8a))
+* add provider-level mask interaction override ([3d4223e](https://github.com/CatLover01/rn-interactive-walkthrough/commit/3d4223e1587d1dd4a5cc1ff40b4cc535fab4652c))
+* unregister steps when their view unmounts ([7d994eb](https://github.com/CatLover01/rn-interactive-walkthrough/commit/7d994eb440a1206c83e8bc6fb208e0f30eba3f6d))
+
+### Bug Fixes
+
+* **example:** fade modal shadows with the overlay animation ([1c11ea2](https://github.com/CatLover01/rn-interactive-walkthrough/commit/1c11ea2b0576ec5940cfb06b7272b050ec07f547))
+* **example:** lock gallery walkthrough masks on scroll ([89533ce](https://github.com/CatLover01/rn-interactive-walkthrough/commit/89533ce685acd61b07d4267095fb99442ad45933))
+* prevent stale closure in measureMask ([549e47d](https://github.com/CatLover01/rn-interactive-walkthrough/commit/549e47debd73443294c70ba1ae6fb45a6c8ebeae))
+* support non-contiguous step numbers in navigation ([c06b16f](https://github.com/CatLover01/rn-interactive-walkthrough/commit/c06b16f8b57179696cdd3a9f0af5af6923846567))
+
 ## [0.4.0](https://github.com/CatLover01/rn-interactive-walkthrough/compare/v0.3.0...v0.4.0) (2026-08-11)
 
 ### Features
