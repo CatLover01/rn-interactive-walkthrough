@@ -80,6 +80,13 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
     [],
   );
 
+  const unregisterStep = useCallback<WalkthroughContextType["unregisterStep"]>(
+    (identifier) => {
+      setSteps((steps) => steps.filter((s) => s.identifier !== identifier));
+    },
+    [],
+  );
+
   const updateStep = useCallback<WalkthroughContextType["updateStep"]>(
     (identifier, step) => {
       setSteps((steps) => {
@@ -158,6 +165,7 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
       maskAllowInteraction,
       contentComponent,
       registerStep,
+      unregisterStep,
       updateStep,
       start,
       stop,
@@ -183,6 +191,7 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
       maskAllowInteraction,
       contentComponent,
       registerStep,
+      unregisterStep,
       updateStep,
       start,
       stop,

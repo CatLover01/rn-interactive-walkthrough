@@ -429,6 +429,27 @@ Stops the walkthrough and hides the overlay.
 
 `void`
 
+<a id="api-unregisterstep"></a>
+
+##### unregisterStep
+
+> **unregisterStep**: (`identifier`: `string`) => `void`
+
+Removes the step identified by [WalkthroughStep.identifier](#api-identifier), if it is
+registered. This is used by [useWalkthroughStep](#api-usewalkthroughstep-1) on unmount so steps
+for views that are no longer mounted don't linger in the provider's list.
+Does nothing if no step matches.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `identifier` | `string` |
+
+###### Returns
+
+`void`
+
 <a id="api-updatestep"></a>
 
 ##### updateStep

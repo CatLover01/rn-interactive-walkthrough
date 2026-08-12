@@ -42,6 +42,7 @@ export const useWalkthroughStep = <
   const { width, height } = useWindowDimensions();
   const {
     registerStep,
+    unregisterStep,
     steps,
     currentStepNumber,
     stop,
@@ -54,12 +55,14 @@ export const useWalkthroughStep = <
 
   const resolvedIdentifier = identifier ?? number.toString();
 
-  // On unmount, make sure to empty the targetRef. It might still be stored in the "steps" on the WalkthroughProvider.
+  // On unmount, make sure to empty the targetRef and remove the step. It
+  // might still be stored in the "steps" on the WalkthroughProvider.
   useEffect(
     () => () => {
       targetRef.current = null;
+      unregisterStep(resolvedIdentifier);
     },
-    [],
+    [resolvedIdentifier, unregisterStep],
   );
 
   const step = useMemo(

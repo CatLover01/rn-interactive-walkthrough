@@ -80,6 +80,13 @@ export interface WalkthroughContextType<
    * */
   registerStep: (step: WalkthroughStep) => void;
   /**
+   * Removes the step identified by {@link WalkthroughStep.identifier}, if it is
+   * registered. This is used by {@link useWalkthroughStep} on unmount so steps
+   * for views that are no longer mounted don't linger in the provider's list.
+   * Does nothing if no step matches.
+   * */
+  unregisterStep: (identifier: WalkthroughStep["identifier"]) => void;
+  /**
    * Merges the given partial props into the step identified by
    * {@link WalkthroughStep.identifier}, if it is registered. Does nothing if no
    * step matches.
