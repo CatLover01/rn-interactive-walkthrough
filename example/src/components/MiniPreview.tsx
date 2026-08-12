@@ -182,6 +182,19 @@ function MiniThemed() {
   );
 }
 
+function MiniPulse() {
+  return (
+    <View style={styles.fill}>
+      <Row />
+      <Row highlighted />
+      <Row withButton />
+      <View style={styles.miniPulseRing}>
+        <View style={styles.miniPulseDot} />
+      </View>
+    </View>
+  );
+}
+
 function PreviewBody({ kind }: MiniPreviewProps) {
   switch (kind) {
     case "tooltips":
@@ -198,6 +211,8 @@ function PreviewBody({ kind }: MiniPreviewProps) {
       return <MiniProgrammatic />;
     case "themed":
       return <MiniThemed />;
+    case "pulse":
+      return <MiniPulse />;
   }
 }
 
@@ -392,6 +407,25 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.border,
+  },
+  miniPulseRing: {
+    position: "absolute",
+    bottom: 8,
+    alignSelf: "center",
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: colors.accentSoft,
+    borderWidth: 2,
+    borderColor: colors.accent,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  miniPulseDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.accent,
   },
   themedRow: {
     paddingVertical: 5,

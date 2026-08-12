@@ -369,6 +369,14 @@ Goes back to the previous step.
 
 `void`
 
+<a id="api-pulse"></a>
+
+##### pulse
+
+> **pulse**: [`WalkthroughPulse`](#api-walkthroughpulse)
+
+The merged pulse configuration used by the displayer.
+
 <a id="api-registerstep"></a>
 
 ##### registerStep
@@ -591,6 +599,18 @@ Whether touches inside the mask should pass through to the target view. Defaults
 
 `Partial.maskAllowInteraction`
 
+<a id="api-pulse-1"></a>
+
+##### pulse?
+
+> `optional` **pulse?**: `Partial`\<[`WalkthroughPulse`](#api-walkthroughpulse)\>
+
+Overrides for the mask pulse animation.
+
+If omitted, the pulse is disabled by default. When enabled, the defaults
+are `delay` `400`, `duration` `400`, `scale` `1.05`, with a fast
+ease-out.
+
 <a id="api-useisfocused-1"></a>
 
 ##### useIsFocused?
@@ -608,6 +628,68 @@ hook that always returns `true`.
 ###### Inherited from
 
 `Partial.useIsFocused`
+
+***
+
+<a id="api-walkthroughpulse"></a>
+
+### WalkthroughPulse
+
+The pulse animation of the mask, i.e. the idle "breathe" the highlighted
+cut-out does to draw the eye once a step is settled on screen.
+
+When the current step is visible and no longer morphing into place, the mask
+repeatedly scales between its base size and `scale` to hint that the target
+is actionable. The whole behavior is configured through one object, see
+[WalkthroughOptions.pulse](#api-pulse-1).
+
+#### Properties
+
+<a id="api-delay"></a>
+
+##### delay
+
+> **delay**: `number`
+
+How long (in ms) to wait after the step finished animating into place
+before the pulse starts. Defaults to `400`.
+
+<a id="api-duration"></a>
+
+##### duration
+
+> **duration**: `number`
+
+The base duration (in ms) of a single beat, i.e. how long one
+bigger-to-smaller (or smaller-to-bigger) transition takes. Defaults to
+`400`.
+
+<a id="api-easing-1"></a>
+
+##### easing
+
+> **easing**: [`WalkthroughEasing`](#api-walkthrougheasing)
+
+Easing curve applied to each beat. Defaults to a fast ease-out.
+
+<a id="api-enabled"></a>
+
+##### enabled
+
+> **enabled**: `boolean`
+
+Whether the pulse is active. Set to `true` to enable it (it is `false` by
+default, so existing walks don't change behavior).
+
+<a id="api-scale"></a>
+
+##### scale
+
+> **scale**: `number`
+
+The peak scale of the pulse, relative to the mask's base size. Values
+greater than `1` grow the mask, lower than `1` shrink it. Defaults to
+`1.05`. Set to `1` to disable (in addition to [WalkthroughPulse.enabled](#api-enabled)).
 
 ***
 
@@ -802,6 +884,16 @@ Called when this step becomes active.
 ###### Returns
 
 `void`
+
+<a id="api-pulse-2"></a>
+
+##### pulse?
+
+> `optional` **pulse?**: `Partial`\<[`WalkthroughPulse`](#api-walkthroughpulse)\>
+
+Per-step overrides for the mask pulse. Merged with the provider-level
+[WalkthroughOptions.pulse](#api-pulse-1) per key, with the step's values taking
+precedence.
 
 ***
 

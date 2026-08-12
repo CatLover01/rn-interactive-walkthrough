@@ -7,7 +7,8 @@ export type DemoPreviewKind =
   | "fullscreen"
   | "variety"
   | "programmatic"
-  | "themed";
+  | "themed"
+  | "pulse";
 
 export type DemoDescriptor = {
   id: string;

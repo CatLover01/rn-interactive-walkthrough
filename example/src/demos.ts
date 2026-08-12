@@ -1,6 +1,7 @@
 import { FullScreenDemoScreen } from "./demos/FullScreenDemo";
 import { InteractiveTargetsScreen } from "./demos/InteractiveTargetsDemo";
 import { OverlayVarietyScreen } from "./demos/OverlayVarietyDemo";
+import { PulseScreen } from "./demos/PulseDemo";
 import { SmartTooltipsScreen } from "./demos/SmartTooltipsDemo";
 import { TapToAdvanceScreen } from "./demos/TapToAdvanceDemo";
 import { ThemedScreen } from "./demos/ThemedDemo";
@@ -56,5 +57,14 @@ export const demos: DemoDescriptor[] = [
     preview: "themed",
     screenTitle: "Themed tour",
     screen: ThemedScreen,
+  },
+  {
+    id: "pulse",
+    title: "Pulsing mask",
+    description:
+      "The highlighted area gently breathes to draw attention to the action.",
+    preview: "pulse",
+    screenTitle: "Pulsing mask",
+    screen: PulseScreen,
   },
 ];

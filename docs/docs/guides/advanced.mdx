@@ -136,6 +136,62 @@ import { Easing } from "react-native-reanimated";
 - `content.entering` / `content.exiting` / `content.layout`: layout animations
   for the step content container
 
+## Pulsing mask
+
+Once a step is visible and has finished animating into place, the mask can
+pulse (scale up and down repeatedly) to draw the user's eye to the highlighted
+action. It is disabled by default, and is switched on through a single `pulse`
+object on the provider, so the whole behaviour lives in one place:
+
+```tsx
+<WalkthroughProvider
+  pulse={{
+    enabled: true,
+    delay: 600,
+    duration: 500,
+    scale: 1.08,
+    easing: Easing.inOut(Easing.sin),
+  }}
+>
+  <MyAwesomeApp />
+</WalkthroughProvider>
+```
+
+Enabled from scratch, it uses `delay: 400`, `duration: 400`, `scale: 1.05`,
+with a fast ease-out. The pulse starts only after the mask morph has settled
+(`delay` counts from that moment), so it never fights the transition between
+steps. It restarts cleanly each time a step becomes active, including when you
+navigate backwards.
+
+Options:
+
+- `enabled`: turn the pulse on or off (defaults to `false`)
+- `delay`: how long to wait (in ms) after the mask settles before the first
+  beat
+- `duration`: how long (in ms) one bigger-to-smaller (or smaller-to-bigger)
+  transition takes
+- `scale`: the peak scale of the beat, relative to the mask's base size. Use a
+  value above `1` to grow the mask, below `1` to shrink it; `1` disables the
+  motion
+- `easing`: the easing curve applied to each beat
+
+The mask is aligned to whole pixels, so during a beat a small target can appear
+to move in 1px steps; at rest it always sits exactly where the morph left it.
+
+### Per-step overrides
+
+A single step can override just some pulse options; the provider value fields
+you don't touch still win from the defaults. The step's `pulse` is merged over
+the provider's, per key:
+
+```tsx
+const { onLayout } = useWalkthroughStep({
+  number: 2,
+  contentComponent: ButtonOverlay,
+  pulse: { enabled: true, scale: 1.12 },
+});
+```
+
 ## Targets in scrollable containers
 
 If a highlighted view sits inside a `ScrollView`, its on-screen position changes

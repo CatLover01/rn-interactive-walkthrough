@@ -11,6 +11,7 @@ import type {
   WalkthroughContextType,
   WalkthroughLayoutAnimations,
   WalkthroughMaskCoordinates,
+  WalkthroughPulse,
   WalkthroughStepMask,
 } from "./types";
 
@@ -39,6 +40,21 @@ export const getMergedAnimations = (
     content: { ...content, ...animations?.content },
   };
 };
+
+export const getDefaultPulse = (): WalkthroughPulse => ({
+  enabled: false,
+  delay: 400,
+  duration: 400,
+  scale: 1.05,
+  easing: Easing.out(Easing.quad),
+});
+
+export const getMergedPulse = (
+  pulse: Partial<WalkthroughPulse> | undefined,
+): WalkthroughPulse => ({
+  ...getDefaultPulse(),
+  ...pulse,
+});
 
 export const defaultUseIsFocused = () => true;
 

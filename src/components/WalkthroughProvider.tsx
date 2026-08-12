@@ -8,7 +8,11 @@ import type {
   WalkthroughOptions,
   WalkthroughStep,
 } from "../types";
-import { defaultUseIsFocused, getMergedAnimations } from "../utils";
+import {
+  defaultUseIsFocused,
+  getMergedAnimations,
+  getMergedPulse,
+} from "../utils";
 import { WalkthroughDisplayer } from "./WalkthroughDisplayer";
 
 /**
@@ -24,6 +28,7 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
   contentComponent,
   animationDuration = 300,
   animations: initialAnimations,
+  pulse: initialPulse,
   layoutAdjustments,
   maskAllowInteraction = false,
   useIsFocused = defaultUseIsFocused,
@@ -38,6 +43,8 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
     () => getMergedAnimations(initialAnimations, animationDuration),
     [initialAnimations, animationDuration],
   );
+
+  const pulse = useMemo(() => getMergedPulse(initialPulse), [initialPulse]);
 
   const isActive = typeof currentStepNumber === "number";
   const isReady = useMemo(() => steps.some((s) => s.number === 1), [steps]);
@@ -121,6 +128,7 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
       backdropColor,
       animationDuration,
       animations,
+      pulse,
       layoutAdjustments,
       maskAllowInteraction,
       contentComponent,
@@ -145,6 +153,7 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
       backdropColor,
       animationDuration,
       animations,
+      pulse,
       layoutAdjustments,
       maskAllowInteraction,
       contentComponent,

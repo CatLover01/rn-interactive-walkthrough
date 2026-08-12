@@ -23,5 +23,6 @@ export type {
   WalkthroughOptions,
   WalkthroughStep,
   WalkthroughStepMask,
+  WalkthroughPulse,
   PartialWalkthroughLayoutAnimations,
 } from "./types";

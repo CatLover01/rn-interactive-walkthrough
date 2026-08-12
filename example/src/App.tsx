@@ -17,7 +17,11 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <WalkthroughProvider key={demo?.id} backdropColor={colors.backdrop}>
+      <WalkthroughProvider
+        key={demo?.id}
+        backdropColor={colors.backdrop}
+        pulse={demo?.id === "pulse" ? { enabled: true } : undefined}
+      >
         {demo ? (
           <DemoShell title={demo.screenTitle} onBack={closeDemo}>
             <demo.screen />

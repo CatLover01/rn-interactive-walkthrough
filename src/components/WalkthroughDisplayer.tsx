@@ -70,6 +70,7 @@ export const WalkthroughDisplayer = () => {
     onPressBackdrop: currentStep.onPressBackdrop,
     onPressMask: currentStep.onPressMask,
     animationDuration: currentStep.animationDuration,
+    pulse: currentStep.pulse,
     context,
     ...backdrop,
   };

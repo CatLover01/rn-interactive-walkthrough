@@ -62,6 +62,8 @@ export interface WalkthroughContextType<
   animationDuration: number;
   /** The merged animation configuration used by the displayer. */
   animations: WalkthroughLayoutAnimations;
+  /** The merged pulse configuration used by the displayer. */
+  pulse: WalkthroughPulse;
   /** Adjusts the measured mask, e.g. to add padding. */
   layoutAdjustments?: LayoutAdjustments;
   /** Whether touches inside the mask should pass through to the target view. Defaults to `false`. */
@@ -237,6 +239,42 @@ export type PartialWalkthroughLayoutAnimations = {
 };
 
 /**
+ * The pulse animation of the mask, i.e. the idle "breathe" the highlighted
+ * cut-out does to draw the eye once a step is settled on screen.
+ *
+ * When the current step is visible and no longer morphing into place, the mask
+ * repeatedly scales between its base size and `scale` to hint that the target
+ * is actionable. The whole behavior is configured through one object, see
+ * {@link WalkthroughOptions.pulse}.
+ * */
+export interface WalkthroughPulse {
+  /**
+   * Whether the pulse is active. Set to `true` to enable it (it is `false` by
+   * default, so existing walks don't change behavior).
+   * */
+  enabled: boolean;
+  /**
+   * How long (in ms) to wait after the step finished animating into place
+   * before the pulse starts. Defaults to `400`.
+   * */
+  delay: number;
+  /**
+   * The base duration (in ms) of a single beat, i.e. how long one
+   * bigger-to-smaller (or smaller-to-bigger) transition takes. Defaults to
+   * `400`.
+   * */
+  duration: number;
+  /**
+   * The peak scale of the pulse, relative to the mask's base size. Values
+   * greater than `1` grow the mask, lower than `1` shrink it. Defaults to
+   * `1.05`. Set to `1` to disable (in addition to {@link WalkthroughPulse.enabled}).
+   * */
+  scale: number;
+  /** Easing curve applied to each beat. Defaults to a fast ease-out. */
+  easing: WalkthroughEasing;
+}
+
+/**
  * Props for the backdrop mask, i.e. everything the displayer needs to render
  * the mask overlay for a step.
  *
@@ -247,7 +285,7 @@ export interface WalkthroughMaskProps
   extends
     Pick<
       WalkthroughStep,
-      "mask" | "onPressBackdrop" | "onPressMask" | "animationDuration"
+      "mask" | "onPressBackdrop" | "onPressMask" | "animationDuration" | "pulse"
     >,
     Partial<WalkthroughBackdropAnimations> {
   /** The shared walkthrough context. */
@@ -311,6 +349,12 @@ export interface WalkthroughStep<
    * back to the provider's duration when omitted.
    * */
   animationDuration?: number;
+  /**
+   * Per-step overrides for the mask pulse. Merged with the provider-level
+   * {@link WalkthroughOptions.pulse} per key, with the step's values taking
+   * precedence.
+   * */
+  pulse?: Partial<WalkthroughPulse>;
   /** Called when this step becomes active. */
   onStart?: (props: WalkthroughCallback) => void;
   /** Called when the walkthrough moves past this step. */
@@ -401,4 +445,12 @@ export interface WalkthroughOptions<
    * {@link animationDuration}) and an elastic easing for the mask morph.
    * */
   animations?: PartialWalkthroughLayoutAnimations;
+  /**
+   * Overrides for the mask pulse animation.
+   *
+   * If omitted, the pulse is disabled by default. When enabled, the defaults
+   * are `delay` `400`, `duration` `400`, `scale` `1.05`, with a fast
+   * ease-out.
+   * */
+  pulse?: Partial<WalkthroughPulse>;
 }
