@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.0](https://github.com/CatLover01/rn-interactive-walkthrough/compare/v1.0.0...v1.1.0) (2026-08-12)
+
+### Features
+
+* add WalkthroughStep component for automatic layout measurement ([cbde138](https://github.com/CatLover01/rn-interactive-walkthrough/commit/cbde13862ffce3e164a28145d42b8433fcf11a13))
+
 ## [1.0.0](https://github.com/CatLover01/rn-interactive-walkthrough/compare/v0.4.0...v1.0.0) (2026-08-12)
 
 ### Features
