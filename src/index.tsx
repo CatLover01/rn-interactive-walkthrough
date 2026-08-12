@@ -1,4 +1,5 @@
 export { WalkthroughProvider } from "./components/WalkthroughProvider";
+export { WalkthroughStep } from "./components/WalkthroughStep";
 export { useWalkthrough } from "./context";
 export { useContentPlacement } from "./hooks/useContentPlacement";
 export { useWalkthroughStep } from "./hooks/useWalkthroughStep";
@@ -21,8 +22,9 @@ export type {
   WalkthroughLayoutAnimations,
   WalkthroughMaskCoordinates,
   WalkthroughOptions,
-  WalkthroughStep,
   WalkthroughStepMask,
+  WalkthroughStepProps,
+  WalkthroughStepType,
   WalkthroughPulse,
   PartialWalkthroughLayoutAnimations,
 } from "./types";

@@ -14,7 +14,7 @@ import type {
   UseWalkthroughStep,
   UseWalkthroughStepStrict,
   WalkthroughMaskCoordinates,
-  WalkthroughStep,
+  WalkthroughStepType,
   WalkthroughStepMask,
 } from "../types";
 
@@ -23,12 +23,12 @@ import type {
  * highlight.
  *
  * Attach the returned `onLayout` to the target view: the hook measures it and
- * registers a step whose {@link WalkthroughStep.mask} matches the measured
- * rectangle (adjusted by {@link WalkthroughStep.layoutAdjustments}). When the
+ * registers a step whose {@link WalkthroughStepType.mask} matches the measured
+ * rectangle (adjusted by {@link WalkthroughStepType.layoutAdjustments}). When the
  * step is active, its content component renders above the mask.
  *
- * The step is re-registered (upserted by {@link WalkthroughStep.identifier})
- * whenever its target moves, as long as {@link WalkthroughStep.layoutLock} is
+ * The step is re-registered (upserted by {@link WalkthroughStepType.identifier})
+ * whenever its target moves, as long as {@link WalkthroughStepType.layoutLock} is
  * not set.
  * */
 export const useWalkthroughStep = <
@@ -84,7 +84,7 @@ export const useWalkthroughStep = <
         ...maskProps,
       };
 
-      let step: WalkthroughStep<P> = {
+      let step: WalkthroughStepType<P> = {
         ...rest,
         number,
         identifier: resolvedIdentifier,
@@ -123,7 +123,7 @@ export const useWalkthroughStep = <
       }
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-      registerStep(step as unknown as WalkthroughStep);
+      registerStep(step as unknown as WalkthroughStepType);
     },
     [
       registerStep,
@@ -144,7 +144,7 @@ export const useWalkthroughStep = <
   // Latest registered step for this hook. `measureMask` may be stored on the
   // step by the provider from an earlier render, so reading the step through a
   // ref keeps that closure from capturing a stale value.
-  const stepRef = useRef<WalkthroughStep | undefined>(undefined);
+  const stepRef = useRef<WalkthroughStepType | undefined>(undefined);
   stepRef.current = step;
 
   const measuredMask = useCallback(() => {

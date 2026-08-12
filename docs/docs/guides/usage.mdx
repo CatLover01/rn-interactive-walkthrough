@@ -24,11 +24,43 @@ export default function App() {
 }
 ```
 
-## 2. Define a step with `useWalkthroughStep`
+## 2. Define a step
 
-Call `useWalkthroughStep` inside any component, passing a step `number` and a
-`contentComponent`. Then attach the returned `onLayout` handler to the `View`
-you want to highlight.
+There are two equivalent ways to define a step: the `WalkthroughStep` **component**
+(recommended) or the `useWalkthroughStep` **hook**. They accept the same options.
+
+### With the `WalkthroughStep` component
+
+Wrap the view you want to highlight with `WalkthroughStep`. It measures itself
+automatically, so you never touch `onLayout`.
+
+```tsx
+import { WalkthroughStep } from "rn-interactive-walkthrough";
+import { NearbyUsersTooltip } from "./Tooltips";
+
+export default function HomeScreen() {
+  return (
+    <View style={{ flex: 1 }}>
+      <WalkthroughStep
+        number={1}
+        contentComponent={NearbyUsersTooltip}
+        style={{ height: 10 }}
+      >
+        <Text>Here is my app!</Text>
+      </WalkthroughStep>
+    </View>
+  );
+}
+```
+
+The component wraps its children in a `View` and measures that wrapper, so the
+mask covers exactly the highlighted subtree. Use the `style` prop to size or
+position the highlight target when its content doesn't fill a predictable box.
+
+### With the `useWalkthroughStep` hook
+
+Call `useWalkthroughStep` inside any component, passing the same options, then
+attach the returned `onLayout` handler to the `View` you want to highlight:
 
 ```tsx
 import { useWalkthroughStep } from "rn-interactive-walkthrough";
@@ -50,8 +82,10 @@ export default function HomeScreen() {
 }
 ```
 
-The `onLayout` handler measures the view so the library knows exactly where to
-draw the mask (the highlighted area) on the screen.
+Either way, the target is measured so the library knows exactly where to draw
+the mask (the highlighted area) on the screen. Prefer the component when you
+highlight a whole subtree; use the hook when you need to attach `onLayout` to an
+existing view that already has its own layout, or for a full-screen step.
 
 ## 3. Start the walkthrough
 
@@ -103,13 +137,15 @@ const NearbyUsersTooltip = ({ title, ctx }: NearbyUsersTooltipProps) => {
 ```
 
 ```tsx
-const { onLayout } = useWalkthroughStep({
-  number: 2,
-  contentComponent: NearbyUsersTooltip,
-  contentComponentProps: {
+<WalkthroughStep
+  number={2}
+  contentComponent={NearbyUsersTooltip}
+  contentComponentProps={{
     title: "These are all your friends nearby!",
-  },
-});
+  }}
+>
+  ...
+</WalkthroughStep>
 ```
 
 See the [Overlays guide](overlays) for the full set of patterns.

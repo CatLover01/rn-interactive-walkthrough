@@ -1,5 +1,5 @@
-import type { ComponentType } from "react";
-import type { ViewProps } from "react-native";
+import type { ComponentType, ReactNode } from "react";
+import type { StyleProp, ViewProps, ViewStyle } from "react-native";
 import type {
   AnimatedProps,
   EasingFunction,
@@ -12,7 +12,7 @@ import type {
  * A step uses this to tell the {@link WalkthroughProvider} where its target
  * view sits so the mask can be drawn around it. It is normally produced by the
  * hook by measuring the view, but can be supplied by hand, see
- * {@link WalkthroughStep.mask}.
+ * {@link WalkthroughStepType.mask}.
  * */
 export interface WalkthroughStepMask {
   /** The x coordinate (in dp) of the target's top-left corner. */
@@ -41,11 +41,11 @@ export interface WalkthroughContextType<
   P extends ContentComponentProps = ContentComponentProps,
 > {
   /** The step currently being displayed, or `undefined` when inactive. */
-  currentStep: WalkthroughStep | undefined;
+  currentStep: WalkthroughStepType | undefined;
   /** The number of the current step, or `undefined` when inactive. */
   currentStepNumber: number | undefined;
-  /** All registered steps, sorted by {@link WalkthroughStep.number}. */
-  steps: WalkthroughStep[];
+  /** All registered steps, sorted by {@link WalkthroughStepType.number}. */
+  steps: WalkthroughStepType[];
   /** Whether the current step is the first one (`number === 1`). */
   isFirstStep: boolean;
   /** Whether the current step is the last registered one. */
@@ -70,29 +70,29 @@ export interface WalkthroughContextType<
   maskAllowInteraction: boolean;
   /**
    * The fallback content component used by steps that don't specify their own
-   * {@link WalkthroughStep.contentComponent}. See {@link WalkthroughOptions.contentComponent}.
+   * {@link WalkthroughStepType.contentComponent}. See {@link WalkthroughOptions.contentComponent}.
    * */
   contentComponent?: ComponentType<P>;
   /**
    * Registers a step, replacing any previously registered step with the same
-   * {@link WalkthroughStep.identifier}. This is the upsert used by
+   * {@link WalkthroughStepType.identifier}. This is the upsert used by
    * {@link useWalkthroughStep}.
    * */
-  registerStep: (step: WalkthroughStep) => void;
+  registerStep: (step: WalkthroughStepType) => void;
   /**
-   * Removes the step identified by {@link WalkthroughStep.identifier}, if it is
+   * Removes the step identified by {@link WalkthroughStepType.identifier}, if it is
    * registered. This is used by {@link useWalkthroughStep} on unmount so steps
    * for views that are no longer mounted don't linger in the provider's list.
    * Does nothing if no step matches.
    * */
-  unregisterStep: (identifier: WalkthroughStep["identifier"]) => void;
+  unregisterStep: (identifier: WalkthroughStepType["identifier"]) => void;
   /**
    * Merges the given partial props into the step identified by
-   * {@link WalkthroughStep.identifier}, if it is registered. Does nothing if no
+   * {@link WalkthroughStepType.identifier}, if it is registered. Does nothing if no
    * step matches.
    * */
   updateStep: (
-    identifier: WalkthroughStep["identifier"],
+    identifier: WalkthroughStepType["identifier"],
     step: Partial<P>,
   ) => void;
   /** Starts the walkthrough from the first registered step. */
@@ -158,12 +158,12 @@ export interface ContentComponentProps {
   /** The walkthrough context. */
   ctx: WalkthroughContextType;
   /** The step currently being displayed. */
-  step: WalkthroughStep;
+  step: WalkthroughStepType;
 }
 
 /**
- * The payload of the step lifecycle callbacks, {@link WalkthroughStep.onStart}
- * and {@link WalkthroughStep.onFinish}.
+ * The payload of the step lifecycle callbacks, {@link WalkthroughStepType.onStart}
+ * and {@link WalkthroughStepType.onFinish}.
  * */
 export interface WalkthroughCallback {
   /** The time at which the callback fired. */
@@ -175,7 +175,7 @@ export interface WalkthroughCallback {
  *
  * Receives the walkthrough {@link WalkthroughContextType} so it can drive the
  * walkthrough (e.g. `(ctx) => ctx.next()`). See
- * {@link WalkthroughStep.onPressMask} and {@link WalkthroughStep.onPressBackdrop}.
+ * {@link WalkthroughStepType.onPressMask} and {@link WalkthroughStepType.onPressBackdrop}.
  * */
 export type OnPressWithContextType = (context?: WalkthroughContextType) => void;
 
@@ -282,32 +282,14 @@ export interface WalkthroughPulse {
 }
 
 /**
- * Props for the backdrop mask, i.e. everything the displayer needs to render
- * the mask overlay for a step.
+ * A single step of the walkthrough, as resolved and stored by the
+ * {@link WalkthroughProvider}.
  *
- * It extends the mask-related bits of {@link WalkthroughStep} with the
- * (optional) backdrop animations, plus the shared {@link WalkthroughContextType}.
- * */
-export interface WalkthroughMaskProps
-  extends
-    Pick<
-      WalkthroughStep,
-      "mask" | "onPressBackdrop" | "onPressMask" | "animationDuration" | "pulse"
-    >,
-    Partial<WalkthroughBackdropAnimations> {
-  /** The shared walkthrough context. */
-  context: WalkthroughContextType;
-}
-
-/**
- * A single step of the walkthrough.
- *
- * This is the full, resolved shape of a step as stored by the
- * {@link WalkthroughProvider}. Callers usually build one through
- * {@link useWalkthroughStep}, which measures the target and fills in
+ * This is the full shape of a registered step. Callers usually build one
+ * through {@link useWalkthroughStep}, which measures the target and fills in
  * {@link mask} and {@link measureMask} automatically.
  * */
-export interface WalkthroughStep<
+export interface WalkthroughStepType<
   P extends ContentComponentProps = ContentComponentProps,
 > {
   /**
@@ -390,7 +372,25 @@ export interface WalkthroughStep<
 }
 
 /**
- * Same as {@link WalkthroughStep}, but with {@link WalkthroughStep.mask}
+ * Props for the backdrop mask, i.e. everything the displayer needs to render
+ * the mask overlay for a step.
+ *
+ * It extends the mask-related bits of {@link WalkthroughStepType} with the
+ * (optional) backdrop animations, plus the shared {@link WalkthroughContextType}.
+ * */
+export interface WalkthroughMaskProps
+  extends
+    Pick<
+      WalkthroughStepType,
+      "mask" | "onPressBackdrop" | "onPressMask" | "animationDuration" | "pulse"
+    >,
+    Partial<WalkthroughBackdropAnimations> {
+  /** The shared walkthrough context. */
+  context: WalkthroughContextType;
+}
+
+/**
+ * Same as {@link WalkthroughStepType}, but with {@link WalkthroughStepType.mask}
  * replaced by `maskAllowInteraction`.
  *
  * Because the hook measures the target itself, callers never provide a full
@@ -398,7 +398,7 @@ export interface WalkthroughStep<
  * `maskAllowInteraction`.
  * */
 export type UseWalkthroughStepStrict<P extends ContentComponentProps> = Omit<
-  WalkthroughStep<P>,
+  WalkthroughStepType<P>,
   "mask"
 > & {
   /**
@@ -414,8 +414,8 @@ export type UseWalkthroughStepStrict<P extends ContentComponentProps> = Omit<
 /**
  * The input of {@link useWalkthroughStep}.
  *
- * Like {@link UseWalkthroughStepStrict}, but {@link WalkthroughStep.identifier}
- * and {@link WalkthroughStep.measureMask} are optional: the identifier defaults
+ * Like {@link UseWalkthroughStepStrict}, but {@link WalkthroughStepType.identifier}
+ * and {@link WalkthroughStepType.measureMask} are optional: the identifier defaults
  * to the string of the step's number, and the hook provides its own measureMask.
  * */
 export type UseWalkthroughStep<P extends ContentComponentProps> = Omit<
@@ -423,6 +423,30 @@ export type UseWalkthroughStep<P extends ContentComponentProps> = Omit<
   "identifier" | "measureMask"
 > &
   Partial<Pick<UseWalkthroughStepStrict<P>, "identifier" | "measureMask">>;
+
+/**
+ * The props accepted by the {@link WalkthroughStep} component.
+ *
+ * Like {@link UseWalkthroughStep}, but the target view is measured
+ * automatically: the component wraps its {@link children} in a `View` and wires
+ * up its own `onLayout`, so callers never handle measuring. A `style` can still
+ * be forwarded to that wrapper to size/position the highlight target.
+ * */
+export interface WalkthroughStepProps<
+  P extends ContentComponentProps = ContentComponentProps,
+> extends UseWalkthroughStep<P> {
+  /**
+   * The content to highlight. It is wrapped in a `View` that is measured
+   * automatically; the mask covers exactly this wrapper (minus any
+   * {@link WalkthroughStepType.layoutAdjustments}).
+   * */
+  children: ReactNode;
+  /**
+   * Style applied to the wrapping `View`. Use this to size and position the
+   * highlight target (e.g. `{ width: 200 }` for fixed-size content).
+   * */
+  style?: StyleProp<ViewStyle>;
+}
 
 /**
  * The props accepted by the {@link WalkthroughProvider}.

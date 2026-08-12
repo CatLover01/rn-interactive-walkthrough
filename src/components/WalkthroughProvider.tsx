@@ -6,7 +6,7 @@ import type {
   ContentComponentProps,
   WalkthroughContextType,
   WalkthroughOptions,
-  WalkthroughStep,
+  WalkthroughStepType,
 } from "../types";
 import {
   defaultUseIsFocused,
@@ -36,7 +36,7 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
   debug = false,
   children,
 }: PropsWithChildren<WalkthroughOptions<P>>) => {
-  const [steps, setSteps] = useState<WalkthroughStep[]>([]);
+  const [steps, setSteps] = useState<WalkthroughStepType[]>([]);
   const [currentStepNumber, setCurrentStepNumber] = useState<number>();
 
   const animations = useMemo(

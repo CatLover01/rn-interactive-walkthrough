@@ -26,7 +26,7 @@ The walkthrough context.
 
 ##### step
 
-> **step**: [`WalkthroughStep`](#api-walkthroughstep)
+> **step**: [`WalkthroughStepType`](#api-walkthroughsteptype)
 
 The step currently being displayed.
 
@@ -36,7 +36,7 @@ The step currently being displayed.
 
 ### LayoutAdjustments
 
-Adjustments applied on top of a measured [WalkthroughStepMask](#api-walkthroughstepmask-1) to tweak
+Adjustments applied on top of a measured [WalkthroughStepMask](#api-walkthroughstepmask) to tweak
 where the mask ends up, e.g. to add padding around the target or to clamp it
 to the screen. See [useWalkthroughStep](#api-usewalkthroughstep-1).
 
@@ -189,8 +189,8 @@ Exits for the backdrop pressables
 
 ### WalkthroughCallback
 
-The payload of the step lifecycle callbacks, [WalkthroughStep.onStart](#api-onstart)
-and [WalkthroughStep.onFinish](#api-onfinish).
+The payload of the step lifecycle callbacks, [WalkthroughStepType.onStart](#api-onstart-1)
+and [WalkthroughStepType.onFinish](#api-onfinish-1).
 
 #### Properties
 
@@ -253,13 +253,13 @@ The color of the backdrop behind the mask, from [WalkthroughOptions.backdropColo
 > `optional` **contentComponent?**: `ComponentType`\<`P`\>
 
 The fallback content component used by steps that don't specify their own
-[WalkthroughStep.contentComponent](#api-contentcomponent-2). See [WalkthroughOptions.contentComponent](#api-contentcomponent-1).
+[WalkthroughStepType.contentComponent](#api-contentcomponent-3). See [WalkthroughOptions.contentComponent](#api-contentcomponent-1).
 
 <a id="api-currentstep"></a>
 
 ##### currentStep
 
-> **currentStep**: [`WalkthroughStep`](#api-walkthroughstep)\<[`ContentComponentProps`](#api-contentcomponentprops)\> \| `undefined`
+> **currentStep**: [`WalkthroughStepType`](#api-walkthroughsteptype)\<[`ContentComponentProps`](#api-contentcomponentprops)\> \| `undefined`
 
 The step currently being displayed, or `undefined` when inactive.
 
@@ -381,17 +381,17 @@ The merged pulse configuration used by the displayer.
 
 ##### registerStep
 
-> **registerStep**: (`step`: [`WalkthroughStep`](#api-walkthroughstep)) => `void`
+> **registerStep**: (`step`: [`WalkthroughStepType`](#api-walkthroughsteptype)) => `void`
 
 Registers a step, replacing any previously registered step with the same
-[WalkthroughStep.identifier](#api-identifier). This is the upsert used by
+[WalkthroughStepType.identifier](#api-identifier-1). This is the upsert used by
 [useWalkthroughStep](#api-usewalkthroughstep-1).
 
 ###### Parameters
 
 | Parameter | Type |
 | ------ | ------ |
-| `step` | [`WalkthroughStep`](#api-walkthroughstep) |
+| `step` | [`WalkthroughStepType`](#api-walkthroughsteptype) |
 
 ###### Returns
 
@@ -413,9 +413,9 @@ Starts the walkthrough from the first registered step.
 
 ##### steps
 
-> **steps**: [`WalkthroughStep`](#api-walkthroughstep)\<[`ContentComponentProps`](#api-contentcomponentprops)\>[]
+> **steps**: [`WalkthroughStepType`](#api-walkthroughsteptype)\<[`ContentComponentProps`](#api-contentcomponentprops)\>[]
 
-All registered steps, sorted by [WalkthroughStep.number](#api-number).
+All registered steps, sorted by [WalkthroughStepType.number](#api-number-1).
 
 <a id="api-stop"></a>
 
@@ -435,7 +435,7 @@ Stops the walkthrough and hides the overlay.
 
 > **unregisterStep**: (`identifier`: `string`) => `void`
 
-Removes the step identified by [WalkthroughStep.identifier](#api-identifier), if it is
+Removes the step identified by [WalkthroughStepType.identifier](#api-identifier-1), if it is
 registered. This is used by [useWalkthroughStep](#api-usewalkthroughstep-1) on unmount so steps
 for views that are no longer mounted don't linger in the provider's list.
 Does nothing if no step matches.
@@ -457,7 +457,7 @@ Does nothing if no step matches.
 > **updateStep**: (`identifier`: `string`, `step`: `Partial`\<`P`\>) => `void`
 
 Merges the given partial props into the step identified by
-[WalkthroughStep.identifier](#api-identifier), if it is registered. Does nothing if no
+[WalkthroughStepType.identifier](#api-identifier-1), if it is registered. Does nothing if no
 step matches.
 
 ###### Parameters
@@ -578,7 +578,7 @@ The color of the backdrop behind the mask, from [WalkthroughOptions.backdropColo
 > `optional` **contentComponent?**: `ComponentType`\<`P`\>
 
 The fallback content component used by steps that don't specify their own
-[WalkthroughStep.contentComponent](#api-contentcomponent-2). See [WalkthroughOptions.contentComponent](#api-contentcomponent-1).
+[WalkthroughStepType.contentComponent](#api-contentcomponent-3). See [WalkthroughOptions.contentComponent](#api-contentcomponent-1).
 
 ###### Inherited from
 
@@ -714,211 +714,7 @@ greater than `1` grow the mask, lower than `1` shrink it. Defaults to
 
 ***
 
-<a id="api-walkthroughstep"></a>
-
-### WalkthroughStep
-
-A single step of the walkthrough.
-
-This is the full, resolved shape of a step as stored by the
-[WalkthroughProvider](#api-walkthroughprovider). Callers usually build one through
-[useWalkthroughStep](#api-usewalkthroughstep-1), which measures the target and fills in
-[mask](#api-mask) and [measureMask](#api-measuremask) automatically.
-
-#### Type Parameters
-
-| Type Parameter | Default type |
-| ------ | ------ |
-| `P` *extends* [`ContentComponentProps`](#api-contentcomponentprops) | [`ContentComponentProps`](#api-contentcomponentprops) |
-
-#### Properties
-
-<a id="api-animationduration-2"></a>
-
-##### animationDuration?
-
-> `optional` **animationDuration?**: `number`
-
-Overrides the mask transition duration (in ms) for this step.
-
-The mask morphs between steps over the provider's `animationDuration`
-(default 300ms). This lets a single step use a different duration. Falls
-back to the provider's duration when omitted.
-
-<a id="api-computedmask"></a>
-
-##### computedMask?
-
-> `optional` **computedMask?**: [`WalkthroughStepMask`](#api-walkthroughstepmask-1)
-
-The final mask used for rendering, after [layoutAdjustments](#api-layoutadjustments-3) are
-applied. Falls back to [mask](#api-mask) when not set.
-
-<a id="api-contentcomponent-2"></a>
-
-##### contentComponent?
-
-> `optional` **contentComponent?**: `ComponentType`\<`P`\>
-
-The component rendered as overlay content for this step. Falls back to the
-provider-level [WalkthroughOptions.contentComponent](#api-contentcomponent-1) when omitted.
-
-<a id="api-contentcomponentprops-1"></a>
-
-##### contentComponentProps?
-
-> `optional` **contentComponentProps?**: `Omit`\<`P`, keyof [`ContentComponentProps`](#api-contentcomponentprops)\>
-
-Extra props passed to this step's [contentComponent](#api-contentcomponent-2) (or the
-provider's fallback), on top of [ContentComponentProps.ctx](#api-ctx) and
-[ContentComponentProps.step](#api-step).
-
-<a id="api-fullscreen"></a>
-
-##### fullScreen?
-
-> `optional` **fullScreen?**: `boolean`
-
-When `true`, the whole screen is treated as the mask: the backdrop covers
-everything and the content renders on top.
-
-<a id="api-identifier"></a>
-
-##### identifier
-
-> **identifier**: `string`
-
-A stable unique id for this step. Used to dedupe registration and as the
-React key for the content container in the displayer. Defaults to the
-string of `number` when omitted.
-
-<a id="api-layoutadjustments-3"></a>
-
-##### layoutAdjustments?
-
-> `optional` **layoutAdjustments?**: [`LayoutAdjustments`](#api-layoutadjustments)
-
-Adjusts the measured mask. Merged with [WalkthroughOptions.layoutAdjustments](#api-layoutadjustments-2)
-per key, with the step's values taking precedence.
-
-<a id="api-layoutlock"></a>
-
-##### layoutLock?
-
-> `optional` **layoutLock?**: `boolean`
-
-Only allow the `onLayout` to get set once. This is useful on for example,
-scrollable containers where the position on the page can change when you
-scroll.
-
-<a id="api-mask"></a>
-
-##### mask
-
-> **mask**: [`WalkthroughStepMask`](#api-walkthroughstepmask-1)
-
-The rectangle of the highlighted target. Normally measured automatically
-by [useWalkthroughStep](#api-usewalkthroughstep-1).
-
-<a id="api-measuremask"></a>
-
-##### measureMask
-
-> **measureMask**: () => `void`
-
-Re-measures the target and re-registers the step with fresh coordinates.
-Provided automatically by [useWalkthroughStep](#api-usewalkthroughstep-1).
-
-###### Returns
-
-`void`
-
-<a id="api-number"></a>
-
-##### number
-
-> **number**: `number`
-
-The order of this step in the walkthrough. Must be unique among the
-registered steps; the walkthrough advances by going up these numbers.
-
-<a id="api-onbackground"></a>
-
-##### onBackground?
-
-> `optional` **onBackground?**: () => `void`
-
-Called when the app goes to the background while this step is active.
-
-###### Returns
-
-`void`
-
-<a id="api-onfinish"></a>
-
-##### onFinish?
-
-> `optional` **onFinish?**: (`props`: [`WalkthroughCallback`](#api-walkthroughcallback)) => `void`
-
-Called when the walkthrough moves past this step.
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `props` | [`WalkthroughCallback`](#api-walkthroughcallback) |
-
-###### Returns
-
-`void`
-
-<a id="api-onpressbackdrop"></a>
-
-##### onPressBackdrop?
-
-> `optional` **onPressBackdrop?**: [`OnPressWithContextType`](#api-onpresswithcontexttype)
-
-Called when the user taps the backdrop (outside the mask).
-
-<a id="api-onpressmask"></a>
-
-##### onPressMask?
-
-> `optional` **onPressMask?**: [`OnPressWithContextType`](#api-onpresswithcontexttype)
-
-Called when the user taps inside the mask.
-
-<a id="api-onstart"></a>
-
-##### onStart?
-
-> `optional` **onStart?**: (`props`: [`WalkthroughCallback`](#api-walkthroughcallback)) => `void`
-
-Called when this step becomes active.
-
-###### Parameters
-
-| Parameter | Type |
-| ------ | ------ |
-| `props` | [`WalkthroughCallback`](#api-walkthroughcallback) |
-
-###### Returns
-
-`void`
-
-<a id="api-pulse-2"></a>
-
-##### pulse?
-
-> `optional` **pulse?**: `Partial`\<[`WalkthroughPulse`](#api-walkthroughpulse)\>
-
-Per-step overrides for the mask pulse. Merged with the provider-level
-[WalkthroughOptions.pulse](#api-pulse-1) per key, with the step's values taking
-precedence.
-
-***
-
-<a id="api-walkthroughstepmask-1"></a>
+<a id="api-walkthroughstepmask"></a>
 
 ### WalkthroughStepMask
 
@@ -927,7 +723,7 @@ The rectangle of the highlighted target, in screen coordinates.
 A step uses this to tell the [WalkthroughProvider](#api-walkthroughprovider) where its target
 view sits so the mask can be drawn around it. It is normally produced by the
 hook by measuring the view, but can be supplied by hand, see
-[WalkthroughStep.mask](#api-mask).
+[WalkthroughStepType.mask](#api-mask).
 
 #### Properties
 
@@ -971,6 +767,508 @@ The x coordinate (in dp) of the target's top-left corner.
 > **y**: `number`
 
 The y coordinate (in dp) of the target's top-left corner.
+
+***
+
+<a id="api-walkthroughstepprops"></a>
+
+### WalkthroughStepProps
+
+The props accepted by the [WalkthroughStep](#api-walkthroughstep) component.
+
+Like [UseWalkthroughStep](#api-usewalkthroughstep), but the target view is measured
+automatically: the component wraps its [children](#api-children) in a `View` and wires
+up its own `onLayout`, so callers never handle measuring. A `style` can still
+be forwarded to that wrapper to size/position the highlight target.
+
+#### Extends
+
+- [`UseWalkthroughStep`](#api-usewalkthroughstep)\<`P`\>
+
+#### Type Parameters
+
+| Type Parameter | Default type |
+| ------ | ------ |
+| `P` *extends* [`ContentComponentProps`](#api-contentcomponentprops) | [`ContentComponentProps`](#api-contentcomponentprops) |
+
+#### Properties
+
+<a id="api-animationduration-2"></a>
+
+##### animationDuration?
+
+> `optional` **animationDuration?**: `number`
+
+Overrides the mask transition duration (in ms) for this step.
+
+The mask morphs between steps over the provider's `animationDuration`
+(default 300ms). This lets a single step use a different duration. Falls
+back to the provider's duration when omitted.
+
+###### Inherited from
+
+`UseWalkthroughStep.animationDuration`
+
+<a id="api-children"></a>
+
+##### children
+
+> **children**: `ReactNode`
+
+The content to highlight. It is wrapped in a `View` that is measured
+automatically; the mask covers exactly this wrapper (minus any
+[WalkthroughStepType.layoutAdjustments](#api-layoutadjustments-4)).
+
+<a id="api-computedmask"></a>
+
+##### computedMask?
+
+> `optional` **computedMask?**: [`WalkthroughStepMask`](#api-walkthroughstepmask)
+
+The final mask used for rendering, after [layoutAdjustments](#api-layoutadjustments-4) are
+applied. Falls back to [mask](#api-mask) when not set.
+
+###### Inherited from
+
+`UseWalkthroughStep.computedMask`
+
+<a id="api-contentcomponent-2"></a>
+
+##### contentComponent?
+
+> `optional` **contentComponent?**: `ComponentType`\<`P`\>
+
+The component rendered as overlay content for this step. Falls back to the
+provider-level [WalkthroughOptions.contentComponent](#api-contentcomponent-1) when omitted.
+
+###### Inherited from
+
+`UseWalkthroughStep.contentComponent`
+
+<a id="api-contentcomponentprops-1"></a>
+
+##### contentComponentProps?
+
+> `optional` **contentComponentProps?**: `Omit`\<`P`, keyof [`ContentComponentProps`](#api-contentcomponentprops)\>
+
+Extra props passed to this step's [contentComponent](#api-contentcomponent-3) (or the
+provider's fallback), on top of [ContentComponentProps.ctx](#api-ctx) and
+[ContentComponentProps.step](#api-step).
+
+###### Inherited from
+
+`UseWalkthroughStep.contentComponentProps`
+
+<a id="api-fullscreen"></a>
+
+##### fullScreen?
+
+> `optional` **fullScreen?**: `boolean`
+
+When `true`, the whole screen is treated as the mask: the backdrop covers
+everything and the content renders on top.
+
+###### Inherited from
+
+`UseWalkthroughStep.fullScreen`
+
+<a id="api-identifier"></a>
+
+##### identifier?
+
+> `optional` **identifier?**: `string`
+
+A stable unique id for this step. Used to dedupe registration and as the
+React key for the content container in the displayer. Defaults to the
+string of `number` when omitted.
+
+###### Inherited from
+
+`UseWalkthroughStep.identifier`
+
+<a id="api-layoutadjustments-3"></a>
+
+##### layoutAdjustments?
+
+> `optional` **layoutAdjustments?**: [`LayoutAdjustments`](#api-layoutadjustments)
+
+Adjusts the measured mask. Merged with [WalkthroughOptions.layoutAdjustments](#api-layoutadjustments-2)
+per key, with the step's values taking precedence.
+
+###### Inherited from
+
+`UseWalkthroughStep.layoutAdjustments`
+
+<a id="api-layoutlock"></a>
+
+##### layoutLock?
+
+> `optional` **layoutLock?**: `boolean`
+
+Only allow the `onLayout` to get set once. This is useful on for example,
+scrollable containers where the position on the page can change when you
+scroll.
+
+###### Inherited from
+
+`UseWalkthroughStep.layoutLock`
+
+<a id="api-maskallowinteraction-2"></a>
+
+##### maskAllowInteraction?
+
+> `optional` **maskAllowInteraction?**: `boolean`
+
+Whether touches inside the mask should pass through to the target view.
+Equivalent to [WalkthroughStepMask.allowInteraction](#api-allowinteraction)
+
+Defaults to the provider's [WalkthroughOptions.maskAllowInteraction](#api-maskallowinteraction-1)
+value, which defaults to `false` (the target is blocked while highlighted).
+
+###### Inherited from
+
+`UseWalkthroughStep.maskAllowInteraction`
+
+<a id="api-measuremask"></a>
+
+##### measureMask?
+
+> `optional` **measureMask?**: () => `void`
+
+Re-measures the target and re-registers the step with fresh coordinates.
+Provided automatically by [useWalkthroughStep](#api-usewalkthroughstep-1).
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`UseWalkthroughStep.measureMask`
+
+<a id="api-number"></a>
+
+##### number
+
+> **number**: `number`
+
+The order of this step in the walkthrough. Must be unique among the
+registered steps; the walkthrough advances by going up these numbers.
+
+###### Inherited from
+
+`UseWalkthroughStep.number`
+
+<a id="api-onbackground"></a>
+
+##### onBackground?
+
+> `optional` **onBackground?**: () => `void`
+
+Called when the app goes to the background while this step is active.
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`UseWalkthroughStep.onBackground`
+
+<a id="api-onfinish"></a>
+
+##### onFinish?
+
+> `optional` **onFinish?**: (`props`: [`WalkthroughCallback`](#api-walkthroughcallback)) => `void`
+
+Called when the walkthrough moves past this step.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `props` | [`WalkthroughCallback`](#api-walkthroughcallback) |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`UseWalkthroughStep.onFinish`
+
+<a id="api-onpressbackdrop"></a>
+
+##### onPressBackdrop?
+
+> `optional` **onPressBackdrop?**: [`OnPressWithContextType`](#api-onpresswithcontexttype)
+
+Called when the user taps the backdrop (outside the mask).
+
+###### Inherited from
+
+`UseWalkthroughStep.onPressBackdrop`
+
+<a id="api-onpressmask"></a>
+
+##### onPressMask?
+
+> `optional` **onPressMask?**: [`OnPressWithContextType`](#api-onpresswithcontexttype)
+
+Called when the user taps inside the mask.
+
+###### Inherited from
+
+`UseWalkthroughStep.onPressMask`
+
+<a id="api-onstart"></a>
+
+##### onStart?
+
+> `optional` **onStart?**: (`props`: [`WalkthroughCallback`](#api-walkthroughcallback)) => `void`
+
+Called when this step becomes active.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `props` | [`WalkthroughCallback`](#api-walkthroughcallback) |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`UseWalkthroughStep.onStart`
+
+<a id="api-pulse-2"></a>
+
+##### pulse?
+
+> `optional` **pulse?**: `Partial`\<[`WalkthroughPulse`](#api-walkthroughpulse)\>
+
+Per-step overrides for the mask pulse. Merged with the provider-level
+[WalkthroughOptions.pulse](#api-pulse-1) per key, with the step's values taking
+precedence.
+
+###### Inherited from
+
+`UseWalkthroughStep.pulse`
+
+<a id="api-style"></a>
+
+##### style?
+
+> `optional` **style?**: `StyleProp`\<`ViewStyle`\>
+
+Style applied to the wrapping `View`. Use this to size and position the
+highlight target (e.g. `{ width: 200 }` for fixed-size content).
+
+***
+
+<a id="api-walkthroughsteptype"></a>
+
+### WalkthroughStepType
+
+A single step of the walkthrough, as resolved and stored by the
+[WalkthroughProvider](#api-walkthroughprovider).
+
+This is the full shape of a registered step. Callers usually build one
+through [useWalkthroughStep](#api-usewalkthroughstep-1), which measures the target and fills in
+[mask](#api-mask) and [measureMask](#api-measuremask-1) automatically.
+
+#### Type Parameters
+
+| Type Parameter | Default type |
+| ------ | ------ |
+| `P` *extends* [`ContentComponentProps`](#api-contentcomponentprops) | [`ContentComponentProps`](#api-contentcomponentprops) |
+
+#### Properties
+
+<a id="api-animationduration-3"></a>
+
+##### animationDuration?
+
+> `optional` **animationDuration?**: `number`
+
+Overrides the mask transition duration (in ms) for this step.
+
+The mask morphs between steps over the provider's `animationDuration`
+(default 300ms). This lets a single step use a different duration. Falls
+back to the provider's duration when omitted.
+
+<a id="api-computedmask-1"></a>
+
+##### computedMask?
+
+> `optional` **computedMask?**: [`WalkthroughStepMask`](#api-walkthroughstepmask)
+
+The final mask used for rendering, after [layoutAdjustments](#api-layoutadjustments-4) are
+applied. Falls back to [mask](#api-mask) when not set.
+
+<a id="api-contentcomponent-3"></a>
+
+##### contentComponent?
+
+> `optional` **contentComponent?**: `ComponentType`\<`P`\>
+
+The component rendered as overlay content for this step. Falls back to the
+provider-level [WalkthroughOptions.contentComponent](#api-contentcomponent-1) when omitted.
+
+<a id="api-contentcomponentprops-2"></a>
+
+##### contentComponentProps?
+
+> `optional` **contentComponentProps?**: `Omit`\<`P`, keyof [`ContentComponentProps`](#api-contentcomponentprops)\>
+
+Extra props passed to this step's [contentComponent](#api-contentcomponent-3) (or the
+provider's fallback), on top of [ContentComponentProps.ctx](#api-ctx) and
+[ContentComponentProps.step](#api-step).
+
+<a id="api-fullscreen-1"></a>
+
+##### fullScreen?
+
+> `optional` **fullScreen?**: `boolean`
+
+When `true`, the whole screen is treated as the mask: the backdrop covers
+everything and the content renders on top.
+
+<a id="api-identifier-1"></a>
+
+##### identifier
+
+> **identifier**: `string`
+
+A stable unique id for this step. Used to dedupe registration and as the
+React key for the content container in the displayer. Defaults to the
+string of `number` when omitted.
+
+<a id="api-layoutadjustments-4"></a>
+
+##### layoutAdjustments?
+
+> `optional` **layoutAdjustments?**: [`LayoutAdjustments`](#api-layoutadjustments)
+
+Adjusts the measured mask. Merged with [WalkthroughOptions.layoutAdjustments](#api-layoutadjustments-2)
+per key, with the step's values taking precedence.
+
+<a id="api-layoutlock-1"></a>
+
+##### layoutLock?
+
+> `optional` **layoutLock?**: `boolean`
+
+Only allow the `onLayout` to get set once. This is useful on for example,
+scrollable containers where the position on the page can change when you
+scroll.
+
+<a id="api-mask"></a>
+
+##### mask
+
+> **mask**: [`WalkthroughStepMask`](#api-walkthroughstepmask)
+
+The rectangle of the highlighted target. Normally measured automatically
+by [useWalkthroughStep](#api-usewalkthroughstep-1).
+
+<a id="api-measuremask-1"></a>
+
+##### measureMask
+
+> **measureMask**: () => `void`
+
+Re-measures the target and re-registers the step with fresh coordinates.
+Provided automatically by [useWalkthroughStep](#api-usewalkthroughstep-1).
+
+###### Returns
+
+`void`
+
+<a id="api-number-1"></a>
+
+##### number
+
+> **number**: `number`
+
+The order of this step in the walkthrough. Must be unique among the
+registered steps; the walkthrough advances by going up these numbers.
+
+<a id="api-onbackground-1"></a>
+
+##### onBackground?
+
+> `optional` **onBackground?**: () => `void`
+
+Called when the app goes to the background while this step is active.
+
+###### Returns
+
+`void`
+
+<a id="api-onfinish-1"></a>
+
+##### onFinish?
+
+> `optional` **onFinish?**: (`props`: [`WalkthroughCallback`](#api-walkthroughcallback)) => `void`
+
+Called when the walkthrough moves past this step.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `props` | [`WalkthroughCallback`](#api-walkthroughcallback) |
+
+###### Returns
+
+`void`
+
+<a id="api-onpressbackdrop-1"></a>
+
+##### onPressBackdrop?
+
+> `optional` **onPressBackdrop?**: [`OnPressWithContextType`](#api-onpresswithcontexttype)
+
+Called when the user taps the backdrop (outside the mask).
+
+<a id="api-onpressmask-1"></a>
+
+##### onPressMask?
+
+> `optional` **onPressMask?**: [`OnPressWithContextType`](#api-onpresswithcontexttype)
+
+Called when the user taps inside the mask.
+
+<a id="api-onstart-1"></a>
+
+##### onStart?
+
+> `optional` **onStart?**: (`props`: [`WalkthroughCallback`](#api-walkthroughcallback)) => `void`
+
+Called when this step becomes active.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `props` | [`WalkthroughCallback`](#api-walkthroughcallback) |
+
+###### Returns
+
+`void`
+
+<a id="api-pulse-3"></a>
+
+##### pulse?
+
+> `optional` **pulse?**: `Partial`\<[`WalkthroughPulse`](#api-walkthroughpulse)\>
+
+Per-step overrides for the mask pulse. Merged with the provider-level
+[WalkthroughOptions.pulse](#api-pulse-1) per key, with the step's values taking
+precedence.
 
 ## Type Aliases
 
@@ -1093,7 +1391,7 @@ A press handler for the mask or the backdrop.
 
 Receives the walkthrough [WalkthroughContextType](#api-walkthroughcontexttype) so it can drive the
 walkthrough (e.g. `(ctx) => ctx.next()`). See
-[WalkthroughStep.onPressMask](#api-onpressmask) and [WalkthroughStep.onPressBackdrop](#api-onpressbackdrop).
+[WalkthroughStepType.onPressMask](#api-onpressmask-1) and [WalkthroughStepType.onPressBackdrop](#api-onpressbackdrop-1).
 
 #### Parameters
 
@@ -1147,8 +1445,8 @@ Same as [WalkthroughLayoutAnimations.content](#api-content), but partial.
 
 The input of [useWalkthroughStep](#api-usewalkthroughstep-1).
 
-Like [UseWalkthroughStepStrict](#api-usewalkthroughstepstrict), but [WalkthroughStep.identifier](#api-identifier)
-and [WalkthroughStep.measureMask](#api-measuremask) are optional: the identifier defaults
+Like [UseWalkthroughStepStrict](#api-usewalkthroughstepstrict), but [WalkthroughStepType.identifier](#api-identifier-1)
+and [WalkthroughStepType.measureMask](#api-measuremask-1) are optional: the identifier defaults
 to the string of the step's number, and the hook provides its own measureMask.
 
 #### Type Parameters
@@ -1163,13 +1461,13 @@ to the string of the step's number, and the hook provides its own measureMask.
 
 ### UseWalkthroughStepStrict
 
-> **UseWalkthroughStepStrict**\<`P`\> = `Omit`\<[`WalkthroughStep`](#api-walkthroughstep)\<`P`\>, `"mask"`\> & \{ `maskAllowInteraction?`: `boolean`; \}
+> **UseWalkthroughStepStrict**\<`P`\> = `Omit`\<[`WalkthroughStepType`](#api-walkthroughsteptype)\<`P`\>, `"mask"`\> & \{ `maskAllowInteraction?`: `boolean`; \}
 
-Same as [WalkthroughStep](#api-walkthroughstep), but with [WalkthroughStep.mask](#api-mask)
+Same as [WalkthroughStepType](#api-walkthroughsteptype), but with [WalkthroughStepType.mask](#api-mask)
 replaced by `maskAllowInteraction`.
 
 Because the hook measures the target itself, callers never provide a full
-[WalkthroughStepMask](#api-walkthroughstepmask-1); instead they only opt into interaction through
+[WalkthroughStepMask](#api-walkthroughstepmask); instead they only opt into interaction through
 `maskAllowInteraction`.
 
 #### Type Declaration
@@ -1200,11 +1498,11 @@ Easing curve applied to the mask transition between steps.
 
 ### WalkthroughMaskCoordinates
 
-> **WalkthroughMaskCoordinates** = `Omit`\<[`WalkthroughStepMask`](#api-walkthroughstepmask-1), `"allowInteraction"`\>
+> **WalkthroughMaskCoordinates** = `Omit`\<[`WalkthroughStepMask`](#api-walkthroughstepmask), `"allowInteraction"`\>
 
 Position of a mask in screen coordinates.
 
-Same as [WalkthroughStepMask](#api-walkthroughstepmask-1) but without
+Same as [WalkthroughStepMask](#api-walkthroughstepmask) but without
 [WalkthroughStepMask.allowInteraction](#api-allowinteraction), as produced by the hook when it
 measures the target.
 
@@ -1264,18 +1562,18 @@ code (start, stop, next, previous, goTo).
 
 ### useWalkthroughStep()
 
-> **useWalkthroughStep**\<`P`\>(`__namedParameters`: [`UseWalkthroughStep`](#api-usewalkthroughstep)\<`P`\>): \{ `isVisible`: `boolean`; `onLayout`: (`event`: `LayoutChangeEvent`) => `void`; `onMeasure`: (`x`: `number`, `y`: `number`, `width`: `number`, `height`: `number`) => `void`; `step`: [`WalkthroughStep`](#api-walkthroughstep)\<[`ContentComponentProps`](#api-contentcomponentprops)\> \| `undefined`; \}
+> **useWalkthroughStep**\<`P`\>(`__namedParameters`: [`UseWalkthroughStep`](#api-usewalkthroughstep)\<`P`\>): \{ `isVisible`: `boolean`; `onLayout`: (`event`: `LayoutChangeEvent`) => `void`; `onMeasure`: (`x`: `number`, `y`: `number`, `width`: `number`, `height`: `number`) => `void`; `step`: [`WalkthroughStepType`](#api-walkthroughsteptype)\<[`ContentComponentProps`](#api-contentcomponentprops)\> \| `undefined`; \}
 
 Registers a walkthrough step and tracks the mask of the view it should
 highlight.
 
 Attach the returned `onLayout` to the target view: the hook measures it and
-registers a step whose [WalkthroughStep.mask](#api-mask) matches the measured
-rectangle (adjusted by [WalkthroughStep.layoutAdjustments](#api-layoutadjustments-3)). When the
+registers a step whose [WalkthroughStepType.mask](#api-mask) matches the measured
+rectangle (adjusted by [WalkthroughStepType.layoutAdjustments](#api-layoutadjustments-4)). When the
 step is active, its content component renders above the mask.
 
-The step is re-registered (upserted by [WalkthroughStep.identifier](#api-identifier))
-whenever its target moves, as long as [WalkthroughStep.layoutLock](#api-layoutlock) is
+The step is re-registered (upserted by [WalkthroughStepType.identifier](#api-identifier-1))
+whenever its target moves, as long as [WalkthroughStepType.layoutLock](#api-layoutlock-1) is
 not set.
 
 #### Type Parameters
@@ -1292,14 +1590,14 @@ not set.
 
 #### Returns
 
-\{ `isVisible`: `boolean`; `onLayout`: (`event`: `LayoutChangeEvent`) => `void`; `onMeasure`: (`x`: `number`, `y`: `number`, `width`: `number`, `height`: `number`) => `void`; `step`: [`WalkthroughStep`](#api-walkthroughstep)\<[`ContentComponentProps`](#api-contentcomponentprops)\> \| `undefined`; \}
+\{ `isVisible`: `boolean`; `onLayout`: (`event`: `LayoutChangeEvent`) => `void`; `onMeasure`: (`x`: `number`, `y`: `number`, `width`: `number`, `height`: `number`) => `void`; `step`: [`WalkthroughStepType`](#api-walkthroughsteptype)\<[`ContentComponentProps`](#api-contentcomponentprops)\> \| `undefined`; \}
 
 | Name | Type |
 | ------ | ------ |
 | `isVisible` | `boolean` |
 | `onLayout()` | (`event`: `LayoutChangeEvent`) => `void` |
 | `onMeasure()` | (`x`: `number`, `y`: `number`, `width`: `number`, `height`: `number`) => `void` |
-| `step` | [`WalkthroughStep`](#api-walkthroughstep)\<[`ContentComponentProps`](#api-contentcomponentprops)\> \| `undefined` |
+| `step` | [`WalkthroughStepType`](#api-walkthroughsteptype)\<[`ContentComponentProps`](#api-contentcomponentprops)\> \| `undefined` |
 
 ***
 
@@ -1328,6 +1626,42 @@ accepted props.
 | Parameter | Type |
 | ------ | ------ |
 | `__namedParameters` | `PropsWithChildren`\<[`WalkthroughOptions`](#api-walkthroughoptions)\<`P`\>\> |
+
+#### Returns
+
+`Element`
+
+***
+
+<a id="api-walkthroughstep"></a>
+
+### WalkthroughStep()
+
+> **WalkthroughStep**\<`P`\>(`__namedParameters`: [`WalkthroughStepProps`](#api-walkthroughstepprops)\<`P`\>): `Element`
+
+Registers a walkthrough step and measures its target automatically.
+
+This is the component form of [useWalkthroughStep](#api-usewalkthroughstep-1). It accepts the same
+options, but instead of returning an `onLayout` for you to attach, it wraps
+its [WalkthroughStepProps.children](#api-children) in a `View` and wires up the
+measurement itself. The mask covers exactly that wrapping view (adjusted by
+[WalkthroughStepType.layoutAdjustments](#api-layoutadjustments-4)).
+
+Prefer this when you want to highlight a subtree without manually hooking
+`onLayout`; use [useWalkthroughStep](#api-usewalkthroughstep-1) when you need to attach the
+handler to an existing view or a full-screen step.
+
+#### Type Parameters
+
+| Type Parameter | Default type |
+| ------ | ------ |
+| `P` *extends* [`ContentComponentProps`](#api-contentcomponentprops) | [`ContentComponentProps`](#api-contentcomponentprops) |
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `__namedParameters` | [`WalkthroughStepProps`](#api-walkthroughstepprops)\<`P`\> |
 
 #### Returns
 

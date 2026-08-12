@@ -3,7 +3,7 @@ import { StyleSheet, Pressable } from "react-native";
 import Animated from "react-native-reanimated";
 
 import { useWalkthrough } from "../context";
-import type { WalkthroughMaskProps, WalkthroughStep } from "../types";
+import type { WalkthroughMaskProps, WalkthroughStepType } from "../types";
 import { handlePress } from "../utils";
 import { ViewMask } from "./ViewMask";
 
@@ -29,7 +29,7 @@ export const WalkthroughDisplayer = () => {
     [debug],
   );
 
-  const prevStepRef = useRef<WalkthroughStep | undefined>(undefined);
+  const prevStepRef = useRef<WalkthroughStepType | undefined>(undefined);
 
   const currentStepKey = currentStep?.identifier;
 

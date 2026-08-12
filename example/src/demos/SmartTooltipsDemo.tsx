@@ -1,5 +1,8 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { useWalkthroughStep } from "rn-interactive-walkthrough";
+import {
+  WalkthroughStep,
+  useWalkthroughStep,
+} from "rn-interactive-walkthrough";
 
 import { FullScreenCard } from "../components/FullScreenCard";
 import { StartDemoButton } from "../components/StartDemoButton";
@@ -7,36 +10,6 @@ import { Tooltip } from "../components/Tooltip";
 import { colors } from "../theme";
 
 export function SmartTooltipsScreen() {
-  const step1 = useWalkthroughStep({
-    number: 1,
-    layoutAdjustments: { addPadding: 8 },
-    contentComponent: Tooltip,
-    contentComponentProps: {
-      title: "Tooltip lands below",
-      text: "There is room under this card, so the tooltip sits below it and points up at the mask.",
-    },
-  });
-
-  const step2 = useWalkthroughStep({
-    number: 2,
-    layoutAdjustments: { addPadding: 8 },
-    contentComponent: Tooltip,
-    contentComponentProps: {
-      title: "Tooltip flips above",
-      text: "No room below this card, so the tooltip moves above it automatically.",
-    },
-  });
-
-  const step3 = useWalkthroughStep({
-    number: 3,
-    layoutAdjustments: { addPadding: 8 },
-    contentComponent: Tooltip,
-    contentComponentProps: {
-      title: "The arrow tracks the target",
-      text: "The arrow stays centered on the highlighted card no matter which side the tooltip lands on.",
-    },
-  });
-
   useWalkthroughStep({
     number: 4,
     fullScreen: true,
@@ -60,20 +33,37 @@ export function SmartTooltipsScreen() {
         <StartDemoButton />
       </View>
 
-      <View style={styles.card} onLayout={step1.onLayout}>
+      <WalkthroughStep
+        number={1}
+        layoutAdjustments={{ addPadding: 8 }}
+        contentComponent={Tooltip}
+        contentComponentProps={{
+          title: "Tooltip lands below",
+          text: "There is room under this card, so the tooltip sits below it and points up at the mask.",
+        }}
+        style={styles.card}
+      >
         <View style={styles.badge}>
           <Text style={styles.badgeText}>1</Text>
         </View>
         <View style={styles.cardBody}>
           <Text style={styles.cardTitle}>Register a step</Text>
           <Text style={styles.cardText}>
-            Call useWalkthroughStep and attach its onLayout to the view you want
-            to highlight.
+            Wrap the view in WalkthroughStep and it measures itself for you.
           </Text>
         </View>
-      </View>
+      </WalkthroughStep>
 
-      <View style={styles.card} onLayout={step3.onLayout}>
+      <WalkthroughStep
+        number={3}
+        layoutAdjustments={{ addPadding: 8 }}
+        contentComponent={Tooltip}
+        contentComponentProps={{
+          title: "The arrow tracks the target",
+          text: "The arrow stays centered on the highlighted card no matter which side the tooltip lands on.",
+        }}
+        style={styles.card}
+      >
         <View style={[styles.badge, styles.badgeAlt]}>
           <Text style={styles.badgeText}>3</Text>
         </View>
@@ -84,20 +74,29 @@ export function SmartTooltipsScreen() {
             so its tooltip flips up.
           </Text>
         </View>
-      </View>
+      </WalkthroughStep>
 
-      <View style={styles.card} onLayout={step2.onLayout}>
+      <WalkthroughStep
+        number={2}
+        layoutAdjustments={{ addPadding: 8 }}
+        contentComponent={Tooltip}
+        contentComponentProps={{
+          title: "Tooltip flips above",
+          text: "No room below this card, so the tooltip moves above it automatically.",
+        }}
+        style={styles.card}
+      >
         <View style={[styles.badge, styles.badgeAlt2]}>
           <Text style={styles.badgeText}>2</Text>
         </View>
         <View style={styles.cardBody}>
           <Text style={styles.cardTitle}>Measure the mask</Text>
           <Text style={styles.cardText}>
-            The library measures the card for you, so the mask always fits. No
-            manual coordinates.
+            No onLayout to attach and no manual coordinates, the wrapper is
+            measured automatically.
           </Text>
         </View>
-      </View>
+      </WalkthroughStep>
 
       <Text style={styles.footnote}>
         Try the other demos to see more ways to use the library.
