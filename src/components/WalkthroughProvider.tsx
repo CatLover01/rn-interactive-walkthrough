@@ -60,10 +60,13 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
     [currentStepNumber],
   );
 
-  const isLastStep = useMemo(
-    () => currentStepNumber === steps.length,
-    [currentStepNumber, steps],
-  );
+  const isLastStep = useMemo(() => {
+    if (!isActive) {
+      return false;
+    }
+    const lastStep = steps[steps.length - 1];
+    return lastStep.number === currentStepNumber;
+  }, [isActive, currentStepNumber, steps]);
 
   const registerStep = useCallback<WalkthroughContextType["registerStep"]>(
     (step) => {
@@ -97,16 +100,38 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
   );
 
   const next = useCallback<WalkthroughContextType["next"]>(() => {
-    setCurrentStepNumber((x) => (x ?? 0) + 1);
-  }, []);
+    setCurrentStepNumber((x) => {
+      if (x === undefined) {
+        return x;
+      }
+      const index = steps.findIndex((s) => s.number === x);
+      if (index === -1 || index >= steps.length - 1) {
+        // Unknown step, or already on the last one: end the walkthrough rather
+        // than drifting to a non-existent step number.
+        return undefined;
+      }
+      return steps[index + 1].number;
+    });
+  }, [steps]);
 
   const previous = useCallback<WalkthroughContextType["previous"]>(() => {
-    setCurrentStepNumber((x) => (x === 0 || x === undefined ? 0 : x - 1));
-  }, []);
+    setCurrentStepNumber((x) => {
+      if (x === undefined) {
+        return x;
+      }
+
+      const index = steps.findIndex((s) => s.number === x);
+      if (index <= 0) {
+        // Unknown step, or already on the first one
+        return x;
+      }
+      return steps[index - 1].number;
+    });
+  }, [steps]);
 
   const start = useCallback<WalkthroughContextType["start"]>(() => {
     if (steps.length) {
-      const step = steps[0]; // already ordered so take the first one
+      const step = steps[0];
       setCurrentStepNumber(step.number);
     }
   }, [steps]);
