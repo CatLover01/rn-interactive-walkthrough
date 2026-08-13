@@ -56,8 +56,8 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
   );
 
   const isFirstStep = useMemo(
-    () => currentStepNumber === 1,
-    [currentStepNumber],
+    () => isActive && currentStepNumber === 1,
+    [isActive, currentStepNumber],
   );
 
   const isLastStep = useMemo(() => {
@@ -136,12 +136,37 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
     });
   }, [steps]);
 
-  const start = useCallback<WalkthroughContextType["start"]>(() => {
-    if (steps.length) {
-      const step = steps[0];
-      setCurrentStepNumber(step.number);
-    }
-  }, [steps]);
+  const start = useCallback<WalkthroughContextType["start"]>(
+    (stepNumber) => {
+      setCurrentStepNumber((current) => {
+        if (current !== undefined) {
+          return current;
+        }
+        const first = steps[0];
+        const target =
+          stepNumber === undefined
+            ? first
+            : steps.find((s) => s.number === stepNumber);
+        return target ? target.number : current;
+      });
+    },
+    [steps],
+  );
+
+  const goTo = useCallback<WalkthroughContextType["goTo"]>(
+    (stepNumber) => {
+      setCurrentStepNumber((current) => {
+        if (current === undefined) {
+          return current;
+        }
+        if (steps.some((s) => s.number === stepNumber)) {
+          return stepNumber;
+        }
+        return current;
+      });
+    },
+    [steps],
+  );
 
   const stop = useCallback<WalkthroughContextType["stop"]>(() => {
     setCurrentStepNumber(undefined);
@@ -171,7 +196,7 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
       stop,
       next,
       previous,
-      goTo: setCurrentStepNumber,
+      goTo,
       useIsFocused,
     }),
     [
@@ -197,6 +222,7 @@ export const WalkthroughProvider = <P extends ContentComponentProps>({
       stop,
       next,
       previous,
+      goTo,
       useIsFocused,
     ],
   );

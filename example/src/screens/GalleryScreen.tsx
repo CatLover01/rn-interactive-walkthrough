@@ -87,7 +87,9 @@ export function GalleryScreen({ onOpen }: GalleryScreenProps) {
           <Pressable
             accessibilityRole="button"
             disabled={!isReady}
-            onPress={start}
+            onPress={() => {
+              start();
+            }}
             style={({ pressed }) => [
               styles.startButton,
               pressed && styles.startButtonPressed,

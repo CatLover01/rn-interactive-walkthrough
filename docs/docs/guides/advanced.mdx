@@ -39,6 +39,11 @@ Every function on the context (`start`, `stop`, `next`, `previous`, `goTo`,
 `updateStep`, `registerStep`) can be triggered from any component inside the
 provider.
 
+Navigating functions follow a simple lifecycle: `start` only runs while the
+walkthrough is **inactive**, whereas `next`, `previous` and `goTo` only run
+while it is **active**. Calling them out of state is a no-op, so you don't need
+to guard them yourself.
+
 ### Via `useWalkthrough()`
 
 ```tsx

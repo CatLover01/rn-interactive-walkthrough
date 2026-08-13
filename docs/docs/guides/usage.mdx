@@ -109,7 +109,8 @@ function StartTourButton() {
 
 `start` begins the walkthrough at the lowest-numbered registered step. `isReady`
 becomes `true` once step `1` has been registered, which is a good condition to
-check before starting.
+check before starting. You can also begin on a specific step by passing its
+number, e.g. `start(3)`.
 
 ## 4. Navigate steps
 
@@ -148,7 +149,25 @@ const NearbyUsersTooltip = ({ title, ctx }: NearbyUsersTooltipProps) => {
 </WalkthroughStep>
 ```
 
-See the [Overlays guide](overlays) for the full set of patterns.
+### Lifecycle
+
+The walkthrough is a tiny state machine. When it is **inactive** (no step shown),
+only `start()` can begin it; `next`, `previous` and `goTo` do nothing. Once it is
+**active**, `next`, `previous` and `goTo` navigate within the tour, while
+`start()` is ignored. `stop()` hides the overlay from either state, returning to
+inactive.
+
+- `next` advances one step (stays on the last one). `previous` goes back one step
+  (stays on the first one). Both no-op while inactive.
+- `goTo(stepNumber)` jumps straight to a step. It only works while active, and
+  is ignored if no registered step has that number.
+- `start(stepNumber?)` begins the tour, at the first step unless a number is
+  given. It is ignored while already active.
+
+`isFirstStep` and `isLastStep` tell you where you are in the tour, and are always
+`false` while inactive.
+
+See the [example app](https://github.com/CatLover01/rn-interactive-walkthrough/tree/main/example) for the full set of patterns.
 
 ## 5. (Optional) Track navigation focus
 

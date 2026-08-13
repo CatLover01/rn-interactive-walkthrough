@@ -16,7 +16,9 @@ export function StartDemoButton({
     <Pressable
       accessibilityRole="button"
       disabled={!isReady}
-      onPress={start}
+      onPress={() => {
+        start();
+      }}
       style={({ pressed }) => [
         styles.button,
         pressed && styles.buttonPressed,

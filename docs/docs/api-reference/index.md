@@ -214,6 +214,13 @@ and passed to every content component as [ContentComponentProps.ctx](#api-ctx).
 It exposes the current state of the walkthrough (current step, progress) and
 the actions to drive it (start, stop, next, previous...).
 
+The walkthrough behaves like a small state machine:
+- **Inactive** (no step is active): the only valid transition is `start()`,
+  which begins the walkthrough. `goTo`, `next` and `previous` are no-ops.
+- **Active** (a step is active): `goTo`, `next` and `previous` navigate
+  within the walkthrough. `start()` is a no-op.
+- `stop()` hides the overlay from either state.
+
 #### Type Parameters
 
 | Type Parameter | Default type |
@@ -287,6 +294,9 @@ Whether debug logging is enabled, from [WalkthroughOptions.debug](#api-debug-1).
 
 Jumps directly to the step with the given number.
 
+Only works while active: when the walkthrough is not running, `goTo` is a
+no-op. It also does nothing if no registered step has that number.
+
 ###### Parameters
 
 | Parameter | Type |
@@ -311,7 +321,7 @@ Whether the walkthrough is currently running (a step is active).
 
 > **isFirstStep**: `boolean`
 
-Whether the current step is the first one (`number === 1`).
+Whether the current step is the first one (`number === 1`). Always `false` when inactive.
 
 <a id="api-islaststep"></a>
 
@@ -319,7 +329,8 @@ Whether the current step is the first one (`number === 1`).
 
 > **isLastStep**: `boolean`
 
-Whether the current step is the last registered one.
+Whether the current step is the last registered one (the highest `number`).
+Always `false` when inactive.
 
 <a id="api-isready"></a>
 
@@ -351,7 +362,8 @@ Whether touches inside the mask should pass through to the target view. Defaults
 
 > **next**: () => `void`
 
-Advances to the next step (or stays put on the last one).
+Advances to the next step. Stays put on the last step, and does nothing
+while inactive.
 
 ###### Returns
 
@@ -363,7 +375,8 @@ Advances to the next step (or stays put on the last one).
 
 > **previous**: () => `void`
 
-Goes back to the previous step.
+Goes back to the previous step. Stays put on the first step, and does
+nothing while inactive.
 
 ###### Returns
 
@@ -401,9 +414,21 @@ Registers a step, replacing any previously registered step with the same
 
 ##### start
 
-> **start**: () => `void`
+> **start**: (`stepNumber?`: `number`) => `void`
 
 Starts the walkthrough from the first registered step.
+
+If a `stepNumber` is given, the walkthrough starts on that step instead.
+It only works while inactive: once a step is active, `start()` is a no-op
+(use `goTo` to move around inside a running walkthrough). If no registered
+step matches the requested number (or no steps are registered at all), it
+does nothing and stays inactive.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `stepNumber?` | `number` |
 
 ###### Returns
 

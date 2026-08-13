@@ -36,6 +36,13 @@ export interface WalkthroughStepMask {
  *
  * It exposes the current state of the walkthrough (current step, progress) and
  * the actions to drive it (start, stop, next, previous...).
+ *
+ * The walkthrough behaves like a small state machine:
+ * - **Inactive** (no step is active): the only valid transition is `start()`,
+ *   which begins the walkthrough. `goTo`, `next` and `previous` are no-ops.
+ * - **Active** (a step is active): `goTo`, `next` and `previous` navigate
+ *   within the walkthrough. `start()` is a no-op.
+ * - `stop()` hides the overlay from either state.
  * */
 export interface WalkthroughContextType<
   P extends ContentComponentProps = ContentComponentProps,
@@ -46,9 +53,12 @@ export interface WalkthroughContextType<
   currentStepNumber: number | undefined;
   /** All registered steps, sorted by {@link WalkthroughStepType.number}. */
   steps: WalkthroughStepType[];
-  /** Whether the current step is the first one (`number === 1`). */
+  /** Whether the current step is the first one (`number === 1`). Always `false` when inactive. */
   isFirstStep: boolean;
-  /** Whether the current step is the last registered one. */
+  /**
+   * Whether the current step is the last registered one (the highest `number`).
+   * Always `false` when inactive.
+   * */
   isLastStep: boolean;
   /** Whether a step with `number === 1` is registered, so `start()` can run. */
   isReady: boolean;
@@ -95,15 +105,34 @@ export interface WalkthroughContextType<
     identifier: WalkthroughStepType["identifier"],
     step: Partial<P>,
   ) => void;
-  /** Starts the walkthrough from the first registered step. */
-  start: () => void;
+  /**
+   * Starts the walkthrough from the first registered step.
+   *
+   * If a `stepNumber` is given, the walkthrough starts on that step instead.
+   * It only works while inactive: once a step is active, `start()` is a no-op
+   * (use `goTo` to move around inside a running walkthrough). If no registered
+   * step matches the requested number (or no steps are registered at all), it
+   * does nothing and stays inactive.
+   * */
+  start: (stepNumber?: number) => void;
   /** Stops the walkthrough and hides the overlay. */
   stop: () => void;
-  /** Advances to the next step (or stays put on the last one). */
+  /**
+   * Advances to the next step. Stays put on the last step, and does nothing
+   * while inactive.
+   * */
   next: () => void;
-  /** Goes back to the previous step. */
+  /**
+   * Goes back to the previous step. Stays put on the first step, and does
+   * nothing while inactive.
+   * */
   previous: () => void;
-  /** Jumps directly to the step with the given number. */
+  /**
+   * Jumps directly to the step with the given number.
+   *
+   * Only works while active: when the walkthrough is not running, `goTo` is a
+   * no-op. It also does nothing if no registered step has that number.
+   * */
   goTo: (number: number) => void;
   /**
    * A hook used to determine whether the current screen is focused. Can be
