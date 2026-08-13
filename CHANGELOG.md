@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.0](https://github.com/CatLover01/rn-interactive-walkthrough/compare/v1.1.0...v2.0.0) (2026-08-13)
+
+### Features
+
+* constrain navigation to an active walkthrough and support start(stepNumber) ([9a864e1](https://github.com/CatLover01/rn-interactive-walkthrough/commit/9a864e1f1ac371a0a32e8207ec2d8fd8081810aa))
+
 ## [1.1.0](https://github.com/CatLover01/rn-interactive-walkthrough/compare/v1.0.0...v1.1.0) (2026-08-12)
 
 ### Features
